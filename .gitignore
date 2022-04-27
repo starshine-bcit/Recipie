@@ -1,9 +1,18 @@
-venv
+# VScode
 .vscode/
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
-__pycache__/
 .history/
+
+# Python
+venv/
+__pycache__/
+
+# Unit Tests
+.pytest_cache/
+.coverage
+coverage.*
+htmlcov/
