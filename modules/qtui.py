@@ -1,1 +1,1 @@
-# Blank File to hold our created Qt constructs
+# Blank File to hold our compiled Qt constructs
