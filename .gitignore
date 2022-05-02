@@ -16,3 +16,6 @@ __pycache__/
 .coverage
 coverage.*
 htmlcov/
+
+# Qt Debug
+build-*-Debug
