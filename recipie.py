@@ -4,8 +4,8 @@ from pathlib import Path
 import argparse
 import sys
 
-import modules.revent.py
-import modules.qtui.py
+import modules.revent
+import modules.qtui
 
 def main():
     #This section creates and parses arguments to the main program
