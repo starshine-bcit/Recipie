@@ -1,3 +1,4 @@
+'''Recipie module for subclassing and event handling'''
 import random
 # Subclass things here for events from mainwindow?
 
