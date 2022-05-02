@@ -1,6 +1,11 @@
+'''Recipie Main Module'''
 # Import from ./modules here
 from pathlib import Path
 import argparse
+import sys
+
+import modules.revent.py
+import modules.qtui.py
 
 def main():
     #This section creates and parses arguments to the main program
@@ -24,7 +29,10 @@ def main():
 
     args = parser.parse_args()
 
-    #Call event loop here
+    # Call Qapplication and event loop here, example:
+    # app = QApplication(args)
+    # ex = Example()
+    # sys.exit(app.exec())
 
 if __name__ == '__main__':
     main()
