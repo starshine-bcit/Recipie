@@ -4,6 +4,16 @@ import json
 from collections import OrderedDict
 from random import choice
 
+def return_rrecipe():
+    rpath = Path('./recipes_ar_clean.json')
+    with rpath.open('r', encoding='utf-8') as rfile:
+        tdata = OrderedDict()
+        tdata = json.load(rfile)
+
+    rrecipe = choice(list(tdata.values()))
+    frecipe = list(tdata.items())[0]
+
+    return rrecipe
 
 def main():
     rpath = Path('./recipes_ar_clean.json')

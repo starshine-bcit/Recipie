@@ -117,6 +117,15 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+# Begin Modify Code
+#         self.pushButtonRandom.clicked.connect(self.random_button_click)
+
+
+#     def random_button_click(self):
+#         print('Clicked')
+
+# End Modify Code
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "recipie --TESTING--"))
