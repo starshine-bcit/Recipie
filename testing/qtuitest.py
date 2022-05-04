@@ -13,6 +13,12 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
+        MainWindow.setSizePolicy(sizePolicy)
+        MainWindow.setMinimumSize(QtCore.QSize(800, 600))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -56,6 +62,7 @@ class Ui_MainWindow(object):
         self.labelRecipeIngredients.setObjectName("labelRecipeIngredients")
         self.verticalLayoutRecipeScrollArea.addWidget(self.labelRecipeIngredients)
         self.textBrowserRecipeIngredients = QtWidgets.QTextBrowser(self.centralwidget)
+        self.textBrowserRecipeIngredients.setMinimumSize(QtCore.QSize(562, 207))
         self.textBrowserRecipeIngredients.setMaximumSize(QtCore.QSize(16777215, 16777215))
         font = QtGui.QFont()
         font.setFamily("Source Code Pro")
@@ -69,6 +76,7 @@ class Ui_MainWindow(object):
         self.labelRecipeDirections.setObjectName("labelRecipeDirections")
         self.verticalLayoutRecipeScrollArea.addWidget(self.labelRecipeDirections)
         self.textBrowserRecipeDirections = QtWidgets.QTextBrowser(self.centralwidget)
+        self.textBrowserRecipeDirections.setMinimumSize(QtCore.QSize(562, 206))
         self.textBrowserRecipeDirections.setMaximumSize(QtCore.QSize(16777215, 16777215))
         font = QtGui.QFont()
         font.setFamily("Source Code Pro")
@@ -104,6 +112,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "recipie --TESTING--"))
+        self.pushButtonRandom.setToolTip(_translate("MainWindow", "Get A Random Recipe"))
         self.pushButtonRandom.setText(_translate("MainWindow", "Random Recipe"))
         self.labelRecipeName.setText(_translate("MainWindow", "Recipe Name"))
         self.labelRecipeIngredients.setText(_translate("MainWindow", "Ingredients:"))
