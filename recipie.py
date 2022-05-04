@@ -2,13 +2,14 @@
 # Import from ./modules here
 from pathlib import Path
 import argparse
-import sys
+
+from PyQt6 import QtCore, QtGui, QtWidgets
 
 import modules.revent
 import modules.qtui
 
 def main():
-    #This section creates and parses arguments to the main program
+    '''Main recipie function to initiate/load everything else'''
     parser = argparse.ArgumentParser(description='Recipie desktop application')
 
     parser.add_argument(
@@ -18,21 +19,24 @@ def main():
         help = 'verbosely output to console'
     )
 
-    #Change default to datastore locaion
     parser.add_argument(
         '-ds',
         '--datastore',
         type = Path,
-        default = Path('./data.json'),
+        default = Path('./data'),
         help = 'json file to load, hopefully with recipies'
     )
 
     args = parser.parse_args()
+    if args.verbose: print(
+        f'Parsed command line arguments:'
+        f'\n{args}\n'
+    )
 
-    # Call Qapplication and event loop here, example:
-    # app = QApplication(args)
-    # ex = Example()
-    # sys.exit(app.exec())
+    # Insert recipe class instantion routine
+    # Return rlist here to pass to into initmainwindow()
+    modules.revent.initmainwindow(args, rlist)
+
 
 if __name__ == '__main__':
     main()
