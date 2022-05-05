@@ -1,12 +1,13 @@
 """Module of a class of a list of food recipes."""
 
 import json
+import random
 from pathlib import Path
 from .recipe import Recipe
 
 
 class RecipeList:
-    """Class represents a list of recipe instances.
+    """Class represents a list of Recipe instances.
     Recipes are from our recipe files.
 
     Args:
@@ -39,3 +40,8 @@ class RecipeList:
                     # print(self.recipes[-1].name)
                     # Skip over non-recipes in JSON
                     continue
+
+    def get_random_recipe(self) -> Recipe:
+        """Returns a random Recipe from list of Recipes."""
+        random_recipe = random.choice(self.recipes)
+        return random_recipe
