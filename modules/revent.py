@@ -6,7 +6,7 @@ from random import choice
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 
-from qtui import Ui_MainWindow
+from .qtui import Ui_MainWindow
 
 
 class MainWindowRecipie(Ui_MainWindow):
