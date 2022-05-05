@@ -38,5 +38,5 @@ class Recipe:
 
     def ingredients_as_str(self) -> str:
         """Returns ingredients in a list as string."""
-        ingredients = ' '.join(self.ingredients)
+        ingredients = '\n'.join(self.ingredients)
         return ingredients
