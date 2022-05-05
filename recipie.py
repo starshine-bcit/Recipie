@@ -1,20 +1,12 @@
 '''Recipie Main Module'''
+# Import from ./modules here
 from pathlib import Path
 import argparse
 
-#from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtCore, QtGui, QtWidgets
 
 import modules.revent
-#import modules.qtui
-import modules.recipelist
-
-
-def createdslist(args):
-    '''Create a list of files from the supplied directory'''
-    datafilelist = args.datastore.glob('*.json')
-    if len(datafilelist) < 1: raise ValueError('Error: no JSON datastores found')
-    return datafilelist
-
+import modules.qtui
 
 def main():
     '''Main recipie function to initiate/load everything else'''
@@ -41,10 +33,9 @@ def main():
         f'\n{args}\n'
     )
 
-    verbose = True if args.verbose else False
-    datafilelist = createdslist(args)
-    mainrlist = modules.recipelist.RecipeList(datafilelist)
-    modules.revent.initmainwindow(verbose, mainrlist)
+    # Insert recipe class instantion routine
+    # Return rlist here to pass to into initmainwindow()
+    modules.revent.initmainwindow(args, rlist)
 
 
 if __name__ == '__main__':

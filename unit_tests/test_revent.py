@@ -1,8 +1,8 @@
 import pytest
-import argparse
-from unittest.mock import mock_open, patch
-# from ACIT2911.modules.revent import MainWindowTest, parserecipe #For local testing
-from modules.revent import MainWindowTest, parserecipe
+from modules.recipe import Recipe
+from modules.revent import MainWindowRecipie, return_rrecipe
+# from ACIT2911.modules.recipe import Recipe                            #For local testing
+# from ACIT2911.modules.revent import MainWindowRecipie, return_rrecipe #For local testing
 
 
 RECIPE_LIST = [
@@ -39,8 +39,7 @@ RECIPE_LIST = [
 
 @pytest.fixture
 def mw():
-    args = argparse.ArgumentParser()
-    mainwindow = MainWindowRecipe(args, RECIPE_LIST)
+    mainwindow = MainWindowRecipie(True, RECIPE_LIST)
     return mainwindow
 
 
@@ -48,14 +47,6 @@ def test_main_window_methods(mw):
     """
     FIXME, need to look into the attributes and methods in the Qt copypasta
     """
-    
-    pass
+    mw.random_button_click()
 
-
-def test_parserecipe():
-    parsed = parserecipe(RECIPE_LIST[0])
-    assert [True for elem in parsed if type(elem) == str]
-
-
-def test_main():
     pass
