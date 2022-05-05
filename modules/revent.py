@@ -10,10 +10,10 @@ from qtui import Ui_MainWindow
 
 
 class MainWindowRecipie(Ui_MainWindow):
-    def __init__(self, args, rlist) -> None:
+    def __init__(self, verbose, rlist) -> None:
         super().__init__()
         self.rlist = rlist
-        self.args = args
+        self.verbose = verbose
 
     def createevents(self):
         '''Connect triggered events with functions'''
@@ -37,7 +37,7 @@ class MainWindowRecipie(Ui_MainWindow):
     def random_button_click(self):
         '''Call rrecipe, then display it with display_recipe'''
         rrecipe = return_rrecipe(self.rlist)
-        if self.args.verbose:
+        if self.verbose:
             print(
                 f'Random event captured\n'
                 f'Selecting random recipe {rrecipe.name} and displaying...'
@@ -53,14 +53,14 @@ class MainWindowRecipie(Ui_MainWindow):
 
     def exit_recipie(self):
         '''Exit the entire program'''
-        if self.args.verbose:
+        if self.verbose:
             print('Exiting Recipie\n')
         sys.exit(0)
 
 
 def return_rrecipe(rlist):
     '''Return a random recipe class instance from a list of them'''
-    return choice(rlist)
+    return choice(rlist.recipes)
 
 
 # def parserecipe(rrecipe):
@@ -73,17 +73,17 @@ def return_rrecipe(rlist):
 #     return title, ingred_parsed, instruct
 
 
-def initmainwindow(args, rlist):
-    if args.verbose:
+def initmainwindow(verbose, rlist):
+    if verbose:
         print('Starting to initialize ui...')
     app = QtWidgets.QApplication([])
     MainWindow = QtWidgets.QMainWindow()
-    ui = MainWindowRecipie(args, rlist)  # Instance of UI_MainWindow
+    ui = MainWindowRecipie(verbose, rlist)  # Instance of UI_MainWindow
     ui.setupUi(MainWindow)  # Basic initialization
     ui.createevents()  # Adding event listeners
     ui.linkimages(app)  # Link images to window
     MainWindow.show()
-    if args.verbose:
+    if verbose:
         print('Initialized successfully and visible')
     sys.exit(app.exec())
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     # )
 
     # args = parser.parse_args()
-    # if args.verbose: print(
+    # if verbose: print(
     #     f'Parsed command line arguments:'
     #     f'\n{args}\n'
     # )
