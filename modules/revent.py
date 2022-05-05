@@ -36,14 +36,15 @@ class MainWindowRecipie(Ui_MainWindow):
 
     def random_button_click(self):
         '''Call rrecipe, then display it with display_recipe'''
-        rrecipe = return_rrecipe(self.rlist)
+        rrecipe = self.rlist.get_random_recipe()
         if self.verbose:
             print(
                 f'Random event captured\n'
                 f'Selecting random recipe {rrecipe.name} and displaying...'
             )
+        ingreds = rrecipe.ingredients_as_str()
         self.display_recipe(
-            rrecipe.name, rrecipe.ingredients, rrecipe.instructions)
+            rrecipe.name, ingreds, rrecipe.instructions)
 
     def display_recipe(self, title, ingred, instruct):
         '''Display chosen recipe in the main window'''
@@ -58,9 +59,9 @@ class MainWindowRecipie(Ui_MainWindow):
         sys.exit(0)
 
 
-def return_rrecipe(rlist):
-    '''Return a random recipe class instance from a list of them'''
-    return choice(rlist.recipes)
+# def return_rrecipe(rlist):
+#     '''Return a random recipe class instance from a list of them'''
+#     return choice(rlist.recipes)
 
 
 # def parserecipe(rrecipe):
