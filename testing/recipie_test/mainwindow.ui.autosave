@@ -23,7 +23,11 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>recipie --TESTING--</string>
+   <string>recipie</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../../image/RecipieLogo_icon.png</normaloff>../../../image/RecipieLogo_icon.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1">

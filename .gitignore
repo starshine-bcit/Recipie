@@ -13,6 +13,7 @@ __pycache__/
 bin/
 lib/
 pyvenv.cfg
+/share
 
 # Unit Tests
 .pytest_cache/
