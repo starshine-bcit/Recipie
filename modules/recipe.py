@@ -35,3 +35,8 @@ class Recipe:
     def to_dict(self) -> dict:
         """Returns dictionary of all Recipe attributes."""
         return self.__dict__
+
+    def ingredients_as_str(self) -> str:
+        """Returns ingredients in a list as string."""
+        ingredients = '\n'.join(self.ingredients)
+        return ingredients

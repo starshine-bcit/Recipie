@@ -10,6 +10,7 @@ Features include:
 - An input field for ingredients that the user has, returns a list of recipes that include only those ingredients or less
 - A category list for users with dietary restrictions, filters out recipes that do not meet the category
 
+
 ## Members
 
 Amanda
