@@ -74,6 +74,7 @@ def return_rrecipe(rlist):
 
 
 def initmainwindow(verbose, rlist):
+    '''Initialize and display main recipie window'''
     if verbose:
         print('Starting to initialize ui...')
     app = QtWidgets.QApplication([])
