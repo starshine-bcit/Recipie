@@ -15,7 +15,6 @@ Features include:
 
 Amanda
 Eva
-Jarrod
 Raqin
 Sasha
 Sean
@@ -26,3 +25,4 @@ Sean
 This project uses open source tools and libraries from the Qt project to generate a GUI, in accordance with the GPLv3 License.
 
 * [Qt.io](https://www.qt.io/product/features?hsLang=en#js-6-4)
+* [Recipe Json](https://eightportions.com/datasets/Recipes/)

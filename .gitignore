@@ -10,9 +10,16 @@
 # Python
 venv/
 __pycache__/
+bin/
+lib/
+pyvenv.cfg
+/share
 
 # Unit Tests
 .pytest_cache/
 .coverage
 coverage.*
 htmlcov/
+
+# Qt Debug
+build-*-Debug
