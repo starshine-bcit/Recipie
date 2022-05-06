@@ -15,7 +15,6 @@ Features include:
 
 Amanda
 Eva
-Jarrod
 Raqin
 Sasha
 Sean
