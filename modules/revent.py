@@ -58,6 +58,13 @@ class MainWindowRecipie(Ui_MainWindow):
             print('Exiting Recipie\n')
         sys.exit(0)
 
+    def status_bar_display(self, message):
+        '''Set status bar display messages'''
+        #self.statusbar.showMessage(message)
+        self.statusbar.showMessage(message)
+        self.statusBarRecipeCount = QtWidgets.QLabel('recipe count here')
+        self.statusbar.addPermanentWidget(self.statusBarRecipeCount)
+
 
 # def return_rrecipe(rlist):
 #     '''Return a random recipe class instance from a list of them'''
@@ -84,6 +91,7 @@ def initmainwindow(verbose, rlist):
     ui.setupUi(MainWindow)  # Basic initialization
     ui.createevents()  # Adding event listeners
     ui.linkimages(app)  # Link images to window
+    ui.status_bar_display('hello')
     MainWindow.show()
     if verbose:
         print('Initialized successfully and visible')
