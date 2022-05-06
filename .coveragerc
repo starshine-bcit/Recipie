@@ -1,2 +1,2 @@
 [run]
-omit = unit_tests/*, testing/*, modules/qtui.py, recipie.py
+omit = unit_tests/*, testing/*, modules/qtui.py, recipie.py, *__init__.py
