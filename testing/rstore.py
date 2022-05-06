@@ -20,7 +20,7 @@ def main():
     with rpath.open('r', encoding='utf-8') as rfile:
         tdata = OrderedDict()
         tdata = json.load(rfile)
-
+    
     rrecipe = choice(list(tdata.values()))
     frecipe = list(tdata.items())[0]
 
