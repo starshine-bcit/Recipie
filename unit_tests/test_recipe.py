@@ -1,11 +1,13 @@
 import pytest
 from modules.recipe import Recipe
+
 # from ACIT2911.modules.recipe import Recipe  # For local testing
 
 
 NAME = "Recipe name"
 INGREDIENTS = ["apple", "orange", "pain"]
 INSTRUCTIONS = "These are cooking instructions"
+
 
 @pytest.fixture
 def rcp():
@@ -60,4 +62,4 @@ def test_recipe_methods(rcp):
     }
 
     # Tests the ingredients to str method
-    assert rcp.ingredients_to_str() == "apple\norange\npain"
+    assert rcp.ingredients_as_str() == "apple\norange\npain"

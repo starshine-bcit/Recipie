@@ -1,3 +1,2 @@
 [run]
-omit = unit_tests/*
-omit = testing/*
+omit = unit_tests/*, testing/*, modules/qtui.py, recipie.py
