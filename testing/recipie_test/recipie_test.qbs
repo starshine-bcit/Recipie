@@ -10,6 +10,7 @@ QtApplication {
     ]
 
     files: [
+        "helpwindow.ui",
         "main.cpp",
         "mainwindow.cpp",
         "mainwindow.h",
