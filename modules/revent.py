@@ -1,8 +1,5 @@
 '''Recipie module for subclassing and event handling'''
 import sys
-from random import choice
-#import argparse
-#from pathlib import Path
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 
@@ -60,25 +57,10 @@ class MainWindowRecipie(Ui_MainWindow):
 
     def status_bar_display(self, message):
         '''Set status bar display messages'''
-        #self.statusbar.showMessage(message)
+        # self.statusbar.showMessage(message)
         self.statusbar.showMessage(message)
         self.statusBarRecipeCount = QtWidgets.QLabel('recipe count here')
         self.statusbar.addPermanentWidget(self.statusBarRecipeCount)
-
-
-# def return_rrecipe(rlist):
-#     '''Return a random recipe class instance from a list of them'''
-#     return choice(rlist.recipes)
-
-
-# def parserecipe(rrecipe):
-#     title = rrecipe.get('title')
-#     ingred = rrecipe.get('ingredients')
-#     ingred_parsed = ''
-#     for x in ingred:
-#         ingred_parsed += x + '\n'
-#     instruct = rrecipe.get('instructions')
-#     return title, ingred_parsed, instruct
 
 
 def initmainwindow(verbose, rlist):
@@ -100,27 +82,3 @@ def initmainwindow(verbose, rlist):
 
 if __name__ == '__main__':
     pass
-    # parser = argparse.ArgumentParser(description='Recipie desktop application')
-
-    # parser.add_argument(
-    #     '-v',
-    #     '--verbose',
-    #     action = 'store_true',
-    #     help = 'verbosely output to console'
-    # )
-
-    # parser.add_argument(
-    #     '-ds',
-    #     '--datastore',
-    #     type = Path,
-    #     default = Path('./data'),
-    #     help = 'json file to load, hopefully with recipies'
-    # )
-
-    # args = parser.parse_args()
-    # if verbose: print(
-    #     f'Parsed command line arguments:'
-    #     f'\n{args}\n'
-    # )
-    # rlist = []
-    # initmainwindow(args, rlist)
