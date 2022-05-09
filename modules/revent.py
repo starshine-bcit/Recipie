@@ -21,6 +21,7 @@ class MainWindowRecipie(Ui_MainWindow):
 
     def __init__(self, verbose: bool, rlist: RecipeList) -> None:
         """Initialize this instance with provided args
+        Use super().__init__() just in case
 
         Args:
             verbose (bool): True enables logging to console
@@ -116,10 +117,11 @@ class MainWindowRecipie(Ui_MainWindow):
         self.statusbar.addPermanentWidget(self.labelStatusBarRecipeCount)
 
 
-def initmainwindow(verbose, rlist: RecipeList) -> None:
+def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
     '''Initialize and display main recipie window
 
         Args:
+            verbose (bool): Specify verbose setting for program
             rlist (RecipeList): Main instance of RecipeList
     '''
 
@@ -132,7 +134,10 @@ def initmainwindow(verbose, rlist: RecipeList) -> None:
     ui.createevents()  # Adding event listeners
     ui.linkimages(app)  # Link images to window
     ui.status_bar_display('Ready')
-    MainWindow.show()
+    # Set both our tab boxes to default
+    ui.tabWidgetRecipe.setCurrentIndex(0)
+    ui.tabWidgetSearch.setCurrentIndex(0)
+    MainWindow.show() # Finally, show the window
     if verbose:
         print('Initialized successfully and visible')
     sys.exit(app.exec())

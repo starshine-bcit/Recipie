@@ -380,7 +380,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QTabWidget" name="tabWidget">
+       <widget class="QTabWidget" name="tabWidgetRecipe">
         <property name="font">
          <font>
           <family>Source Code Pro</family>
@@ -388,6 +388,9 @@
         </property>
         <property name="currentIndex">
          <number>0</number>
+        </property>
+        <property name="usesScrollButtons">
+         <bool>false</bool>
         </property>
         <widget class="QWidget" name="tabRecipeDisplay">
          <property name="sizePolicy">
@@ -531,7 +534,7 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <layout class="QHBoxLayout" name="horizontalLayoutBottomRecipeDisplay">
             <item>
              <spacer name="horizontalSpacer_3">
               <property name="orientation">
@@ -583,6 +586,9 @@
          </layout>
         </widget>
         <widget class="QWidget" name="tabSearchResults">
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
+         </property>
          <attribute name="title">
           <string>Search Results</string>
          </attribute>
