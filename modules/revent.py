@@ -40,11 +40,17 @@ class MainWindowRecipie(Ui_MainWindow):
         self.actionExit.triggered.connect(self.exit_recipie)
         self.commandLinkButtonEnterIngredient.clicked.connect(
             self.enter_search_term)
+        self.radioButtonExclusive.clicked.connect(self.call_search)
+        self.radioButtonInclusive.clicked.connect(self.call_search)
+        self.pushButtonRemoveSelected.clicked.connect(self.remove_selected_search)
+        self.pushButtonResetSearch.clicked.connect(self.reset_search)
+        self.pushButtonRecipeClear.clicked.connect(self.clear_recipe_display)
 
     def init_keyboard_shortcuts(self) -> None:
         '''Create keyboard shortcuts based on event defined above'''
         self.actionExit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
-        QtGui.QShortcut(QtGui.QKeySequence.StandardKey.InsertParagraphSeparator, self.lineEditIngredientEntry, activated=self.enter_search_term)
+        QtGui.QShortcut(QtGui.QKeySequence.StandardKey.InsertParagraphSeparator,
+                        self.lineEditIngredientEntry, activated=self.enter_search_term)
 
     def linkimages(self, app: QtWidgets.QApplication) -> None:
         '''Link image files to application
@@ -123,8 +129,54 @@ class MainWindowRecipie(Ui_MainWindow):
             f'Indexing {len(self.rlist.recipes)} recipes ')
         self.statusbar.addPermanentWidget(self.labelStatusBarRecipeCount)
 
-    def enter_search_term(self):
-        print(self.lineEditIngredientEntry.text())
+    def enter_search_term(self) -> None:
+        '''Captures text from user entry and inputs to search list'''
+
+        stext = self.lineEditIngredientEntry.text()
+        self.lineEditIngredientEntry.setText('')
+        newitem = QtWidgets.QListWidgetItem(stext)
+        self.listWidgetSearchInput.addItem(newitem)
+        self.call_search()
+
+    def call_search(self) -> None:
+        '''Sends list of user search terms to logic search functions'''
+
+        search_terms = [self.listWidgetSearchInput.item(x).text() for x in range(self.listWidgetSearchInput.count())]
+        if self.verbose:
+            print(
+                f'Sending these terms to search:\n{search_terms}'
+            )
+        if len(search_terms) > 0:
+            if self.radioButtonExclusive.isChecked():
+                pass
+            elif self.radioButtonInclusive.isChecked():
+                pass
+            # Pass search_terms to logic search functions here
+        else:
+            if self.verbose:
+                print('Search called, but no items to search for')
+
+    def reset_search(self) -> None:
+        '''Clear Search inputs and results'''
+
+        self.listWidgetSearchInput.clear()
+        self.listWidgetSearchResults.clear()
+        if self.verbose: print('Resetting search...')
+
+    def remove_selected_search(self) -> None:
+        '''Remove user selected items from search input'''
+
+        for listitem in self.listWidgetSearchInput.selectedItems():
+            self.listWidgetSearchInput.takeItem(self.listWidgetSearchInput.row(listitem))
+        if self.verbose: print('Removing selected items...')
+        self.call_search()
+
+    def clear_recipe_display(self) -> None:
+        '''Clear currently displayed recipe, for reasons'''
+
+        self.labelRecipeName.setText('Recipe Name')
+        self.textBrowserRecipeIngredients.setText('')
+        self.textBrowserRecipeDirections.setText('')
 
 
 def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
@@ -144,7 +196,7 @@ def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
     ui.createevents()  # Adding event listeners
     ui.linkimages(app)  # Link images to window
     ui.status_bar_display('Ready')
-    # Set both our tab boxes to default
+    # Set both our tab boxes to default and initialize keyboard shortcuts
     ui.tabWidgetRecipe.setCurrentIndex(0)
     ui.tabWidgetSearch.setCurrentIndex(0)
     ui.init_keyboard_shortcuts()
