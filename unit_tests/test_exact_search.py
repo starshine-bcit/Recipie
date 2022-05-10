@@ -3,7 +3,7 @@ import pytest
 from ACIT2911.modules import esearch
 from ACIT2911.modules.recipe import Recipe
 
-USER_INPUT = ['Flour', 'SUGAR', 'butter', 'apPPle']
+USER_INPUT = ['flour', 'sugar', 'butter', 'apples']
 
 RECIPES_LIST = [
     {
