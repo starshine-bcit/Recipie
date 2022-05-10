@@ -1,4 +1,5 @@
 '''Recipie Main Module'''
+import sys
 from pathlib import Path
 import argparse
 
@@ -46,6 +47,7 @@ def main():
     if verbose:
         print(f'Total recipes indexed: {len(mainrlist.recipes)}')
     modules.revent.initmainwindow(verbose, mainrlist)
+
 
 
 if __name__ == '__main__':
