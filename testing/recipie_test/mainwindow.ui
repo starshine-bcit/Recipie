@@ -498,6 +498,9 @@
             <property name="autoFormatting">
              <set>QTextEdit::AutoNone</set>
             </property>
+            <property name="acceptRichText">
+             <bool>false</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -640,6 +643,7 @@
      <string>File</string>
     </property>
     <addaction name="actionRandom"/>
+    <addaction name="actionPrint"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuSearch">
@@ -673,31 +677,9 @@
     <string>Remove Selected</string>
    </property>
   </action>
-  <action name="actionPartial">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
+  <action name="actionPrint">
    <property name="text">
-    <string>Partial</string>
-   </property>
-  </action>
-  <action name="actionExact">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Exact</string>
-   </property>
-  </action>
-  <action name="actionOther">
-   <property name="text">
-    <string>Other</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::TextHeuristicRole</enum>
+    <string>Print</string>
    </property>
   </action>
  </widget>

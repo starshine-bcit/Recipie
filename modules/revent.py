@@ -1,7 +1,7 @@
 '''Recipie module for subclassing and event handling'''
 import sys
 
-from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtCore, QtGui, QtWidgets, QtPrintSupport
 
 from .qtui import Ui_MainWindow
 from .recipelist import RecipeList
@@ -47,6 +47,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonRemoveSelected.clicked.connect(self.remove_selected_search)
         self.pushButtonResetSearch.clicked.connect(self.reset_search)
         self.pushButtonRecipeClear.clicked.connect(self.clear_recipe_display)
+        self.actionPrint.triggered.connect(self.call_print)
 
     def init_keyboard_shortcuts(self) -> None:
         '''Create keyboard shortcuts based on event defined above'''
@@ -89,6 +90,7 @@ class MainWindowRecipie(Ui_MainWindow):
 
         # In this case, we pass the ingredients as a string
         ingreds = rrecipe.ingredients_as_str()
+        #ingreds.replace('\n', '\n\u2022 ')
         self.display_recipe(
             rrecipe.name, ingreds, rrecipe.instructions)
 
@@ -163,6 +165,8 @@ class MainWindowRecipie(Ui_MainWindow):
 
         self.listWidgetSearchInput.clear()
         self.listWidgetSearchResults.clear()
+        self.tabWidgetRecipe.setCurrentIndex(0)
+        self.tabWidgetSearch.setCurrentIndex(0)
         self.radioButtonInclusive.setChecked(True)
         if self.verbose: print('Resetting search...')
 
@@ -180,6 +184,33 @@ class MainWindowRecipie(Ui_MainWindow):
         self.labelRecipeName.setText('Recipe Name')
         self.textBrowserRecipeIngredients.setText('')
         self.textBrowserRecipeDirections.setText('')
+        if self.verbose: print('Clearing displayed recipe...')
+
+    def init_print(self) -> None:
+        '''Initialize print functionality'''
+
+        self.printer = QtPrintSupport.QPrinter()
+        self.curr_recipe_text = QtGui.QTextDocument('hello')
+
+    def call_print(self) -> None:
+        '''Open print dialogue for current selected recipe'''
+
+        self.print_dialog = QtPrintSupport.QPrintDialog(self.printer)
+        self.print_dialog.open()
+        self.print_dialog.show()
+        #self.print_dialog.accepted().connect(self.send_print)
+        # if self.print_dialog.show() == QtWidgets.QDialog.accepted():
+        #     self.curr_recipe_text.print(self.printer)
+
+    def send_print(self) -> None:
+        '''Send document to configured printer'''
+
+        self.curr_recipe_text.print(self.printer)
+    
+    def update_qtext_print(self) -> None:
+        '''Update curr_recipe_text with current recipe '''
+
+        pass
 
 def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
     '''Initialize and display main recipie window
@@ -202,6 +233,7 @@ def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
     ui.tabWidgetRecipe.setCurrentIndex(0)
     ui.tabWidgetSearch.setCurrentIndex(0)
     ui.init_keyboard_shortcuts()
+    ui.init_print()
     MainWindow.show()  # Finally, show the window
     if verbose:
         print('Initialized successfully and visible')
