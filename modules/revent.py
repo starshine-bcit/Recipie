@@ -100,6 +100,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.labelRecipeName.setText(title)
         self.textBrowserRecipeIngredients.setText(ingred)
         self.textBrowserRecipeDirections.setText(instruct)
+        self.update_qtext_print(title, ingred, instruct)
 
     def exit_recipie(self) -> None:
         '''Exit the entire program'''
@@ -190,27 +191,38 @@ class MainWindowRecipie(Ui_MainWindow):
         '''Initialize print functionality'''
 
         self.printer = QtPrintSupport.QPrinter()
-        self.curr_recipe_text = QtGui.QTextDocument('hello')
+        self.curr_recipe_text = QtGui.QTextDocument()
 
     def call_print(self) -> None:
         '''Open print dialogue for current selected recipe'''
 
         self.print_dialog = QtPrintSupport.QPrintDialog(self.printer)
-        self.print_dialog.open()
-        self.print_dialog.show()
-        #self.print_dialog.accepted().connect(self.send_print)
-        # if self.print_dialog.show() == QtWidgets.QDialog.accepted():
-        #     self.curr_recipe_text.print(self.printer)
+        self.print_dialog.open(self.send_print)
 
     def send_print(self) -> None:
         '''Send document to configured printer'''
 
         self.curr_recipe_text.print(self.printer)
     
-    def update_qtext_print(self) -> None:
-        '''Update curr_recipe_text with current recipe '''
+    def update_qtext_print(self, title: str, ingred: str, instruct: str) -> None:
+        '''Update curr_recipe_text with current recipe for printing'''
 
-        pass
+        ingred = ingred.replace('\n', '\n- ')
+        ingred = '- ' + ingred
+        count = 0
+        finstruct = ''
+        for x in instruct.split('. '):
+            count += 1
+            temp = str(count) + '. ' + x + '\n'
+            finstruct += temp
+
+        self.curr_recipe_text.setMarkdown(
+            f'# {title}\n'
+            f'## Ingredients\n'
+            f'{ingred}\n'
+            f'## Instructions:\n'
+            f'{finstruct}'
+        )
 
 def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
     '''Initialize and display main recipie window
