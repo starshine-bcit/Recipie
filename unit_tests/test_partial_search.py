@@ -1,6 +1,9 @@
 import pytest
-from modules.recipe import Recipe
-from modules import psearch
+# from modules.recipe import Recipe
+# from modules import psearch
+# Import 
+from ACIT2911.modules.recipe import Recipe
+from ACIT2911.modules import psearch
 
 INGREDIENTS = ["flour", "sugar", "butter"]
 
