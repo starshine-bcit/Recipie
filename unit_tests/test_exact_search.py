@@ -48,15 +48,15 @@ def test_exact_search(search):
     Each item in the list should be a Recipe instance
     Capitalization shouldn't matter for the user input
     """
-    #The first argument is the user's input, this user input is a list of ingredients, the second argument is the list of Recipe instances
+    #The first argument is the user's input, this user input is a list of ingredients, the second argument is the list of dictionaries
     assert isinstance(search, list) == True
 
-    #To access the ingredients key inside the RECIPES_LIST, iterate over it and use .ingredients with the iterated Recipe instance eg.for recipe in RECIPE_LIST, if recipe.ingredients...       
+    #To access the ingredients key inside the RECIPES_LIST, iterate over it and use .ingredients with the iterated dictionary eg.for recipe in RECIPE_LIST, if recipe.ingredients...       
 
 
-# def test_exact_search_output_item(search):
-#     #The list should contain only Recipe instances/class
-#     assert isinstance(search[0], Recipe) == True
+def test_exact_search_output_item(search):
+    #The list should contain only dictionaries
+    assert isinstance(search[0], dict) == True
 
 
 def test_exact_search_working(search):
