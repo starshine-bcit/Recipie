@@ -38,6 +38,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonRandom.clicked.connect(self.random_button_click)
         self.actionRandom.triggered.connect(self.random_button_click)
         self.actionExit.triggered.connect(self.exit_recipie)
+        self.actionRemove_Selected.triggered.connect(self.remove_selected_search)
+        self.actionReset_Search.triggered.connect(self.reset_search)
         self.commandLinkButtonEnterIngredient.clicked.connect(
             self.enter_search_term)
         self.radioButtonExclusive.clicked.connect(self.call_search)
@@ -161,6 +163,7 @@ class MainWindowRecipie(Ui_MainWindow):
 
         self.listWidgetSearchInput.clear()
         self.listWidgetSearchResults.clear()
+        self.radioButtonInclusive.setChecked(True)
         if self.verbose: print('Resetting search...')
 
     def remove_selected_search(self) -> None:
@@ -177,7 +180,6 @@ class MainWindowRecipie(Ui_MainWindow):
         self.labelRecipeName.setText('Recipe Name')
         self.textBrowserRecipeIngredients.setText('')
         self.textBrowserRecipeDirections.setText('')
-
 
 def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
     '''Initialize and display main recipie window

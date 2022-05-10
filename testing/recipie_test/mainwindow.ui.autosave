@@ -544,19 +544,6 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayoutBottomRecipeDisplay">
             <item>
-             <spacer name="horizontalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QPushButton" name="pushButtonRecipeClear">
               <property name="font">
                <font>
@@ -568,6 +555,19 @@
                <string>Clear Display</string>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item>
              <widget class="QPushButton" name="pushButtonRandom">
@@ -646,16 +646,8 @@
     <property name="title">
      <string>Search</string>
     </property>
-    <widget class="QMenu" name="menuSearch_Type">
-     <property name="title">
-      <string>Search Type</string>
-     </property>
-     <addaction name="actionPartial"/>
-     <addaction name="actionExact"/>
-    </widget>
     <addaction name="actionReset_Search"/>
     <addaction name="actionRemove_Selected"/>
-    <addaction name="menuSearch_Type"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSearch"/>
@@ -681,20 +673,12 @@
     <string>Remove Selected</string>
    </property>
   </action>
-  <action name="actionPartial">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
+  <action name="actionOther">
    <property name="text">
-    <string>Partial</string>
+    <string>Other</string>
    </property>
-  </action>
-  <action name="actionExact">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Exact</string>
+   <property name="menuRole">
+    <enum>QAction::TextHeuristicRole</enum>
    </property>
   </action>
  </widget>
