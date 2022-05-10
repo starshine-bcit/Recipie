@@ -38,6 +38,13 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonRandom.clicked.connect(self.random_button_click)
         self.actionRandom.triggered.connect(self.random_button_click)
         self.actionExit.triggered.connect(self.exit_recipie)
+        self.commandLinkButtonEnterIngredient.clicked.connect(
+            self.enter_search_term)
+
+    def init_keyboard_shortcuts(self) -> None:
+        '''Create keyboard shortcuts based on event defined above'''
+        self.actionExit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
+        QtGui.QShortcut(QtGui.QKeySequence.StandardKey.InsertParagraphSeparator, self.lineEditIngredientEntry, activated=self.enter_search_term)
 
     def linkimages(self, app: QtWidgets.QApplication) -> None:
         '''Link image files to application
@@ -116,6 +123,9 @@ class MainWindowRecipie(Ui_MainWindow):
             f'Indexing {len(self.rlist.recipes)} recipes ')
         self.statusbar.addPermanentWidget(self.labelStatusBarRecipeCount)
 
+    def enter_search_term(self):
+        print(self.lineEditIngredientEntry.text())
+
 
 def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
     '''Initialize and display main recipie window
@@ -137,7 +147,8 @@ def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
     # Set both our tab boxes to default
     ui.tabWidgetRecipe.setCurrentIndex(0)
     ui.tabWidgetSearch.setCurrentIndex(0)
-    MainWindow.show() # Finally, show the window
+    ui.init_keyboard_shortcuts()
+    MainWindow.show()  # Finally, show the window
     if verbose:
         print('Initialized successfully and visible')
     sys.exit(app.exec())
