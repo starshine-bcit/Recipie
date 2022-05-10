@@ -1,7 +1,6 @@
 import pytest
 # from modules.esearch import ExactSearch
-from ACIT2911.modules import esearch
-from ACIT2911.modules.recipe import Recipe
+from modules import esearch
 
 USER_INPUT = ['flour', 'sugar', 'butter', 'apples']
 
@@ -50,21 +49,16 @@ def test_exact_search(search):
     Capitalization shouldn't matter for the user input
     """
     #The first argument is the user's input, this user input is a list of ingredients, the second argument is the list of Recipe instances
-    result = esearch(USER_INPUT, RECIPES_LIST)
+    assert isinstance(search, list) == True
 
     #To access the ingredients key inside the RECIPES_LIST, iterate over it and use .ingredients with the iterated Recipe instance eg.for recipe in RECIPE_LIST, if recipe.ingredients...       
 
 
-def test_exact_search_output(search):
-    #A list should be returned from the function
-    assert isinstance(search, list) == True
-
-
-def test_exact_search_output_item(search):
-    #The list should contain only Recipe instances/class
-    assert isinstance(search[0], Recipe) == True
+# def test_exact_search_output_item(search):
+#     #The list should contain only Recipe instances/class
+#     assert isinstance(search[0], Recipe) == True
 
 
 def test_exact_search_working(search):
     #Checks if the exact match function worked, since only one item in the list matches those same ingredients
-    assert search[0].title == "Apple Pie"  
+    assert search[0]['title'] == "Apple Pie"  
