@@ -237,6 +237,10 @@ class MainWindowRecipie(Ui_MainWindow):
             f'{format_instruct }'
         )
 
+    def display_search_result_list(self, frlist: list) -> None:
+        pass
+
+
 def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
     '''Initialize and display main recipie window
 
