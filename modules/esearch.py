@@ -27,7 +27,8 @@ def exact_search(ingredient_input: list[str], recipes_list: RecipeList) -> list[
     for recipe in recipes_list.recipes: 
         match = True 
         new_ingred_list = [] 
-
+        
+        if len(recipe.ingredients) < 1 : continue
         ingred_list = [i.lower().translate(str.maketrans(
             '', '', string.punctuation)) for i in recipe.ingredients]
             
@@ -46,8 +47,8 @@ def exact_search(ingredient_input: list[str], recipes_list: RecipeList) -> list[
                 else: 
                     food_item = food
                 templist.append(food_item)
-                
-            new_ingred_list.append(templist)
+
+            new_ingred_list.append(' '.join(templist))
             templist = []
 
         for ingred in new_ingred_list:
