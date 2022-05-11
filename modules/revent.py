@@ -36,7 +36,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.srlist = {}
         self.verbose = verbose
         self.currname = ''
-        self.multidict = {}
+        self.multiwin = {}
 
     def setupUicustom(self):
         '''Setup various elements which have no depends'''
@@ -222,7 +222,7 @@ class MainWindowRecipie(Ui_MainWindow):
 
         self.curr_recipe_md.print(self.printer)
 
-    def set_md_recipe(self, title: str, ingred: str, instruct: str):
+    def set_md_recipe(self, title: str, ingred: str, instruct: str) -> None:
         '''_summary_
 
         Args:
@@ -282,12 +282,12 @@ class MainWindowRecipie(Ui_MainWindow):
     def display_recipe_window(self) -> None:
         '''Display recipe in new window'''
 
-        self.multidict[self.currname] = QtWidgets.QDialog()
-        self.multidict[self.currname + '2'] = Ui_Dialog()
-        self.multidict[self.currname + '2'].setupUi(self.multidict[self.currname])
-        self.multidict[self.currname].setWindowTitle(self.currname)
-        self.multidict[self.currname + '2'].textBrowserDisplay.setMarkdown(self.curr_recipe_md.toMarkdown())
-        self.multidict[self.currname].show()
+        self.multiwin[self.currname] = QtWidgets.QDialog()
+        self.multiwin[self.currname + '2'] = Ui_Dialog()
+        self.multiwin[self.currname + '2'].setupUi(self.multiwin[self.currname])
+        self.multiwin[self.currname].setWindowTitle(self.currname)
+        self.multiwin[self.currname + '2'].textBrowserDisplay.setMarkdown(self.curr_recipe_md.toMarkdown())
+        self.multiwin[self.currname].show()
 
 
 def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
