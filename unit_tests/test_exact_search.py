@@ -1,8 +1,9 @@
 import pytest
 # from modules.esearch import ExactSearch
-from modules import esearch
+from ACIT2911.modules.esearch import exact_match
 
 USER_INPUT = ['flour', 'sugar', 'butter', 'apples']
+ANNOYING_USER_INPUT = ['Flour', 'SUGAR', 'butTeR', 'blueBERRIES']
 
 RECIPES_LIST = [
     {
@@ -38,7 +39,7 @@ RECIPES_LIST = [
 
 @pytest.fixture
 def search():
-    result = esearch(USER_INPUT, RECIPES_LIST)
+    result = exact_match(USER_INPUT, RECIPES_LIST)
     return result 
 
 
@@ -62,3 +63,10 @@ def test_exact_search_output_item(search):
 def test_exact_search_working(search):
     #Checks if the exact match function worked, since only one item in the list matches those same ingredients
     assert search[0]['title'] == "Apple Pie"  
+
+
+def test_irregular_input():
+    #Checks if the exact match function works even if the user doesn't know how to turn off their caps or stop holding shift
+    result = exact_search(ANNOYING_USER_INPUT, RECIPES_LIST)
+    assert isinstance(result, list) == True
+    assert result[0]['title'] == "Blueberry Pie"
