@@ -47,7 +47,7 @@ def test_partial_search():
     assert isinstance(results_list, list) == True
 
     # Expecting 2 recipes that match in results list
-    assert len([results_list]) == 2
+    assert len(results_list) == 2
 
     # Check that items in the list are Recipe instances
     # assert isinstance(results_list[0], Recipe) == True
