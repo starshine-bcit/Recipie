@@ -214,9 +214,10 @@ class MainWindowRecipie(Ui_MainWindow):
         # Create separate function for this
         ingred = ingred.replace('\n', '\n- ')
         ingred = '- ' + ingred
-        count = 1
         finstruct = ''
-        ginstruct = '\n'.join(re.split('\d{0,2}\.[[:space:]]', instruct))
+        count = 0
+        ginstruct = '\n'.join(re.split(r'\d{0,2}\.[: \n\t:]', instruct))
+        #finstruct = '\n'.join(re.split(r'.*\.[: \n\t:]$', instruct))
   
         for x in instruct.split('. '):
             count += 1
@@ -233,7 +234,7 @@ class MainWindowRecipie(Ui_MainWindow):
             f'## Ingredients\n'
             f'{ingred}\n'
             f'## Instructions:\n'
-            f'{format_instruct}'
+            f'{format_instruct }'
         )
 
 def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
