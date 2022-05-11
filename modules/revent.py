@@ -6,6 +6,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets, QtPrintSupport
 
 from .qtui import Ui_MainWindow
 from .recipelist import RecipeList
+from .recipe import Recipe
 
 
 class MainWindowRecipie(Ui_MainWindow):
@@ -31,7 +32,18 @@ class MainWindowRecipie(Ui_MainWindow):
 
         super().__init__()
         self.rlist = rlist
+        self.srlist = {}
         self.verbose = verbose
+
+    def setupUicustom(self):
+        self.printer = QtPrintSupport.QPrinter()
+        self.curr_recipe_md = QtGui.QTextDocument()
+        self.labelStatusBarRecipeCount = QtWidgets.QLabel(
+            f'Indexing {len(self.rlist.recipes)} recipes ')
+        self.statusbar.addPermanentWidget(self.labelStatusBarRecipeCount)
+        self.statusbar.showMessage('Ready')
+        self.tabWidgetRecipe.setCurrentIndex(0)
+        self.tabWidgetSearch.setCurrentIndex(0)
 
     def createevents(self) -> None:
         '''Connect triggered events with functions'''
@@ -39,20 +51,21 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonRandom.clicked.connect(self.random_button_click)
         self.actionRandom.triggered.connect(self.random_button_click)
         self.actionExit.triggered.connect(self.exit_recipie)
-        self.actionRemove_Selected.triggered.connect(self.remove_selected_search)
+        self.actionRemove_Selected.triggered.connect(
+            self.remove_selected_search)
         self.actionReset_Search.triggered.connect(self.reset_search)
         self.commandLinkButtonEnterIngredient.clicked.connect(
             self.enter_search_term)
         self.radioButtonExclusive.clicked.connect(self.call_search)
         self.radioButtonInclusive.clicked.connect(self.call_search)
-        self.pushButtonRemoveSelected.clicked.connect(self.remove_selected_search)
+        self.pushButtonRemoveSelected.clicked.connect(
+            self.remove_selected_search)
         self.pushButtonResetSearch.clicked.connect(self.reset_search)
         self.pushButtonRecipeClear.clicked.connect(self.clear_recipe_display)
         self.actionPrint.triggered.connect(self.call_print)
+        self.listWidgetSearchResults.itemDoubleClicked.connect(
+            self.click_search_result)
 
-    def init_keyboard_shortcuts(self) -> None:
-        '''Create keyboard shortcuts based on event defined above'''
-        
         self.actionExit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
         self.actionPrint.setShortcut(QtGui.QKeySequence('Ctrl+P'))
         self.actionRandom.setShortcut(QtGui.QKeySequence('Ctrl+R'))
@@ -92,19 +105,17 @@ class MainWindowRecipie(Ui_MainWindow):
                 f'Selecting random recipe {rrecipe.name} and displaying...'
             )
 
-        # In this case, we pass the ingredients as a string
-        ingreds = rrecipe.ingredients_as_str()
-        #ingreds.replace('\n', '\n\u2022 ')
-        self.display_recipe(
-            rrecipe.name, ingreds, rrecipe.instructions)
+        self.display_recipe(rrecipe)
 
-    def display_recipe(self, title: str, ingred: str, instruct: str) -> None:
+    def display_recipe(self, rcp: Recipe) -> None:
         '''Display chosen recipe in the main window'''
 
-        self.labelRecipeName.setText(title)
-        self.textBrowserRecipeIngredients.setText(ingred)
-        self.textBrowserRecipeDirections.setText(instruct)
-        self.update_qtext_print(title, ingred, instruct)
+        ingreds = rcp.ingredients_as_str()
+
+        self.labelRecipeName.setText(rcp.name)
+        self.textBrowserRecipeIngredients.setText(ingreds)
+        self.textBrowserRecipeDirections.setText(rcp.instructions)
+        self.set_md_recipe(rcp.name, ingreds, rcp.instructions)
 
     def exit_recipie(self) -> None:
         '''Exit the entire program'''
@@ -114,7 +125,8 @@ class MainWindowRecipie(Ui_MainWindow):
         sys.exit(0)
 
     def status_bar_display(self, message: str) -> None:
-        '''Set status bar display message
+        '''
+        Set status bar display message
             Also initializes recipe count widget if not done already
 
             Args:
@@ -123,20 +135,6 @@ class MainWindowRecipie(Ui_MainWindow):
         '''
 
         self.statusbar.showMessage(message)
-
-        # Call init function if Qlabel doesn't exist
-        try:
-            if self.labelStatusBarRecipeCount:
-                pass
-        except AttributeError:
-            self.init_status_recipe_count()
-
-    def init_status_recipe_count(self) -> None:
-        '''Initialize and display recipe count status bar widget'''
-
-        self.labelStatusBarRecipeCount = QtWidgets.QLabel(
-            f'Indexing {len(self.rlist.recipes)} recipes ')
-        self.statusbar.addPermanentWidget(self.labelStatusBarRecipeCount)
 
     def enter_search_term(self) -> None:
         '''Captures text from user entry and inputs to search list'''
@@ -150,18 +148,23 @@ class MainWindowRecipie(Ui_MainWindow):
     def call_search(self) -> None:
         '''Sends list of user search terms to logic search functions'''
 
-        search_terms = [self.listWidgetSearchInput.item(x).text() for x in range(self.listWidgetSearchInput.count())]
+        self.listWidgetSearchResults.clear()
+        search_terms = [self.listWidgetSearchInput.item(
+            x).text() for x in range(self.listWidgetSearchInput.count())]
         if self.verbose:
             print(
                 f'Sending these terms to search:\n{search_terms}'
             )
         if len(search_terms) > 0:
             if self.radioButtonExclusive.isChecked():
+                # self.srlist = function call
                 pass
             elif self.radioButtonInclusive.isChecked():
+                # self.srlist = function call
                 pass
-            # Pass search_terms to logic search functions here
+            self.display_search_result_list()
         else:
+            self.srlist.clear()
             if self.verbose:
                 print('Search called, but no items to search for')
 
@@ -173,14 +176,19 @@ class MainWindowRecipie(Ui_MainWindow):
         self.tabWidgetRecipe.setCurrentIndex(0)
         self.tabWidgetSearch.setCurrentIndex(0)
         self.radioButtonInclusive.setChecked(True)
-        if self.verbose: print('Resetting search...')
+        self.srlist.clear()
+        self.status_bar_display('Ready')
+        if self.verbose:
+            print('Resetting search...')
 
     def remove_selected_search(self) -> None:
         '''Remove user selected items from search input'''
 
         for listitem in self.listWidgetSearchInput.selectedItems():
-            self.listWidgetSearchInput.takeItem(self.listWidgetSearchInput.row(listitem))
-        if self.verbose: print('Removing selected items...')
+            self.listWidgetSearchInput.takeItem(
+                self.listWidgetSearchInput.row(listitem))
+        if self.verbose:
+            print('Removing selected items...')
         self.call_search()
 
     def clear_recipe_display(self) -> None:
@@ -189,13 +197,9 @@ class MainWindowRecipie(Ui_MainWindow):
         self.labelRecipeName.setText('Recipe Name')
         self.textBrowserRecipeIngredients.setText('')
         self.textBrowserRecipeDirections.setText('')
-        if self.verbose: print('Clearing displayed recipe...')
-
-    def init_print(self) -> None:
-        '''Initialize print functionality'''
-
-        self.printer = QtPrintSupport.QPrinter()
-        self.curr_recipe_text = QtGui.QTextDocument()
+        self.curr_recipe_md.setMarkdown('')
+        if self.verbose:
+            print('Clearing displayed recipe...')
 
     def call_print(self) -> None:
         '''Open print dialogue for current selected recipe'''
@@ -206,40 +210,61 @@ class MainWindowRecipie(Ui_MainWindow):
     def send_print(self) -> None:
         '''Send document to configured printer'''
 
-        self.curr_recipe_text.print(self.printer)
-    
-    def update_qtext_print(self, title: str, ingred: str, instruct: str) -> None:
-        '''Update curr_recipe_text with current recipe for printing'''
+        self.curr_recipe_md.print(self.printer)
 
-        # Create separate function for this
+    def set_md_recipe(self, title: str, ingred: str, instruct: str):
+        '''_summary_
+
+        Args:
+            title (str): title of recipe
+            ingred (str): ingredients of recipe
+            instruct (str): instructions of recipe
+        '''
+
         ingred = ingred.replace('\n', '\n- ')
         ingred = '- ' + ingred
         finstruct = ''
         count = 0
-        ginstruct = '\n'.join(re.split(r'\d{0,2}\.[: \n\t:]', instruct))
-        #finstruct = '\n'.join(re.split(r'.*\.[: \n\t:]$', instruct))
-  
-        for x in instruct.split('. '):
+        instructnums = re.split(r'\d{0,2}\.[: \n\t:]', instruct)
+        instructper = instruct.split('. ')
+
+        if len(instructnums) > len(instructper):
+            instructper = instructnums
+        for x in instructper:
             count += 1
             temp = str(count) + '. ' + x + '\n'
             finstruct += temp
 
-        if finstruct.count('\n') > ginstruct.count('\n'):
-            format_instruct = finstruct
-        else:
-            format_instruct = ginstruct
-
-        self.curr_recipe_text.setMarkdown(
+        self.curr_recipe_md.setMarkdown(
             f'# {title}\n'
             f'## Ingredients\n'
             f'{ingred}\n'
             f'## Instructions:\n'
-            f'{format_instruct }'
+            f'{finstruct}'
         )
 
-    def display_search_result_list(self, frlist: list) -> None:
-        pass
+    def display_search_result_list(self) -> None:
+        '''Displays list of recipes in search bar'''
 
+        for x in range(10):
+            self.srlist.update({x: self.rlist.recipes[x]})
+        srlistlen = len(self.srlist)
+
+        for x in range(srlistlen):
+            newname = self.srlist[x].name
+            newitem = QtWidgets.QListWidgetItem(newname)
+            self.listWidgetSearchResults.addItem(newitem)
+
+        self.status_bar_display(f'Found {srlistlen} results')
+        self.tabWidgetRecipe.setCurrentIndex(1)
+
+    def click_search_result(self) -> None:
+        '''Display search result when clicked on'''
+
+        currindex = self.listWidgetSearchResults.currentRow()
+        self.display_recipe(self.srlist[currindex])
+        self.tabWidgetRecipe.setCurrentIndex(0)
+        if self.verbose: print(f'Display recipe at index {currindex}')
 
 def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
     '''Initialize and display main recipie window
@@ -255,14 +280,10 @@ def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
     MainWindow = QtWidgets.QMainWindow()
     ui = MainWindowRecipie(verbose, rlist)  # Instance of UI_MainWindow
     ui.setupUi(MainWindow)  # Basic initialization
-    ui.createevents()  # Adding event listeners
+    ui.setupUicustom()  # Our secondary initialization
+    ui.createevents()  # Add event listeners and shortcuts
     ui.linkimages(app)  # Link images to window
     ui.status_bar_display('Ready')
-    # Set both our tab boxes to default and initialize keyboard shortcuts
-    ui.tabWidgetRecipe.setCurrentIndex(0)
-    ui.tabWidgetSearch.setCurrentIndex(0)
-    ui.init_keyboard_shortcuts()
-    ui.init_print()
     MainWindow.show()  # Finally, show the window
     if verbose:
         print('Initialized successfully and visible')
