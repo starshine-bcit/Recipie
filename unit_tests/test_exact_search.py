@@ -1,6 +1,5 @@
 import pytest
-# from modules.esearch import ExactSearch
-from ACIT2911.modules.esearch import exact_match
+from ACIT2911.modules.esearch import exact_search
 
 USER_INPUT = ['flour', 'sugar', 'butter', 'apples']
 ANNOYING_USER_INPUT = ['Flour', 'SUGAR', 'butTeR', 'blueBERRIES']
@@ -39,7 +38,7 @@ RECIPES_LIST = [
 
 @pytest.fixture
 def search():
-    result = exact_match(USER_INPUT, RECIPES_LIST)
+    result = exact_search(USER_INPUT, RECIPES_LIST)
     return result 
 
 
