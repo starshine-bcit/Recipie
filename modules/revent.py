@@ -8,6 +8,7 @@ from .qtui import Ui_MainWindow
 from .recipelist import RecipeList
 from .recipe import Recipe
 from .recipewindow import Ui_Dialog
+from .esearch import exact_search
 
 
 class MainWindowRecipie(Ui_MainWindow):
@@ -166,12 +167,10 @@ class MainWindowRecipie(Ui_MainWindow):
             )
         if len(search_terms) > 0:
             if self.radioButtonExclusive.isChecked():
-                # self.srlist = function call
-                pass
+                self.display_search_result_list(exact_search(search_terms, self.rlist))
             elif self.radioButtonInclusive.isChecked():
                 # self.srlist = function call
                 pass
-            self.display_search_result_list()
         else:
             self.srlist.clear()
             if self.verbose:
@@ -253,11 +252,11 @@ class MainWindowRecipie(Ui_MainWindow):
             f'{finstruct}'
         )
 
-    def display_search_result_list(self) -> None:
+    def display_search_result_list(self, unlist: list[Recipe]) -> None:
         '''Displays list of recipes in search bar'''
 
-        for x in range(10):
-            self.srlist.update({x: self.rlist.recipes[x]})
+        for x in range(len(unlist)):
+            self.srlist.update({x: unlist[x]})
         srlistlen = len(self.srlist)
 
         for x in range(srlistlen):
