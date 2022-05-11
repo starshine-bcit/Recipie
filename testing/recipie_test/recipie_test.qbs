@@ -15,6 +15,7 @@ QtApplication {
         "mainwindow.cpp",
         "mainwindow.h",
         "mainwindow.ui",
+        "recipewindow.ui",
         "recipie_test_en_CA.ts",
     ]
 

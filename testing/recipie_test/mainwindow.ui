@@ -547,7 +547,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayoutBottomRecipeDisplay">
             <item>
-             <widget class="QPushButton" name="pushButtonRecipeClear">
+             <widget class="QPushButton" name="pushButtonDisplayRecipeNewWindow">
               <property name="font">
                <font>
                 <family>Source Sans Pro</family>
@@ -555,7 +555,10 @@
                </font>
               </property>
               <property name="text">
-               <string>Clear Display</string>
+               <string>Open In New Window</string>
+              </property>
+              <property name="shortcut">
+               <string>Ctrl+O</string>
               </property>
              </widget>
             </item>
@@ -571,6 +574,19 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButtonRecipeClear">
+              <property name="font">
+               <font>
+                <family>Source Sans Pro</family>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Clear Display</string>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QPushButton" name="pushButtonRandom">

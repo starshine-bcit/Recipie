@@ -7,6 +7,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets, QtPrintSupport
 from .qtui import Ui_MainWindow
 from .recipelist import RecipeList
 from .recipe import Recipe
+from .recipewindow import Ui_Dialog
 
 
 class MainWindowRecipie(Ui_MainWindow):
@@ -34,8 +35,12 @@ class MainWindowRecipie(Ui_MainWindow):
         self.rlist = rlist
         self.srlist = {}
         self.verbose = verbose
+        self.currname = ''
+        self.multidict = {}
 
     def setupUicustom(self):
+        '''Setup various elements which have no depends'''
+
         self.printer = QtPrintSupport.QPrinter()
         self.curr_recipe_md = QtGui.QTextDocument()
         self.labelStatusBarRecipeCount = QtWidgets.QLabel(
@@ -44,6 +49,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.statusbar.showMessage('Ready')
         self.tabWidgetRecipe.setCurrentIndex(0)
         self.tabWidgetSearch.setCurrentIndex(0)
+        self.pushButtonDisplayRecipeNewWindow.setEnabled(False)
 
     def createevents(self) -> None:
         '''Connect triggered events with functions'''
@@ -65,6 +71,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.actionPrint.triggered.connect(self.call_print)
         self.listWidgetSearchResults.itemDoubleClicked.connect(
             self.click_search_result)
+        self.pushButtonDisplayRecipeNewWindow.clicked.connect(self.display_recipe_window)
 
         self.actionExit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
         self.actionPrint.setShortcut(QtGui.QKeySequence('Ctrl+P'))
@@ -116,6 +123,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.textBrowserRecipeIngredients.setText(ingreds)
         self.textBrowserRecipeDirections.setText(rcp.instructions)
         self.set_md_recipe(rcp.name, ingreds, rcp.instructions)
+        self.pushButtonDisplayRecipeNewWindow.setEnabled(True)
+        self.currname = rcp.name
 
     def exit_recipie(self) -> None:
         '''Exit the entire program'''
@@ -198,6 +207,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.textBrowserRecipeIngredients.setText('')
         self.textBrowserRecipeDirections.setText('')
         self.curr_recipe_md.setMarkdown('')
+        self.pushButtonDisplayRecipeNewWindow.setEnabled(False)
         if self.verbose:
             print('Clearing displayed recipe...')
 
@@ -256,6 +266,8 @@ class MainWindowRecipie(Ui_MainWindow):
             self.listWidgetSearchResults.addItem(newitem)
 
         self.status_bar_display(f'Found {srlistlen} results')
+        if self.verbose:
+            print(f'Successfully searched and found {srlistlen} results')
         self.tabWidgetRecipe.setCurrentIndex(1)
 
     def click_search_result(self) -> None:
@@ -264,7 +276,19 @@ class MainWindowRecipie(Ui_MainWindow):
         currindex = self.listWidgetSearchResults.currentRow()
         self.display_recipe(self.srlist[currindex])
         self.tabWidgetRecipe.setCurrentIndex(0)
-        if self.verbose: print(f'Display recipe at index {currindex}')
+        if self.verbose:
+            print(f'Display recipe at index {currindex}')
+
+    def display_recipe_window(self) -> None:
+        '''Display recipe in new window'''
+
+        self.multidict[self.currname] = QtWidgets.QDialog()
+        self.multidict[self.currname + '2'] = Ui_Dialog()
+        self.multidict[self.currname + '2'].setupUi(self.multidict[self.currname])
+        self.multidict[self.currname].setWindowTitle(self.currname)
+        self.multidict[self.currname + '2'].textBrowserDisplay.setMarkdown(self.curr_recipe_md.toMarkdown())
+        self.multidict[self.currname].show()
+
 
 def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
     '''Initialize and display main recipie window
