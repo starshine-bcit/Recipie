@@ -1,5 +1,6 @@
 '''Recipie module for subclassing and event handling'''
 import sys
+import re
 
 from PyQt6 import QtCore, QtGui, QtWidgets, QtPrintSupport
 
@@ -51,7 +52,10 @@ class MainWindowRecipie(Ui_MainWindow):
 
     def init_keyboard_shortcuts(self) -> None:
         '''Create keyboard shortcuts based on event defined above'''
+        
         self.actionExit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
+        self.actionPrint.setShortcut(QtGui.QKeySequence('Ctrl+P'))
+        self.actionRandom.setShortcut(QtGui.QKeySequence('Ctrl+R'))
         QtGui.QShortcut(QtGui.QKeySequence.StandardKey.InsertParagraphSeparator,
                         self.lineEditIngredientEntry, activated=self.enter_search_term)
 
@@ -207,21 +211,29 @@ class MainWindowRecipie(Ui_MainWindow):
     def update_qtext_print(self, title: str, ingred: str, instruct: str) -> None:
         '''Update curr_recipe_text with current recipe for printing'''
 
+        # Create separate function for this
         ingred = ingred.replace('\n', '\n- ')
         ingred = '- ' + ingred
-        count = 0
+        count = 1
         finstruct = ''
+        ginstruct = '\n'.join(re.split('\d{0,2}\.[[:space:]]', instruct))
+  
         for x in instruct.split('. '):
             count += 1
             temp = str(count) + '. ' + x + '\n'
             finstruct += temp
+
+        if finstruct.count('\n') > ginstruct.count('\n'):
+            format_instruct = finstruct
+        else:
+            format_instruct = ginstruct
 
         self.curr_recipe_text.setMarkdown(
             f'# {title}\n'
             f'## Ingredients\n'
             f'{ingred}\n'
             f'## Instructions:\n'
-            f'{finstruct}'
+            f'{format_instruct}'
         )
 
 def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
