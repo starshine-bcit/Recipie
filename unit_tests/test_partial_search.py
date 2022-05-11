@@ -17,7 +17,7 @@ RECIPES = [
             "10 sticks of butter"
         ],
         "instructions": "this is a recipe for apple pies"
-    },
+    }, 
     {
         "title": "Blueberry Pie",
         "ingredients": [
