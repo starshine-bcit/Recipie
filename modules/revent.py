@@ -33,7 +33,7 @@ class WorkerSignals(QtCore.QObject):
 
     '''
     finished = QtCore.pyqtSignal()
-    error = QtCore.pyqtSignal(tuple)
+    # error = QtCore.pyqtSignal(tuple)
     result = QtCore.pyqtSignal(list)
     progress = QtCore.pyqtSignal(int)
 
@@ -76,7 +76,8 @@ class Worker(QtCore.QRunnable):
         except:
             traceback.print_exc()
             exctype, value = sys.exc_info()[:2]
-            self.signals.error.emit((exctype, value, traceback.format_exc()))
+            print((exctype, value, traceback.format_exc()))
+            # self.signals.error.emit((exctype, value, traceback.format_exc()))
         else:
             self.signals.result.emit(result)  # Return the result of the processing
         finally:
@@ -113,8 +114,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.currname = ''
         self.multiwin = {}
         self.threadpool = QtCore.QThreadPool().globalInstance()
-        self.timer = QtCore.QTimer()
-        self.timer.setInterval(1000)
+        #self.timer = QtCore.QTimer()
+        #self.timer.setInterval(1000)
         #self.timer.timeout.connect(self.recurring_timer)
         #self.timer.start()
 
@@ -227,10 +228,18 @@ class MainWindowRecipie(Ui_MainWindow):
         '''Captures text from user entry and inputs to search list'''
 
         stext = self.lineEditIngredientEntry.text()
-        self.lineEditIngredientEntry.setText('')
-        newitem = QtWidgets.QListWidgetItem(stext)
-        self.listWidgetSearchInput.addItem(newitem)
-        self.call_search()
+        search_terms = [self.listWidgetSearchInput.item(
+            x).text() for x in range(self.listWidgetSearchInput.count())]
+        if stext != '':
+            self.lineEditIngredientEntry.setText('')
+            newitem = QtWidgets.QListWidgetItem(stext)
+            self.listWidgetSearchInput.addItem(newitem)
+            self.call_search()
+        elif stext in search_terms:
+            self.lineEditIngredientEntry.setText('')
+            if self.verbose: print('Error, search term already exists')
+        else:
+            print('Error, you can\'t search for nothing fool')
 
     def call_search(self) -> None:
         '''Sends list of user search terms to logic search functions'''
@@ -246,9 +255,11 @@ class MainWindowRecipie(Ui_MainWindow):
         if len(search_terms) > 0:
             if self.radioButtonExclusive.isChecked():
                 searchworker = Worker(self.send_search_exact, search_terms, self.rlist)
+                self.lock_ui_elements()
                 #search_type = getattr(esearch, 'exact_search')
             elif self.radioButtonInclusive.isChecked():
-                searchworker = Worker(self.send_search_exact, search_terms, self.rlist)
+                searchworker = Worker(self.send_search_partial, search_terms, self.rlist)
+                self.lock_ui_elements()
                 #search_type = getattr(exact_search, 'partial_search')
 
              # Setup our signals
@@ -265,6 +276,7 @@ class MainWindowRecipie(Ui_MainWindow):
  
     def thread_complete(self):
         if self.verbose: print('Search thread completed')
+        self.unlock_ui_elements()
 
     def send_search_exact(self, search_terms, rlist):
         # progress_callback.emit(n*100/4)
@@ -276,6 +288,27 @@ class MainWindowRecipie(Ui_MainWindow):
         # progress_callback.emit(n*100/4)
         #search_result = partial_search(search_terms, rlist)
         #return search_result
+
+    def lock_ui_elements(self):
+        self.lineEditIngredientEntry.setEnabled(False)
+        self.commandLinkButtonEnterIngredient.setEnabled(False)
+        self.radioButtonExclusive.setEnabled(False)
+        self.radioButtonInclusive.setEnabled(False)
+        self.pushButtonResetSearch.setEnabled(False)
+        self.pushButtonRemoveSelected.setEnabled(False)
+        self.actionRemove_Selected.setEnabled(False)
+        self.actionReset_Search.setEnabled(False)
+        self.status_bar_display('Searching...')
+
+    def unlock_ui_elements(self):
+        self.lineEditIngredientEntry.setEnabled(True)
+        self.commandLinkButtonEnterIngredient.setEnabled(True)
+        self.radioButtonExclusive.setEnabled(True)
+        self.radioButtonInclusive.setEnabled(True)
+        self.pushButtonResetSearch.setEnabled(True)
+        self.pushButtonRemoveSelected.setEnabled(True)
+        self.actionRemove_Selected.setEnabled(True)
+        self.actionReset_Search.setEnabled(True)
 
     def reset_search(self) -> None:
         '''Clear Search inputs and results'''
