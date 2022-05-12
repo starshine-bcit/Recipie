@@ -1,23 +1,28 @@
-# from .recipe import Recipe
-
 """A function that takes in a list of ingredients and a list of recipes
 and returns matching recipes (that use all ingredients) as a list"""
 
+from modules.recipe import Recipe
+from modules.recipelist import RecipeList
+
+# When testing, comment out above import blocks & uncomment below imports
+# from ACIT2911.modules.recipe import Recipe
+# from ACIT2911.modules.recipelist import RecipeList
+
 
 def p_search(ingredients_list: list[str],
-             recipes_list: list[dict]) -> list[dict]:
+             recipes_list: RecipeList) -> list[Recipe]:
     """Finds recipes that contain all ingredients passed in.
 
     Args:
         ingredients_list (list[str]):
             List of string of ingredients that recipe should contain.
-        recipes_list (list[dict]):
-            List of dictionaries of recipes.
+        recipes_list (list[Recipe]):
+            List of Recipe instances.
 
     Returns:
-        list[dict]:
-            List of dictionaries of recipes that contain all
-            ingredients in ingredients_list.
+        list[Recipe]:
+            List of Recipe instances whose ingredients contain all
+            ingredients (and possibly other ingredients) in ingredients_list.
     """
 
     required_matches = len(ingredients_list)
@@ -25,9 +30,9 @@ def p_search(ingredients_list: list[str],
     ingredients_list = [remove_plural(ingred) for ingred in ingredients_list]
     matching_recipes = []
 
-    for recipe in recipes_list:
+    for recipe in recipes_list.recipes:
         matches = 0
-        for rec_ingredient in recipe["ingredients"]:
+        for rec_ingredient in recipe.ingredients:
             for ingredient in ingredients_list:
                 if ingredient in rec_ingredient:
                     matches += 1
