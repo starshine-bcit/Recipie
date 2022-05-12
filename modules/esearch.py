@@ -62,11 +62,7 @@ def exact_search(ingredient_input: list[str], recipes_list: RecipeList) -> list[
 
         total_ingredients = len(recipe.ingredients) 
         for ingredients in recipe.ingredients:
-            for item in exclude:
-                if item in ingredients: 
-                    break   # Breaks the loop and skips the ingredient if it matches an item in the exclusion list
-            else:
-                ingred_list.append(ingredients)
+            ingred_list.append(ingredients)
         
         # Cleansing plurals in recipe's list of ingredients and turns it into one long string
         new_ingred_list = replace_chr(ingred_list)
@@ -74,7 +70,12 @@ def exact_search(ingredient_input: list[str], recipes_list: RecipeList) -> list[
         for item in user_input:
             for ingred in new_ingred_list:
                 if ingred.find(item) != -1:
-                    match += 1
+                    for exclusion in exclude:
+                        if ingred.find(exclusion) != -1:
+                            print('found')
+                            break
+                    else:
+                        match += 1
     
         if match == total_ingredients: 
             matched_recipe.append(recipe)
