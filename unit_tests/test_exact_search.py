@@ -6,6 +6,7 @@ ANNOYING_USER_INPUT = ['Flour', 'SUGAR', 'butTeR', 'blueBERRIES']
 SINGULAR_USER_INPUT = ['Flour', 'sugar', 'Butter', 'apple']
 ONION_ENJOYER_INPUT = ['bread', 'onion', 'ham', 'lettuce']
 ONION_SOUP_ENJOYER_INPUT = ['bread', 'onion soup', 'ham', 'lettuce']
+WEIRD_USER_INPUT = ['strawberry', 'chicken', 'broccoli']
 
 RECIPES_LIST = [
     {
@@ -49,14 +50,22 @@ RECIPES_LIST = [
     {
         "title": "Onion Soup & Bread",
         "ingredients": [
-            "1 can of onion soup!",
-            "3 slices of bread.",
-            "1 leg of ham..",
+            "1 can of onion soup",
+            "3 slices of bread",
+            "1 leg of ham",
             "1 whole head of lettuce"
         ],
         "instructions": "Toast the bread and drink the soup, eat like a barbarian."
     },
-
+    {
+        "title": "Weirdly Punctuated Recipe",
+        "ingredients": [
+            "2 grams of strawberries?",
+            "1 spoonful of chicken!!!",
+            "5 pounds of broccoli."
+        ],
+        "instructions": "Haha you thought this was a real recipe?!"
+    }
 ]
 
 
@@ -109,6 +118,7 @@ def test_exact_ingredient():
     assert len(result) == 1
     assert result[0]['title'] == "Sandwich with Onions"
 
+
 def test_exact_ingredient_two():
     #Checks if it only matches with the ingredient and not ingredients with that share the same ingredient, eg. onions and onion soup
     result = exact_search(ONION_SOUP_ENJOYER_INPUT, RECIPES_LIST)
@@ -116,3 +126,10 @@ def test_exact_ingredient_two():
     assert len(result) == 1
     assert result[0]['title'] == "Onion Soup & Bread"
 
+
+def test_for_punctuated_ingredients():
+    #Checks for weirdly punctuated recipes, if any
+    result = exact_search(WEIRD_USER_INPUT, RECIPES_LIST)
+    assert isinstance(result, list) == True
+    assert len(result) == 1
+    assert result[0]['title'] == "Weirdly Punctuated Recipe"
