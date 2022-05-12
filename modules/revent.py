@@ -13,7 +13,7 @@ from .recipelist import RecipeList
 from .recipe import Recipe
 from .recipewindow import Ui_Dialog
 from .esearch import exact_search
-#from .psearch import p_search
+from .psearch import p_search
 
 
 # Credits to https://www.pythonguis.com for this code
@@ -265,7 +265,7 @@ class MainWindowRecipie(Ui_MainWindow):
                 # progress_callback.emit(n*100/4)
                 #search_type = getattr(esearch, 'exact_search')
             elif self.radioButtonInclusive.isChecked():
-                searchworker = Worker(self.send_search_partial, search_terms, self.rlist)
+                searchworker = Worker(p_search, search_terms, self.rlist)
                 self.lock_ui_elements()
                 #search_type = getattr(exact_search, 'partial_search')
 
@@ -284,17 +284,6 @@ class MainWindowRecipie(Ui_MainWindow):
     def thread_complete(self):
         if self.verbose: print('Search thread completed')
         self.unlock_ui_elements()
-
-    def send_search_exact(self, search_terms, rlist):
-        # progress_callback.emit(n*100/4)
-        search_result = exact_search(search_terms, rlist)
-        return search_result
-
-    def send_search_partial(self, search_terms, rlist):
-        pass
-        # progress_callback.emit(n*100/4)
-        #search_result = p_search(search_terms, rlist)
-        #return search_result
 
     def lock_ui_elements(self):
         '''Lock search-related ui elements'''
