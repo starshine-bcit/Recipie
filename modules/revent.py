@@ -222,7 +222,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.curr_recipe_md.print(self.printer)
 
     def set_md_recipe(self, title: str, ingred: str, instruct: str) -> None:
-        '''_summary_
+        '''Format and store markdown based on string version of recipe
 
         Args:
             title (str): title of recipe
