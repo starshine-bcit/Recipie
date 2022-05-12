@@ -49,9 +49,9 @@ RECIPES_LIST = [
     {
         "title": "Onion Soup & Bread",
         "ingredients": [
-            "1 can of onion soup",
-            "3 slices of bread",
-            "1 leg of ham",
+            "1 can of onion soup!",
+            "3 slices of bread.",
+            "1 leg of ham..",
             "1 whole head of lettuce"
         ],
         "instructions": "Toast the bread and drink the soup, eat like a barbarian."
