@@ -1,5 +1,6 @@
 '''Recipie module for subclassing and event handling'''
 import sys
+import traceback
 import re
 
 from PyQt6 import QtCore, QtGui, QtWidgets, QtPrintSupport
@@ -9,6 +10,79 @@ from .recipelist import RecipeList
 from .recipe import Recipe
 from .recipewindow import Ui_Dialog
 from .esearch import exact_search
+
+
+# Credits to https://www.pythonguis.com for this code
+class WorkerSignals(QtCore.QObject):
+    '''
+    Defines the signals available from a running worker thread.
+
+    Supported signals are:
+
+    finished
+        No data
+
+    error
+        tuple (exctype, value, traceback.format_exc() )
+
+    result
+        object data returned from processing, anything
+
+    progress
+        int indicating % progress
+
+    '''
+    finished = QtCore.pyqtSignal()
+    error = QtCore.pyqtSignal(tuple)
+    result = QtCore.pyqtSignal(list)
+    progress = QtCore.pyqtSignal(int)
+
+
+class Worker(QtCore.QRunnable):
+    '''
+    Worker thread
+
+    Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
+
+    :param callback: The function callback to run on this worker thread. Supplied args and
+                     kwargs will be passed through to the runner.
+    :type callback: function
+    :param args: Arguments to pass to the callback function
+    :param kwargs: Keywords to pass to the callback function
+
+    '''
+
+    def __init__(self, fn, *args, **kwargs):
+        super(Worker, self).__init__()
+
+        # Store constructor arguments (re-used for processing)
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+        self.signals = WorkerSignals()
+
+        # Add the callback to our kwargs
+        # self.kwargs['progress_callback'] = self.signals.progress
+
+    @QtCore.pyqtSlot()
+    def run(self):
+        '''
+        Initialise the runner function with passed args, kwargs.
+        '''
+
+        # Retrieve args/kwargs here; and fire processing using them
+        try:
+            result = self.fn(*self.args, **self.kwargs)
+        except:
+            traceback.print_exc()
+            exctype, value = sys.exc_info()[:2]
+            self.signals.error.emit((exctype, value, traceback.format_exc()))
+        else:
+            self.signals.result.emit(result)  # Return the result of the processing
+        finally:
+            self.signals.finished.emit()  # Done
+#End credited code here
+
 
 
 class MainWindowRecipie(Ui_MainWindow):
@@ -38,6 +112,11 @@ class MainWindowRecipie(Ui_MainWindow):
         self.verbose = verbose
         self.currname = ''
         self.multiwin = {}
+        self.threadpool = QtCore.QThreadPool().globalInstance()
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(1000)
+        #self.timer.timeout.connect(self.recurring_timer)
+        #self.timer.start()
 
     def setupUicustom(self):
         '''Setup various elements which have no depends'''
@@ -72,7 +151,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.actionPrint.triggered.connect(self.call_print)
         self.listWidgetSearchResults.itemDoubleClicked.connect(
             self.click_search_result)
-        self.pushButtonDisplayRecipeNewWindow.clicked.connect(self.display_recipe_window)
+        self.pushButtonDisplayRecipeNewWindow.clicked.connect(
+            self.display_recipe_window)
 
         self.actionExit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
         self.actionPrint.setShortcut(QtGui.QKeySequence('Ctrl+P'))
@@ -108,10 +188,7 @@ class MainWindowRecipie(Ui_MainWindow):
 
         rrecipe = self.rlist.get_random_recipe()
         if self.verbose:
-            print(
-                f'Random event captured\n'
-                f'Selecting random recipe {rrecipe.name} and displaying...'
-            )
+            print(f'Selecting random recipe {rrecipe.name} and displaying...')
 
         self.display_recipe(rrecipe)
 
@@ -165,16 +242,40 @@ class MainWindowRecipie(Ui_MainWindow):
             print(
                 f'Sending these terms to search:\n{search_terms}'
             )
+        # Pass the function to execute
         if len(search_terms) > 0:
             if self.radioButtonExclusive.isChecked():
-                self.display_search_result_list(exact_search(search_terms, self.rlist))
+                searchworker = Worker(self.send_search_exact, search_terms, self.rlist)
+                #search_type = getattr(esearch, 'exact_search')
             elif self.radioButtonInclusive.isChecked():
-                # self.srlist = function call
-                pass
+                searchworker = Worker(self.send_search_exact, search_terms, self.rlist)
+                #search_type = getattr(exact_search, 'partial_search')
+
+             # Setup our signals
+            searchworker.signals.result.connect(self.display_search_result_list)
+            searchworker.signals.finished.connect(self.thread_complete)
+            # searchworker.signals.progress.connect(self.progress_fn)
+
+            # Execute our search
+            self.threadpool.start(searchworker)
         else:
             self.srlist.clear()
             if self.verbose:
                 print('Search called, but no items to search for')
+ 
+    def thread_complete(self):
+        if self.verbose: print('Search thread completed')
+
+    def send_search_exact(self, search_terms, rlist):
+        # progress_callback.emit(n*100/4)
+        search_result = exact_search(search_terms, rlist)
+        return search_result
+
+    def send_search_partial(self, search_type, search_terms, rlist):
+        pass
+        # progress_callback.emit(n*100/4)
+        #search_result = partial_search(search_terms, rlist)
+        #return search_result
 
     def reset_search(self) -> None:
         '''Clear Search inputs and results'''
@@ -283,9 +384,11 @@ class MainWindowRecipie(Ui_MainWindow):
 
         self.multiwin[self.currname] = QtWidgets.QDialog()
         self.multiwin[self.currname + '2'] = Ui_Dialog()
-        self.multiwin[self.currname + '2'].setupUi(self.multiwin[self.currname])
+        self.multiwin[self.currname +
+                      '2'].setupUi(self.multiwin[self.currname])
         self.multiwin[self.currname].setWindowTitle(self.currname)
-        self.multiwin[self.currname + '2'].textBrowserDisplay.setMarkdown(self.curr_recipe_md.toMarkdown())
+        self.multiwin[self.currname +
+                      '2'].textBrowserDisplay.setMarkdown(self.curr_recipe_md.toMarkdown())
         self.multiwin[self.currname].show()
 
 
