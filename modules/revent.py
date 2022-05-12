@@ -64,6 +64,7 @@ class Worker(QtCore.QRunnable):
         self.args = args
         self.kwargs = kwargs
         self.signals = WorkerSignals()
+        self.setAutoDelete(True)
 
         # Add the callback to our kwargs
         # self.kwargs['progress_callback'] = self.signals.progress
@@ -148,8 +149,6 @@ class MainWindowRecipie(Ui_MainWindow):
         self.actionReset_Search.triggered.connect(self.reset_search)
         self.commandLinkButtonEnterIngredient.clicked.connect(
             self.enter_search_term)
-        self.radioButtonExclusive.clicked.connect(self.call_search)
-        self.radioButtonInclusive.clicked.connect(self.call_search)
         self.pushButtonRemoveSelected.clicked.connect(
             self.remove_selected_search)
         self.pushButtonResetSearch.clicked.connect(self.reset_search)
@@ -159,6 +158,8 @@ class MainWindowRecipie(Ui_MainWindow):
             self.click_search_result)
         self.pushButtonDisplayRecipeNewWindow.clicked.connect(
             self.display_recipe_window)
+        self.radioButtonExclusive.clicked.connect(self.exclusive_search_clicked)
+        self.radioButtonInclusive.clicked.connect(self.inclusive_search_clicked)
 
         self.actionExit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
         self.actionPrint.setShortcut(QtGui.QKeySequence('Ctrl+P'))
@@ -232,20 +233,23 @@ class MainWindowRecipie(Ui_MainWindow):
 
     def enter_search_term(self) -> None:
         '''Captures text from user entry and inputs to search list'''
-
+        
         stext = self.lineEditIngredientEntry.text()
         search_terms = [self.listWidgetSearchInput.item(
             x).text() for x in range(self.listWidgetSearchInput.count())]
-        if stext != '':
-            self.lineEditIngredientEntry.setText('')
-            newitem = QtWidgets.QListWidgetItem(stext)
-            self.listWidgetSearchInput.addItem(newitem)
+        if stext == '' and len(search_terms) == 0:
+            print('Error, you can\'t search for nothing fool')
+        elif stext == '' and len(search_terms) > 0:
             self.call_search()
         elif stext in search_terms:
             self.lineEditIngredientEntry.setText('')
             if self.verbose: print('Error, search term already exists')
         else:
-            print('Error, you can\'t search for nothing fool')
+            self.lineEditIngredientEntry.setText('')
+            newitem = QtWidgets.QListWidgetItem(stext)
+            self.listWidgetSearchInput.addItem(newitem)
+            self.call_search()
+        
 
     def call_search(self) -> None:
         '''Sends list of user search terms to logic search functions'''
@@ -260,22 +264,24 @@ class MainWindowRecipie(Ui_MainWindow):
         # Pass the function to execute
         if len(search_terms) > 0:
             if self.radioButtonExclusive.isChecked():
-                searchworker = Worker(exact_search, search_terms, self.rlist)
+                if self.verbose: print('Starting exclusive search...')
+                self.searchworker = Worker(exact_search, search_terms, self.rlist)
                 self.lock_ui_elements()
                 # progress_callback.emit(n*100/4)
                 #search_type = getattr(esearch, 'exact_search')
             elif self.radioButtonInclusive.isChecked():
-                searchworker = Worker(p_search, search_terms, self.rlist)
+                if self.verbose: print('Starting inclusive search...')
+                self.searchworker = Worker(p_search, search_terms, self.rlist)
                 self.lock_ui_elements()
                 #search_type = getattr(exact_search, 'partial_search')
 
              # Setup our signals
-            searchworker.signals.result.connect(self.display_search_result_list)
-            searchworker.signals.finished.connect(self.thread_complete)
+            self.searchworker.signals.result.connect(self.display_search_result_list)
+            self.searchworker.signals.finished.connect(self.thread_complete)
             # searchworker.signals.progress.connect(self.progress_fn)
 
             # Execute our search
-            self.threadpool.start(searchworker)
+            self.threadpool.start(self.searchworker)
         else:
             self.srlist.clear()
             if self.verbose:
@@ -392,6 +398,8 @@ class MainWindowRecipie(Ui_MainWindow):
     def display_search_result_list(self, unlist: list[Recipe]) -> None:
         '''Displays list of recipes in search bar'''
 
+        self.srlist.clear()
+
         for x in range(len(unlist)):
             self.srlist.update({x: unlist[x]})
         srlistlen = len(self.srlist)
@@ -433,6 +441,16 @@ class MainWindowRecipie(Ui_MainWindow):
         rquote = choice(self.quotes['quotes'])
         qstring = rquote['quote'] + '\n- ' + rquote['author']
         self.labelTopBarText.setText(qstring)
+
+    def exclusive_search_clicked(self) -> None:
+        self.radioButtonExclusive.setChecked(True)
+        self.radioButtonInclusive.setChecked(False)
+        self.call_search()
+
+    def inclusive_search_clicked(self) -> None:
+        self.radioButtonExclusive.setChecked(False)
+        self.radioButtonInclusive.setChecked(True)
+        self.call_search()
 
 def load_quotes():
     """Load quotes from hardcoded json file
