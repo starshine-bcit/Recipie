@@ -1,12 +1,12 @@
 """A function that takes in a list of ingredients and a list of recipes
 and returns matching recipes (that use all ingredients) as a list"""
 
-# from modules.recipe import Recipe
-# from modules.recipelist import RecipeList
+from modules.recipe import Recipe
+from modules.recipelist import RecipeList
 
 # When testing, comment out above import blocks & uncomment below imports
-from ACIT2911.modules.recipe import Recipe
-from ACIT2911.modules.recipelist import RecipeList
+# from ACIT2911.modules.recipe import Recipe
+# from ACIT2911.modules.recipelist import RecipeList
 
 
 def p_search(ingredients_list: list[str],
@@ -25,24 +25,41 @@ def p_search(ingredients_list: list[str],
             ingredients (and possibly other ingredients) in ingredients_list.
     """
 
+    # Number of ingredients needed to match
     required_matches = len(ingredients_list)
+
+    # Cleaning ingredients input, remove plurals and make lowercase
     ingredients_list = [ingred.lower() for ingred in ingredients_list]
     ingredients_list = [remove_plural(ingred) for ingred in ingredients_list]
+
     matching_recipes = []
 
+    # Iterate through recipes
     for recipe in recipes_list.recipes:
+        # Start counting for ingredient matches in recipe
         matches = 0
+
+        # Iterate through each ingredient in recipe
         for rec_ingredient in recipe.ingredients:
+            # Iterate through each input ingredient
             for ingredient in ingredients_list:
+
+                # Stop looping if number of matches is met
                 if matches == required_matches:
                     break
+                # Stop looping if input ingredient is
+                #  in current recipe ingredient and increment
+                #  if ingredients match
                 if ingredient in rec_ingredient:
                     matches += 1
                     break
+
+            # Stop looping and add recipe to list to be returned
+            #  if number of matches is met, move to next recipe
             if matches == required_matches:
                 matching_recipes.append(recipe)
                 break
-    # print(matching_recipes)
+
     return matching_recipes
 
 
