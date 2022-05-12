@@ -45,17 +45,19 @@ def exact_search(ingredient_input: list[str], recipes_list: RecipeList) -> list[
 
     for recipe in recipes_list.recipes: 
         match = 0
-        ingred_list = [] 
-        last_ingredient = ""
+        ingred_list = []
+        total_ingredients = 0
         exclude = ['soup', 'powder', 'puree', 'paste', 'sauce']
 
+        if len(recipe.ingredients) < 1 : continue # Remove after merging the latest Recipe commit
         # Removes an item from the exclude list if the user input an item
         for item in exclude:    
             for ui in user_input:
-                if ui.find(item) >= 0:
+                if ui.find(item) != -1:
                     exclude.remove(item)
 
         for ingredients in recipe.ingredients:
+            total_ingredients += 1
             for item in exclude:
                 if item in ingredients: 
                     break   # Breaks the loop and skips the ingredient if it matches an item in the exclusion list
@@ -64,18 +66,14 @@ def exact_search(ingredient_input: list[str], recipes_list: RecipeList) -> list[
                 for i in ingred:
                     ingred_list.append(i)
         
-        # Cleansing plurals in recipe's list of ingredients
-        new_ingred_list = replace_chr(ingred_list)
+        # Cleansing plurals in recipe's list of ingredients and turns it into one long string
+        new_ingred = " ".join(replace_chr(ingred_list))
 
-        for ingredient in new_ingred_list:
-            if ingredient in user_input:
+        for item in user_input:
+            if item in new_ingred:
                 match += 1
-            # Checks if a combination of the last ingredient + current ingredient matches the user input
-            if f"{last_ingredient} {ingredient}" in user_input:
-                match += 1
-            last_ingredient = ingredient
 
-        if match >= len(user_input): 
+        if match == total_ingredients: 
             matched_recipe.append(recipe)
 
     return matched_recipe 
