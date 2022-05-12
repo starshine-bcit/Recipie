@@ -457,7 +457,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelRecipeDirections">
+           <widget class="QLabel" name="labelRecipeIngredients">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -471,7 +471,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Directions:</string>
+             <string>Ingredients:</string>
             </property>
            </widget>
           </item>
@@ -504,7 +504,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelRecipeIngredients">
+           <widget class="QLabel" name="labelRecipeDirections">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -518,7 +518,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Ingredients:</string>
+             <string>Directions:</string>
             </property>
            </widget>
           </item>
