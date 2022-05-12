@@ -34,7 +34,7 @@ RECIPES = [
         "title": "Sweet Death",
         "ingredients": [
             "3 cups of coca cola",
-            "2 sticks of mentos",
+            "2 sticks of mento",
             "1 cup of sugar"
         ],
         "instructions": "eat sugar, drink the cola, down the mentos"
@@ -96,5 +96,5 @@ def test_p_search_singular():
     """Function should return recipe with pluralized ingredients
     e.g. input of 'apple' should match 'apples' in recipe ingredients.
     """
-    result = p_search('apple', RECIPES)
+    result = p_search(['apple'], RECIPES)
     assert result[0]["title"] == 'Apple Pie'
