@@ -1,4 +1,6 @@
 import string
+from .recipe import Recipe
+from .recipelist import RecipeList
 
 def replace_chr(words_list:list[str]) -> list[str]:
     """
@@ -26,7 +28,7 @@ def replace_chr(words_list:list[str]) -> list[str]:
     return word_list 
 
 
-def exact_search(ingredient_input: list[str], recipes_list: list[dict]) -> list[dict]:
+def exact_search(ingredient_input: list[str], recipes_list: RecipeList) -> list[Recipe]:
     """
     Searches through recipes that match the exact ingredients the user is looking for
 
@@ -41,7 +43,7 @@ def exact_search(ingredient_input: list[str], recipes_list: list[dict]) -> list[
     # Cleansing plurals in list of ingredients user input 
     user_input = replace_chr(ingredient_input)
 
-    for recipe in recipes_list: 
+    for recipe in recipes_list.recipes: 
         match = 0
         ingred_list = [] 
         last_ingredient = ""
@@ -53,7 +55,7 @@ def exact_search(ingredient_input: list[str], recipes_list: list[dict]) -> list[
                 if ui.find(item) >= 0:
                     exclude.remove(item)
 
-        for ingredients in recipe["ingredients"]:
+        for ingredients in recipe.ingredients:
             for item in exclude:
                 if item in ingredients: 
                     break   # Breaks the loop and skips the ingredient if it matches an item in the exclusion list
