@@ -2,6 +2,9 @@
 import sys
 import traceback
 import re
+import json
+from pathlib import Path
+from random import choice
 
 from PyQt6 import QtCore, QtGui, QtWidgets, QtPrintSupport
 
@@ -10,6 +13,7 @@ from .recipelist import RecipeList
 from .recipe import Recipe
 from .recipewindow import Ui_Dialog
 from .esearch import exact_search
+#from .psearch import p_search
 
 
 # Credits to https://www.pythonguis.com for this code
@@ -112,8 +116,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.srlist = {}
         self.verbose = verbose
         self.currname = ''
-        self.multiwin = {}
-        self.threadpool = QtCore.QThreadPool().globalInstance()
+        self.multiwin = {} 
         #self.timer = QtCore.QTimer()
         #self.timer.setInterval(1000)
         #self.timer.timeout.connect(self.recurring_timer)
@@ -131,6 +134,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.tabWidgetRecipe.setCurrentIndex(0)
         self.tabWidgetSearch.setCurrentIndex(0)
         self.pushButtonDisplayRecipeNewWindow.setEnabled(False)
+        self.quotes = load_quotes()
+        self.threadpool = QtCore.QThreadPool().globalInstance()
 
     def createevents(self) -> None:
         '''Connect triggered events with functions'''
@@ -191,6 +196,7 @@ class MainWindowRecipie(Ui_MainWindow):
         if self.verbose:
             print(f'Selecting random recipe {rrecipe.name} and displaying...')
 
+        self.display_quote()
         self.display_recipe(rrecipe)
 
     def display_recipe(self, rcp: Recipe) -> None:
@@ -254,8 +260,9 @@ class MainWindowRecipie(Ui_MainWindow):
         # Pass the function to execute
         if len(search_terms) > 0:
             if self.radioButtonExclusive.isChecked():
-                searchworker = Worker(self.send_search_exact, search_terms, self.rlist)
+                searchworker = Worker(exact_search, search_terms, self.rlist)
                 self.lock_ui_elements()
+                # progress_callback.emit(n*100/4)
                 #search_type = getattr(esearch, 'exact_search')
             elif self.radioButtonInclusive.isChecked():
                 searchworker = Worker(self.send_search_partial, search_terms, self.rlist)
@@ -283,13 +290,16 @@ class MainWindowRecipie(Ui_MainWindow):
         search_result = exact_search(search_terms, rlist)
         return search_result
 
-    def send_search_partial(self, search_type, search_terms, rlist):
+    def send_search_partial(self, search_terms, rlist):
         pass
         # progress_callback.emit(n*100/4)
-        #search_result = partial_search(search_terms, rlist)
+        #search_result = p_search(search_terms, rlist)
         #return search_result
 
     def lock_ui_elements(self):
+        '''Lock search-related ui elements'''
+
+        self.lineEditIngredientEntry.setText('Patience, grasshopper')
         self.lineEditIngredientEntry.setEnabled(False)
         self.commandLinkButtonEnterIngredient.setEnabled(False)
         self.radioButtonExclusive.setEnabled(False)
@@ -301,7 +311,10 @@ class MainWindowRecipie(Ui_MainWindow):
         self.status_bar_display('Searching...')
 
     def unlock_ui_elements(self):
+        ''''Unlock search-related ui elements'''
+
         self.lineEditIngredientEntry.setEnabled(True)
+        self.lineEditIngredientEntry.setText('')
         self.commandLinkButtonEnterIngredient.setEnabled(True)
         self.radioButtonExclusive.setEnabled(True)
         self.radioButtonInclusive.setEnabled(True)
@@ -341,6 +354,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.textBrowserRecipeDirections.setText('')
         self.curr_recipe_md.setMarkdown('')
         self.pushButtonDisplayRecipeNewWindow.setEnabled(False)
+        self.labelTopBarText.setText('Welcome to Recipie Beta, please hit \'Random Recipe to try it out!')
         if self.verbose:
             print('Clearing displayed recipe...')
 
@@ -423,6 +437,27 @@ class MainWindowRecipie(Ui_MainWindow):
         self.multiwin[self.currname +
                       '2'].textBrowserDisplay.setMarkdown(self.curr_recipe_md.toMarkdown())
         self.multiwin[self.currname].show()
+
+    def display_quote(self) -> None:
+        '''Display quotes from self.quotes'''
+
+        rquote = choice(self.quotes['quotes'])
+        qstring = rquote['quote'] + '\n- ' + rquote['author']
+        self.labelTopBarText.setText(qstring)
+
+def load_quotes():
+    """Load quotes from hardcoded json file
+
+    Returns:
+        dict: dictionary of quotes
+    """    
+    try:
+        file = Path('./data/quotes/quotes.json')
+        with file.open('r', encoding='utf-8') as fp:
+            data = json.load(fp)
+        return data
+    except FileNotFoundError as err: print(err)
+    except TypeError as err: print(err)
 
 
 def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
