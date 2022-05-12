@@ -75,6 +75,7 @@ def exact_search(ingredient_input: list[str], recipes_list: RecipeList) -> list[
                             break
                     else:
                         match += 1
+                        break
     
         if match == total_ingredients: 
             matched_recipe.append(recipe)
