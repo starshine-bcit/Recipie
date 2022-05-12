@@ -11,6 +11,30 @@ from .recipewindow import Ui_Dialog
 from .esearch import exact_search
 
 
+class SearchWorker(QtCore.QRunnable):
+    '''Subclass of Qrunnable for multithreaded searches''' 
+
+    def __init__(self, search_type, params: list[str], rlist: RecipeList):
+        """Initiate our worker with required things to search
+
+        Args:
+            search_type (dict[str]): type of search (exact or partial)
+            params (list[str]): list of user input to search for
+            rlist (RecipeList): our main recipe list
+        """        
+
+        super().__init__()
+        self.search_type = search_type
+        self.params = params
+        self.rlist = rlist
+        self.finished = QtCore.pyqtSignal()
+        self.progress = QtCore.pyqtSignal(int)
+
+    def run(self):
+        self.result = exact_search(self.params, self.rlist)
+        
+
+
 class MainWindowRecipie(Ui_MainWindow):
     """Main Window of Recipie, sub-classed from qtui.Ui_MainWindow
         Contains a variety of functions and methods to manipulate UI
@@ -72,7 +96,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.actionPrint.triggered.connect(self.call_print)
         self.listWidgetSearchResults.itemDoubleClicked.connect(
             self.click_search_result)
-        self.pushButtonDisplayRecipeNewWindow.clicked.connect(self.display_recipe_window)
+        self.pushButtonDisplayRecipeNewWindow.clicked.connect(
+            self.display_recipe_window)
 
         self.actionExit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
         self.actionPrint.setShortcut(QtGui.QKeySequence('Ctrl+P'))
@@ -108,10 +133,7 @@ class MainWindowRecipie(Ui_MainWindow):
 
         rrecipe = self.rlist.get_random_recipe()
         if self.verbose:
-            print(
-                f'Random event captured\n'
-                f'Selecting random recipe {rrecipe.name} and displaying...'
-            )
+            print(f'Selecting random recipe {rrecipe.name} and displaying...')
 
         self.display_recipe(rrecipe)
 
@@ -167,14 +189,30 @@ class MainWindowRecipie(Ui_MainWindow):
             )
         if len(search_terms) > 0:
             if self.radioButtonExclusive.isChecked():
-                self.display_search_result_list(exact_search(search_terms, self.rlist))
-            elif self.radioButtonInclusive.isChecked():
-                # self.srlist = function call
                 pass
+                #search_type = getattr(exact_search, 'search_type')
+            elif self.radioButtonInclusive.isChecked():
+                pass
+                #search_type = getattr(exact_search, 'partial_search')
         else:
             self.srlist.clear()
             if self.verbose:
                 print('Search called, but no items to search for')
+
+        threadpool = QtCore.QThreadPool.globalInstance()
+        searchworker = SearchWorker('test', search_terms, self.rlist)
+        searchworker.autoDelete(False)
+        # searchworker.moveToThread(searchthread)
+        # started.connect(searchworker.run)
+        # searchworker.finished.connect(searchthread.quit)
+        # searchworker.finished.connect(searchworker.deleteLater)
+        # searchthread.finished.connect(searchthread.deleteLater)
+        #self.searchworker.progress.connect(report)
+        
+        threadpool.start(searchworker)
+        #print(search_result)
+        #self.display_search_result_list(search_result)
+        
 
     def reset_search(self) -> None:
         '''Clear Search inputs and results'''
@@ -283,9 +321,11 @@ class MainWindowRecipie(Ui_MainWindow):
 
         self.multiwin[self.currname] = QtWidgets.QDialog()
         self.multiwin[self.currname + '2'] = Ui_Dialog()
-        self.multiwin[self.currname + '2'].setupUi(self.multiwin[self.currname])
+        self.multiwin[self.currname +
+                      '2'].setupUi(self.multiwin[self.currname])
         self.multiwin[self.currname].setWindowTitle(self.currname)
-        self.multiwin[self.currname + '2'].textBrowserDisplay.setMarkdown(self.curr_recipe_md.toMarkdown())
+        self.multiwin[self.currname +
+                      '2'].textBrowserDisplay.setMarkdown(self.curr_recipe_md.toMarkdown())
         self.multiwin[self.currname].show()
 
 
