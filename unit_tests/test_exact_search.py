@@ -1,10 +1,11 @@
 import pytest
-from ACIT2911.modules.esearch import exact_search
+from modules.esearch import exact_search
 
 USER_INPUT = ['flour', 'sugar', 'butter', 'apples']
 ANNOYING_USER_INPUT = ['Flour', 'SUGAR', 'butTeR', 'blueBERRIES']
 SINGULAR_USER_INPUT = ['Flour', 'sugar', 'Butter', 'apple']
-ONION_ENJOYER_INPUT = ['bread', 'onion', 'ham', 'onion']
+ONION_ENJOYER_INPUT = ['bread', 'onion', 'ham', 'lettuce']
+ONION_SOUP_ENJOYER_INPUT = ['bread', 'onion soup', 'ham', 'lettuce']
 
 RECIPES_LIST = [
     {
@@ -96,7 +97,6 @@ def test_irregular_input():
 
 def test_plural_input():
     #Checks if the exact_search function works even if the user forgets to make the word plural
-    
     result = exact_search(SINGULAR_USER_INPUT, RECIPES_LIST)
     assert isinstance(result, list) == True
     assert result[0]['title'] == "Apple Pie"
@@ -108,3 +108,11 @@ def test_exact_ingredient():
     assert isinstance(result, list) == True
     assert len(result) == 1
     assert result[0]['title'] == "Sandwich with Onions"
+
+def test_exact_ingredient_two():
+    #Checks if it only matches with the ingredient and not ingredients with that share the same ingredient, eg. onions and onion soup
+    result = exact_search(ONION_SOUP_ENJOYER_INPUT, RECIPES_LIST)
+    assert isinstance(result, list) == True
+    assert len(result) == 1
+    assert result[0]['title'] == "Onion Soup & Bread"
+
