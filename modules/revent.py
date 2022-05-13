@@ -121,10 +121,6 @@ class MainWindowRecipie(Ui_MainWindow):
         self.currname = ''
         self.multiwin = {}
         self.favlist = []
-        #self.timer = QtCore.QTimer()
-        # self.timer.setInterval(1000)
-        # self.timer.timeout.connect(self.recurring_timer)
-        # self.timer.start()
 
     def setupUicustom(self):
         '''Setup various elements which have no depends'''
@@ -134,6 +130,9 @@ class MainWindowRecipie(Ui_MainWindow):
         self.labelStatusBarRecipeCount = QtWidgets.QLabel(
             f'Indexing {len(self.rlist.recipes)} recipes ')
         self.statusbar.addPermanentWidget(self.labelStatusBarRecipeCount)
+        self.labelStatusBarFavCount = QtWidgets.QLabel()
+        self.update_favcount_status_bar()
+        self.statusbar.addPermanentWidget(self.labelStatusBarFavCount)
         self.statusbar.showMessage('Ready')
         self.tabWidgetRecipe.setCurrentIndex(0)
         self.tabWidgetSearch.setCurrentIndex(0)
@@ -145,6 +144,9 @@ class MainWindowRecipie(Ui_MainWindow):
         self.listWidgetFavouriteRecipes.setSortingEnabled(True)
         self.pushButtonRemoveAllFavourites.setEnabled(False)
         self.pushButtonRemoveSelectedFavourites.setEnabled(False)
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(1000)
+        
 
         # self.listWidgetSearchResults.setSortingEnabled(True)
         # Enable this once we have id on recipes?
@@ -180,6 +182,7 @@ class MainWindowRecipie(Ui_MainWindow):
             self.remove_selected_favourites)
         self.listWidgetFavouriteRecipes.itemDoubleClicked.connect(
             self.display_recipe_from_favourites)
+        self.timer.timeout.connect(self.timeout_status_bar_display)
 
         self.actionExit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
         self.actionPrint.setShortcut(QtGui.QKeySequence('Ctrl+P'))
@@ -473,7 +476,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.labelTopBarText.setText(qstring)
 
     def load_favourites_from_file(self) -> None:
-        favfilepath = Path('favourites.txt')
+        favfilepath = Path('./data/favourites.csv')
         if favfilepath.exists():
             with favfilepath.open('r', encoding='utf-8', newline='') as file:
                 reader = csv.reader(file, delimiter='~', quotechar='`')
@@ -487,9 +490,10 @@ class MainWindowRecipie(Ui_MainWindow):
             if self.verbose:
                 print(f'No favourites file to load :\'(')
             self.favlist = []
+        self.update_favcount_status_bar()
 
     def write_favourites_to_file(self) -> None:
-        favfilepath = Path('favourites.txt')
+        favfilepath = Path('./data/favourites.csv')
         if len(self.favlist) > 0:
             with favfilepath.open('w', encoding='utf-8', newline='') as file:
                 writer = csv.writer(file, delimiter='~', quotechar='`')
@@ -502,6 +506,7 @@ class MainWindowRecipie(Ui_MainWindow):
                 if self.verbose:
                     print('Deleting favourites file')
                 favfilepath.unlink()
+        self.update_favcount_status_bar()
 
     def add_favourite(self) -> None:
         if self.currname in self.favlist:
@@ -513,7 +518,8 @@ class MainWindowRecipie(Ui_MainWindow):
             self.favlist.append(self.currname)
             self.write_favourites_to_file()
             self.display_favourites_list()
-            # self.tabWidgetRecipe.setCurrentIndex(2)
+            self.status_bar_display('Added favourite')
+            self.timer.start(1500)
 
     def display_favourites_list(self) -> None:
         # rework this function using recipe id
@@ -570,6 +576,11 @@ class MainWindowRecipie(Ui_MainWindow):
             if self.verbose:
                 print('No selected favourites to remove')
 
+    def timeout_status_bar_display(self) -> None:
+        self.status_bar_display('Ready')
+
+    def update_favcount_status_bar(self) -> None:
+        self.labelStatusBarFavCount.setText(f'Favourites: {len(self.favlist)} ')
 
 def load_quotes():
     """Load quotes from hardcoded json file
