@@ -469,7 +469,7 @@ class MainWindowRecipie(Ui_MainWindow):
         '''Display quotes from self.quotes'''
 
         rquote = choice(self.quotes['quotes'])
-        qstring = rquote['quote'] + '\n- ' + rquote['author']
+        qstring = rquote['quote'] + ' -- ' + rquote['author']
         self.labelTopBarText.setText(qstring)
 
     def load_favourites_from_file(self) -> None:
