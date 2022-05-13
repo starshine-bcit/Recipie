@@ -28,7 +28,7 @@ class Recipe:
                 "Recipe instructions improperly formatted, should be string."
             )
 
-        self.name = name
+        self.name = name.strip()
         self.ingredients = ingredients
         self.instructions = instructions
 

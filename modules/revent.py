@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from random import choice
 import operator
+import csv
 
 from PyQt6 import QtCore, QtGui, QtWidgets, QtPrintSupport
 
@@ -85,11 +86,11 @@ class Worker(QtCore.QRunnable):
             print((exctype, value, traceback.format_exc()))
             # self.signals.error.emit((exctype, value, traceback.format_exc()))
         else:
-            self.signals.result.emit(result)  # Return the result of the processing
+            # Return the result of the processing
+            self.signals.result.emit(result)
         finally:
             self.signals.finished.emit()  # Done
-#End credited code here
-
+# End credited code here
 
 
 class MainWindowRecipie(Ui_MainWindow):
@@ -118,11 +119,12 @@ class MainWindowRecipie(Ui_MainWindow):
         self.srlist = {}
         self.verbose = verbose
         self.currname = ''
-        self.multiwin = {} 
+        self.multiwin = {}
+        self.favlist = []
         #self.timer = QtCore.QTimer()
-        #self.timer.setInterval(1000)
-        #self.timer.timeout.connect(self.recurring_timer)
-        #self.timer.start()
+        # self.timer.setInterval(1000)
+        # self.timer.timeout.connect(self.recurring_timer)
+        # self.timer.start()
 
     def setupUicustom(self):
         '''Setup various elements which have no depends'''
@@ -136,11 +138,16 @@ class MainWindowRecipie(Ui_MainWindow):
         self.tabWidgetRecipe.setCurrentIndex(0)
         self.tabWidgetSearch.setCurrentIndex(0)
         self.pushButtonDisplayRecipeNewWindow.setEnabled(False)
+        self.pushButtonAddFavourite.setEnabled(False)
         self.quotes = load_quotes()
         self.threadpool = QtCore.QThreadPool().globalInstance()
+        self.load_favourites_from_file()
+        self.listWidgetFavouriteRecipes.setSortingEnabled(True)
+        self.pushButtonRemoveAllFavourites.setEnabled(False)
+        self.pushButtonRemoveSelectedFavourites.setEnabled(False)
 
         # self.listWidgetSearchResults.setSortingEnabled(True)
-        # Enable this once we have id on recipes
+        # Enable this once we have id on recipes?
 
     def createevents(self) -> None:
         '''Connect triggered events with functions'''
@@ -162,8 +169,17 @@ class MainWindowRecipie(Ui_MainWindow):
             self.click_search_result)
         self.pushButtonDisplayRecipeNewWindow.clicked.connect(
             self.display_recipe_window)
-        self.radioButtonExclusive.clicked.connect(self.exclusive_search_clicked)
-        self.radioButtonInclusive.clicked.connect(self.inclusive_search_clicked)
+        self.radioButtonExclusive.clicked.connect(
+            self.call_search)
+        self.radioButtonInclusive.clicked.connect(
+            self.call_search)
+        self.pushButtonAddFavourite.clicked.connect(self.add_favourite)
+        self.pushButtonRemoveAllFavourites.clicked.connect(
+            self.remove_all_favourites)
+        self.pushButtonRemoveSelectedFavourites.clicked.connect(
+            self.remove_selected_favourites)
+        self.listWidgetFavouriteRecipes.itemDoubleClicked.connect(
+            self.display_recipe_from_favourites)
 
         self.actionExit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
         self.actionPrint.setShortcut(QtGui.QKeySequence('Ctrl+P'))
@@ -214,6 +230,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.textBrowserRecipeDirections.setText(rcp.instructions)
         self.set_md_recipe(rcp.name, ingreds, rcp.instructions)
         self.pushButtonDisplayRecipeNewWindow.setEnabled(True)
+        self.pushButtonAddFavourite.setEnabled(True)
         self.currname = rcp.name
 
     def exit_recipie(self) -> None:
@@ -237,7 +254,7 @@ class MainWindowRecipie(Ui_MainWindow):
 
     def enter_search_term(self) -> None:
         '''Captures text from user entry and inputs to search list'''
-        
+
         stext = self.lineEditIngredientEntry.text()
         search_terms = [self.listWidgetSearchInput.item(
             x).text() for x in range(self.listWidgetSearchInput.count())]
@@ -247,13 +264,13 @@ class MainWindowRecipie(Ui_MainWindow):
             self.call_search()
         elif stext in search_terms:
             self.lineEditIngredientEntry.setText('')
-            if self.verbose: print('Error, search term already exists')
+            if self.verbose:
+                print('Error, search term already exists')
         else:
             self.lineEditIngredientEntry.setText('')
             newitem = QtWidgets.QListWidgetItem(stext)
             self.listWidgetSearchInput.addItem(newitem)
             self.call_search()
-        
 
     def call_search(self) -> None:
         '''Sends list of user search terms to logic search functions'''
@@ -268,19 +285,23 @@ class MainWindowRecipie(Ui_MainWindow):
         # Pass the function to execute
         if len(search_terms) > 0:
             if self.radioButtonExclusive.isChecked():
-                if self.verbose: print('Starting exclusive search...')
-                self.searchworker = Worker(exact_search, search_terms, self.rlist)
+                if self.verbose:
+                    print('Starting exclusive search...')
+                self.searchworker = Worker(
+                    exact_search, search_terms, self.rlist)
                 self.lock_ui_elements()
                 # progress_callback.emit(n*100/4)
                 #search_type = getattr(esearch, 'exact_search')
             elif self.radioButtonInclusive.isChecked():
-                if self.verbose: print('Starting inclusive search...')
+                if self.verbose:
+                    print('Starting inclusive search...')
                 self.searchworker = Worker(p_search, search_terms, self.rlist)
                 self.lock_ui_elements()
                 #search_type = getattr(exact_search, 'partial_search')
 
              # Setup our signals
-            self.searchworker.signals.result.connect(self.display_search_result_list)
+            self.searchworker.signals.result.connect(
+                self.display_search_result_list)
             self.searchworker.signals.finished.connect(self.thread_complete)
             # searchworker.signals.progress.connect(self.progress_fn)
 
@@ -290,9 +311,10 @@ class MainWindowRecipie(Ui_MainWindow):
             self.srlist.clear()
             if self.verbose:
                 print('Search called, but no items to search for')
- 
+
     def thread_complete(self):
-        if self.verbose: print('Search thread completed')
+        if self.verbose:
+            print('Search thread completed')
         self.unlock_ui_elements()
 
     def lock_ui_elements(self):
@@ -353,7 +375,9 @@ class MainWindowRecipie(Ui_MainWindow):
         self.textBrowserRecipeDirections.setText('')
         self.curr_recipe_md.setMarkdown('')
         self.pushButtonDisplayRecipeNewWindow.setEnabled(False)
-        self.labelTopBarText.setText('Welcome to Recipie Beta, please hit \'Random Recipe to try it out!')
+        self.pushButtonAddFavourite.setEnabled(False)
+        self.labelTopBarText.setText(
+            'Welcome to Recipie Beta, please hit \'Random Recipe to try it out!')
         if self.verbose:
             print('Clearing displayed recipe...')
 
@@ -448,29 +472,120 @@ class MainWindowRecipie(Ui_MainWindow):
         qstring = rquote['quote'] + '\n- ' + rquote['author']
         self.labelTopBarText.setText(qstring)
 
-    def exclusive_search_clicked(self) -> None:
-        self.radioButtonExclusive.setChecked(True)
-        self.radioButtonInclusive.setChecked(False)
-        self.call_search()
+    def load_favourites_from_file(self) -> None:
+        favfilepath = Path('favourites.txt')
+        if favfilepath.exists():
+            with favfilepath.open('r', encoding='utf-8', newline='') as file:
+                reader = csv.reader(file, delimiter='~', quotechar='`')
+                tlist = list(reader)
+                self.favlist = tlist[0]
+                print(self.favlist)
+                self.display_favourites_list()
+                if self.verbose:
+                    print(f'Loaded {len(self.favlist)} favourites from file')
+        else:
+            if self.verbose:
+                print(f'No favourites file to load :\'(')
+            self.favlist = []
 
-    def inclusive_search_clicked(self) -> None:
-        self.radioButtonExclusive.setChecked(False)
-        self.radioButtonInclusive.setChecked(True)
-        self.call_search()
+    def write_favourites_to_file(self) -> None:
+        favfilepath = Path('favourites.txt')
+        if len(self.favlist) > 0:
+            with favfilepath.open('w', encoding='utf-8', newline='') as file:
+                writer = csv.writer(file, delimiter='~', quotechar='`')
+                writer.writerow(self.favlist)
+            if self.verbose:
+                print(
+                    f'Successfully wrote favourites file with {len(self.favlist)} items')
+        else:
+            if favfilepath.is_file:
+                if self.verbose:
+                    print('Deleting favourites file')
+                favfilepath.unlink()
+
+    def add_favourite(self) -> None:
+        if self.currname in self.favlist:
+            if self.verbose:
+                print('Error: Recipe is already in favourites')
+        else:
+            if self.verbose:
+                print(f'Added favourite recipe: {self.currname}')
+            self.favlist.append(self.currname)
+            self.write_favourites_to_file()
+            self.display_favourites_list()
+            # self.tabWidgetRecipe.setCurrentIndex(2)
+
+    def display_favourites_list(self) -> None:
+        # rework this function using recipe id
+        if len(self.favlist) > 0:
+            self.listWidgetFavouriteRecipes.clear()
+            for x in self.favlist:
+                newitem = QtWidgets.QListWidgetItem(x)
+                self.listWidgetFavouriteRecipes.addItem(newitem)
+                self.pushButtonRemoveAllFavourites.setEnabled(True)
+                self.pushButtonRemoveSelectedFavourites.setEnabled(True)
+            if self.verbose:
+                print(f'Displaying {len(self.favlist)} favourites')
+
+    def display_recipe_from_favourites(self) -> None:
+        # also rework this function using recipe id
+        rname = self.listWidgetFavouriteRecipes.currentItem().text()
+        found = False
+        for recipe in self.rlist.recipes:
+            if recipe.name == rname:
+                rmatch = recipe
+                found = True
+                break
+        if found:
+            if self.verbose:
+                print('Found favourite recipe to display')
+            self.display_recipe(rmatch)
+            self.tabWidgetRecipe.setCurrentIndex(0)
+        else:
+            if self.verbose:
+                print('Error: Can\'t find favourite recipe to display')
+
+    def remove_all_favourites(self) -> None:
+        # Add dialog box to confirm
+        self.listWidgetFavouriteRecipes.clear()
+        self.favlist.clear()
+        if self.verbose:
+            print('Removing all favourites')
+        self.write_favourites_to_file()
+
+    def remove_selected_favourites(self) -> None:
+        count = len(self.listWidgetFavouriteRecipes.selectedItems())
+        if count > 0:
+            for listitem in self.listWidgetFavouriteRecipes.selectedItems():
+                self.favlist.remove(listitem.text())
+                self.listWidgetFavouriteRecipes.takeItem(
+                    self.listWidgetFavouriteRecipes.row(listitem))
+                self.write_favourites_to_file()
+                if self.verbose:
+                    print(f'Removed {count} items from favourites')
+            if self.listWidgetFavouriteRecipes.count() == 0:
+                self.pushButtonRemoveAllFavourites.setEnabled(False)
+                self.pushButtonRemoveSelectedFavourites.setEnabled(False)
+        else:
+            if self.verbose:
+                print('No selected favourites to remove')
+
 
 def load_quotes():
     """Load quotes from hardcoded json file
 
     Returns:
         dict: dictionary of quotes
-    """    
+    """
     try:
         file = Path('./data/quotes/quotes.json')
         with file.open('r', encoding='utf-8') as fp:
             data = json.load(fp)
         return data
-    except FileNotFoundError as err: print(err)
-    except TypeError as err: print(err)
+    except FileNotFoundError as err:
+        print(err)
+    except TypeError as err:
+        print(err)
 
 
 def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
