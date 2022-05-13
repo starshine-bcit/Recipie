@@ -28,7 +28,7 @@ def test_recipe_list(rlist):
     Args:
         rlist (RecipeList): A RecipeList instance
     """
-    assert len(rlist.recipes) == 3
+    assert len(rlist.recipes) == 6
     assert type(rlist.recipes) == list
     assert isinstance(rlist.recipes[0], Recipe) == True
 
