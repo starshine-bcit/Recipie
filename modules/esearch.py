@@ -1,65 +1,83 @@
+import string
 from .recipe import Recipe
 from .recipelist import RecipeList
-import string
+
+def replace_chr(words_list:list[str]) -> list[str]:
+    """
+    Replaces plural form of words to their singular version
+
+    Args:
+        words_list (list[str]): List of a mix of plural/singular form words being transformed
+
+    Returns:
+        list[str]: list of singular form words
+    """
+    word_list = []
+    ingredient_list = []
+
+    for ingredient in words_list:
+        for word in ingredient.split(" "):
+            word = word.lower().translate(str.maketrans('', '', string.punctuation))
+            if word.endswith('ies'):
+                word_list.append(word.replace('ies', 'y'))
+            elif word.endswith('s'):
+                word_list.append(word.removesuffix('s'))
+            elif word.endswith('es'):
+                word_list.append(word.removesuffix('es'))
+            else: 
+                word_list.append(word)
+        ingredient_list.append(' '.join(word_list))
+        word_list.clear()
+
+    return ingredient_list 
 
 
 def exact_search(ingredient_input: list[str], recipes_list: RecipeList) -> list[Recipe]:
-    matched_recipe = [] 
-    user_input = [] 
+    """
+    Searches through recipes that match the exact ingredients the user is looking for
 
-    for user in ingredient_input: 
-        user_ingred = user.lower()
-        if user_ingred.endswith('ies'): 
-            ingred_input = user_ingred.replace('ies', 'y')
-            user_input.append(ingred_input)
-            # user_input.append(user_ingred.replace('ies', 'y'))
-        elif user.endswith('s'):
-            ingred_input = user_ingred.replace('s', '')
-            user_input.append(ingred_input)
-            # user_input.append(user_ingred.replace('s', ''))
-        elif user.endswith('es'):
-            ingred_input = user_ingred.replace('es', '')
-            user_input.append(ingred_input)
-            # user_input.append(user_ingred.replace('es', ''))
-        else: 
-            user_input.append(user_ingred)
+    Args:
+        ingredient_input (list[str]): The list of ingredients the user has given
+        recipes_list (list[dict]): the list of recipes the search function will look through
+
+    Returns:
+        list[dict]: A list of recipes that matches what the user was looking for
+    """
+    matched_recipe = [] 
+    # Cleansing plurals in list of ingredients user input 
+    user_input = replace_chr(ingredient_input)
 
     for recipe in recipes_list.recipes: 
-        match = True 
-        new_ingred_list = [] 
-        
-        if len(recipe.ingredients) < 1 : continue
-        ingred_list = [i.lower().translate(str.maketrans(
-            '', '', string.punctuation)) for i in recipe.ingredients]
-            
-        templist = []
-        for ingredstring in ingred_list:
-            for food in ingredstring.split(' '):
-                if food.endswith('ies'): 
-                    food_item = food.replace('ies', 'y')
-                    # new_ingred_list.append(food.replace('ies', 'y'))
-                elif food.endswith('s'):
-                    food_item = food.replace('s', '')
-                    # new_ingred_list.append(food.replace('s', ''))                     
-                elif food.endswith('es'):
-                    food_item = food.replace('es', '')
-                    # new_ingred_list.append(food.replace('es', ''))
-                else: 
-                    food_item = food
-                templist.append(food_item)
+        match = 0
+        ingred_list = []
+        new_ingred_list = []
+        exclude = ['soup', 'powder', 'puree', 'paste', 'sauce']
 
-            new_ingred_list.append(' '.join(templist))
-            templist = []
+        if len(recipe.ingredients) < 1 : continue # Remove after merging the latest Recipe commit
+        # Removes an item from the exclude list if the user input an item
+        for item in exclude:    
+            for ui in user_input:
+                if ui.find(item) != -1:
+                    exclude.remove(item)
+
+        total_ingredients = len(recipe.ingredients) 
+        for ingredients in recipe.ingredients:
+            ingred_list.append(ingredients)
+        
+        # Cleansing plurals in recipe's list of ingredients and turns it into one long string
+        new_ingred_list = replace_chr(ingred_list)
 
         for ingred in new_ingred_list:
-            ret = -1
-            for term in user_input:
-                fret = ingred.find(term)
-                if fret > ret:
-                    ret = fret
-            if ret == -1:
-                match = False
-        if match is True:
+            for item in user_input:
+                if ingred.find(item) != -1:
+                    for exclusion in exclude:
+                        if ingred.find(exclusion) != -1:
+                            break
+                    else:
+                        match += 1
+                        break
+    
+        if match == total_ingredients: 
             matched_recipe.append(recipe)
 
-    return matched_recipe
+    return matched_recipe 
