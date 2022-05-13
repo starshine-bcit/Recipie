@@ -5,6 +5,7 @@ import re
 import json
 from pathlib import Path
 from random import choice
+import operator
 
 from PyQt6 import QtCore, QtGui, QtWidgets, QtPrintSupport
 
@@ -137,6 +138,9 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonDisplayRecipeNewWindow.setEnabled(False)
         self.quotes = load_quotes()
         self.threadpool = QtCore.QThreadPool().globalInstance()
+
+        # self.listWidgetSearchResults.setSortingEnabled(True)
+        # Enable this once we have id on recipes
 
     def createevents(self) -> None:
         '''Connect triggered events with functions'''
@@ -399,6 +403,8 @@ class MainWindowRecipie(Ui_MainWindow):
         '''Displays list of recipes in search bar'''
 
         self.srlist.clear()
+
+        unlist.sort(key=operator.attrgetter('name'))
 
         for x in range(len(unlist)):
             self.srlist.update({x: unlist[x]})
