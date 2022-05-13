@@ -67,8 +67,8 @@ def exact_search(ingredient_input: list[str], recipes_list: RecipeList) -> list[
         # Cleansing plurals in recipe's list of ingredients and turns it into one long string
         new_ingred_list = replace_chr(ingred_list)
 
-        for item in user_input:
-            for ingred in new_ingred_list:
+        for ingred in new_ingred_list:
+            for item in user_input:
                 if ingred.find(item) != -1:
                     for exclusion in exclude:
                         if ingred.find(exclusion) != -1:
