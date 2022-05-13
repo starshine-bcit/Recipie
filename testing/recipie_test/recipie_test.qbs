@@ -10,10 +10,12 @@ QtApplication {
     ]
 
     files: [
+        "helpwindow.ui",
         "main.cpp",
         "mainwindow.cpp",
         "mainwindow.h",
         "mainwindow.ui",
+        "recipewindow.ui",
         "recipie_test_en_CA.ts",
     ]
 
