@@ -4,6 +4,7 @@ from modules.recipe import Recipe
 from modules.recipelist import RecipeList
 from modules.esearch import exact_search
 
+
 USER_INPUT = ['flour', 'sugar', 'butter', 'apples']
 ANNOYING_USER_INPUT = ['Flour', 'SUGAR', 'butTeR', 'blueBERRIES']
 SINGULAR_USER_INPUT = ['Flour', 'sugar', 'Butter', 'apple']
@@ -40,6 +41,7 @@ def test_exact_search(search):
 def test_exact_search_output_item(search):
     #The list should contain only dictionaries
     assert isinstance(search[0], Recipe) == True
+
 
 
 def test_exact_search_working(search):
