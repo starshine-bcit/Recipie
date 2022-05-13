@@ -49,6 +49,5 @@ def main():
     modules.revent.initmainwindow(verbose, mainrlist)
 
 
-
 if __name__ == '__main__':
     main()
