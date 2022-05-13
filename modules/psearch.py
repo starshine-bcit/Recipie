@@ -2,12 +2,12 @@
 and returns matching recipes (that use all ingredients) as a list"""
 
 import re
-# from modules.recipe import Recipe
-# from modules.recipelist import RecipeList
+from modules.recipe import Recipe
+from modules.recipelist import RecipeList
 
 # When testing, comment out above import blocks & uncomment below imports
-from ACIT2911.modules.recipe import Recipe
-from ACIT2911.modules.recipelist import RecipeList
+# from ACIT2911.modules.recipe import Recipe
+# from ACIT2911.modules.recipelist import RecipeList
 
 
 def p_search(ingredients_list: list[str],
