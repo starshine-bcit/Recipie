@@ -17,8 +17,10 @@ from .recipewindow import Ui_Dialog
 from .esearch import exact_search
 from .psearch import p_search
 
-
+#####################################################
 # Credits to https://www.pythonguis.com for this code
+
+
 class WorkerSignals(QtCore.QObject):
     '''
     Defines the signals available from a running worker thread.
@@ -91,6 +93,7 @@ class Worker(QtCore.QRunnable):
         finally:
             self.signals.finished.emit()  # Done
 # End credited code here
+#####################################################
 
 
 class MainWindowRecipie(Ui_MainWindow):
@@ -146,7 +149,6 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonRemoveSelectedFavourites.setEnabled(False)
         self.timer = QtCore.QTimer()
         self.timer.setInterval(1000)
-        
 
         # self.listWidgetSearchResults.setSortingEnabled(True)
         # Enable this once we have id on recipes?
@@ -397,6 +399,7 @@ class MainWindowRecipie(Ui_MainWindow):
 
     def set_md_recipe(self, title: str, ingred: str, instruct: str) -> None:
         '''Format and store markdown based on string version of recipe
+        This code could use a refactor
 
         Args:
             title (str): title of recipe
@@ -594,10 +597,12 @@ class MainWindowRecipie(Ui_MainWindow):
         self.status_bar_display('Ready')
 
     def update_favcount_status_bar(self) -> None:
-        self.labelStatusBarFavCount.setText(f'Favourites: {len(self.favlist)} ')
+        self.labelStatusBarFavCount.setText(
+            f'Favourites: {len(self.favlist)} ')
+
 
 def load_quotes():
-    '''Load quotes from hardcoded csv file'''
+    '''Load quotes from hardcoded json file'''
 
     try:
         file = Path('./data/quotes/quotes.json')
