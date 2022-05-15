@@ -476,6 +476,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.labelTopBarText.setText(qstring)
 
     def load_favourites_from_file(self) -> None:
+        '''Load saved and favourited recipes from hardcoded csv file'''
+
         favfilepath = Path('./data/favourites.csv')
         if favfilepath.exists():
             with favfilepath.open('r', encoding='utf-8', newline='') as file:
@@ -493,6 +495,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.update_favcount_status_bar()
 
     def write_favourites_to_file(self) -> None:
+        '''Write out a csv file of favourited recipes'''
+
         favfilepath = Path('./data/favourites.csv')
         if len(self.favlist) > 0:
             with favfilepath.open('w', encoding='utf-8', newline='') as file:
@@ -509,6 +513,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.update_favcount_status_bar()
 
     def add_favourite(self) -> None:
+        '''Add selected recipe from search to favourites'''
+
         if self.currname in self.favlist:
             if self.verbose:
                 print('Error: Recipe is already in favourites')
@@ -522,6 +528,8 @@ class MainWindowRecipie(Ui_MainWindow):
             self.timer.start(1500)
 
     def display_favourites_list(self) -> None:
+        '''Reset then display all favourited recipes'''
+
         # rework this function using recipe id
         if len(self.favlist) > 0:
             self.listWidgetFavouriteRecipes.clear()
@@ -534,6 +542,8 @@ class MainWindowRecipie(Ui_MainWindow):
                 print(f'Displaying {len(self.favlist)} favourites')
 
     def display_recipe_from_favourites(self) -> None:
+        '''Find favourited recipe and display it as normal'''
+
         # also rework this function using recipe id
         rname = self.listWidgetFavouriteRecipes.currentItem().text()
         found = False
@@ -552,6 +562,8 @@ class MainWindowRecipie(Ui_MainWindow):
                 print('Error: Can\'t find favourite recipe to display')
 
     def remove_all_favourites(self) -> None:
+        '''Remove all favourites and clear file'''
+
         # Add dialog box to confirm
         self.listWidgetFavouriteRecipes.clear()
         self.favlist.clear()
@@ -560,6 +572,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.write_favourites_to_file()
 
     def remove_selected_favourites(self) -> None:
+        '''Remove favourites as selected on list widget'''
+
         count = len(self.listWidgetFavouriteRecipes.selectedItems())
         if count > 0:
             for listitem in self.listWidgetFavouriteRecipes.selectedItems():
@@ -583,11 +597,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.labelStatusBarFavCount.setText(f'Favourites: {len(self.favlist)} ')
 
 def load_quotes():
-    """Load quotes from hardcoded json file
+    '''Load quotes from hardcoded csv file'''
 
-    Returns:
-        dict: dictionary of quotes
-    """
     try:
         file = Path('./data/quotes/quotes.json')
         with file.open('r', encoding='utf-8') as fp:
