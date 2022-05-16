@@ -23,3 +23,7 @@ htmlcov/
 
 # Qt Debug
 build-*-Debug
+
+# PyInstaller
+build
+dist
