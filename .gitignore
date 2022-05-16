@@ -27,3 +27,6 @@ build-*-Debug
 # PyInstaller
 build
 dist
+
+# User Data
+data/favourites.csv
