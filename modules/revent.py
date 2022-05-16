@@ -143,10 +143,10 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonAddFavourite.setEnabled(False)
         self.quotes = load_quotes()
         self.threadpool = QtCore.QThreadPool().globalInstance()
-        self.load_favourites_from_file()
-        self.listWidgetFavouriteRecipes.setSortingEnabled(True)
         self.pushButtonRemoveAllFavourites.setEnabled(False)
         self.pushButtonRemoveSelectedFavourites.setEnabled(False)
+        self.load_favourites_from_file()
+        self.listWidgetFavouriteRecipes.setSortingEnabled(True)
         self.timer = QtCore.QTimer()
         self.timer.setInterval(1000)
 
@@ -487,7 +487,9 @@ class MainWindowRecipie(Ui_MainWindow):
                 reader = csv.reader(file, delimiter='~', quotechar='`')
                 tlist = list(reader)
                 self.favlist = tlist[0]
-                print(self.favlist)
+                if len(self.favlist) > 0:
+                    self.pushButtonRemoveAllFavourites.setEnabled(True)
+                    self.pushButtonRemoveAllFavourites.setEnabled(True)
                 self.display_favourites_list()
                 if self.verbose:
                     print(f'Loaded {len(self.favlist)} favourites from file')
@@ -539,10 +541,13 @@ class MainWindowRecipie(Ui_MainWindow):
             for x in self.favlist:
                 newitem = QtWidgets.QListWidgetItem(x)
                 self.listWidgetFavouriteRecipes.addItem(newitem)
-                self.pushButtonRemoveAllFavourites.setEnabled(True)
-                self.pushButtonRemoveSelectedFavourites.setEnabled(True)
+            self.pushButtonRemoveAllFavourites.setEnabled(True)
+            self.pushButtonRemoveSelectedFavourites.setEnabled(True)
             if self.verbose:
                 print(f'Displaying {len(self.favlist)} favourites')
+        else:
+            self.pushButtonRemoveAllFavourites.setEnabled(False)
+            self.pushButtonRemoveSelectedFavourites.setEnabled(False)
 
     def display_recipe_from_favourites(self) -> None:
         '''Find favourited recipe and display it as normal'''
