@@ -26,13 +26,14 @@ class RecipeList:
             with file.open('r', encoding='utf-8') as fp:
                 data = json.load(fp)
 
-            for value in data.values():
+            for key, value in data.items():
                 try:
                     self.recipes.append(
                         Recipe(
+                            id = int(key),
                             name = value["title"],
-                            ingredients = value["ingredients"],
-                            instructions = value["instructions"]
+                            ingredients = value["ingreds"],
+                            instructions = value["instruct"]
                         )
                     )
                 except:
