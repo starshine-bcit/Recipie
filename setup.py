@@ -1,7 +1,7 @@
 import pathlib
 from setuptools import setup, find_packages
 HERE = pathlib.Path(__file__).parent
-VERSION = '0.2.2'
+VERSION = '0.2.2.1'
 PACKAGE_NAME = 'recipie'
 AUTHOR = 'starshine-bcit'
 AUTHOR_EMAIL = 'sfey1@my.bcit.ca'
