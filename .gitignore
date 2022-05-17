@@ -30,3 +30,6 @@ dist
 
 # User Data
 data/favourites.csv
+
+# setuptools
+recipie.egg-info

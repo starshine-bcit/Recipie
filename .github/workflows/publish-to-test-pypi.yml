@@ -30,11 +30,11 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip
         python3 -m pip install PyQt6
-        python3 -m pip install pyinstaller
+        python3 -m pip install setuptools
     - name: Build package
-      run: pyinstaller --noconfirm recipie.spec
+      run: python3 setup.py sdist
     - name: Publish distribution to Test PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+      uses: pypa/gh-action-pypi-publish@release/v0.2.2
       with:
         password: ${{ secrets.TEST_PYPI_API_TOKEN }}
         repository_url: https://test.pypi.org/legacy/
