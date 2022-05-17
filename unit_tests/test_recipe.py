@@ -1,8 +1,6 @@
 import pytest
 from modules.recipe import Recipe
 
-# from ACIT2911.modules.recipe import Recipe  # For local testing
-
 
 NAME = "Recipe name"
 INGREDIENTS = ["apple", "orange", "pain"]
