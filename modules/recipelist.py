@@ -22,6 +22,9 @@ class RecipeList:
     def __init__(self, files: list[Path]):
         self.recipes = []
 
+        # Numbering recipes for easy reference.
+        count = 1
+
         for file in files:
             with file.open('r', encoding='utf-8') as fp:
                 data = json.load(fp)
@@ -30,11 +33,14 @@ class RecipeList:
                 try:
                     self.recipes.append(
                         Recipe(
+                            id = count,
                             name = value["title"],
+                            diets = ['placeholder'],  #FIXME: update after diet labelling
                             ingredients = value["ingredients"],
                             instructions = value["instructions"]
                         )
                     )
+                    count += 1
                 except:
                     # Quick check of where it is breaking
                     # print(self.recipes[-1].name)
@@ -46,7 +52,8 @@ class RecipeList:
         random_recipe = random.choice(self.recipes)
         return random_recipe
 
+    # Method used when cleaning up multiple recipe data files.
     def save_recipes_to_file(self):
-        """Writes recipes in JSON to a file"""
+        """Writes recipes to JSON file"""
         with open("./data/recipe_list.json", "w") as fp:
             json.dump([rec.to_dict() for rec in self.recipes], fp)
