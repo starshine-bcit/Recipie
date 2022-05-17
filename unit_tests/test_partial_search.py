@@ -1,13 +1,9 @@
 import pytest
 from pathlib import Path
-# from modules.recipe import Recipe
-# from modules.recipelist import RecipeList
-# from modules.psearch import p_search
+from modules.recipe import Recipe
+from modules.recipelist import RecipeList
+from modules.psearch import p_search
 
-# When testing, comment out above import blocks & uncomment below imports
-from ACIT2911.modules.recipe import Recipe
-from ACIT2911.modules.recipelist import RecipeList
-from ACIT2911.modules.psearch import p_search
 
 INGREDIENTS_LOWER = ["flour", "sugar", "butter"]
 INGREDIENTS_UPPER = ["flOUr", "suGar", "buttER"]
