@@ -214,6 +214,8 @@ class MainWindowRecipie(Ui_MainWindow):
 
     def exit_recipie(self) -> None:
         '''Exit the entire program'''
+
+
         if self.verbose:
             print('Exiting Recipie\n')
         sys.exit(0)
@@ -473,6 +475,8 @@ def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
             verbose (bool): Specify verbose setting for program
             rlist (RecipeList): Main instance of RecipeList
     '''
+
+
     if verbose:
         print('Starting to initialize ui...')
     app = QtWidgets.QApplication([])
