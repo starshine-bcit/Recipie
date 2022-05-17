@@ -18,7 +18,7 @@ def rcp():
         obj: Recipe instance
     """
     recipe = Recipe(
-        ID, NAME, DIETS, INGREDIENTS, INSTRUCTIONS
+        ID, NAME, INGREDIENTS, INSTRUCTIONS, DIETS
     )
     return recipe
 
@@ -48,19 +48,19 @@ def test_recipe_errors():
     """
 
     with pytest.raises(TypeError):
-        recipe = Recipe('a', NAME, DIETS, INGREDIENTS, INSTRUCTIONS)
+        recipe = Recipe('a', NAME, INGREDIENTS, INSTRUCTIONS, DIETS)
     with pytest.raises(TypeError):
-        recipe = Recipe(1, 12345, DIETS, INGREDIENTS, INSTRUCTIONS)
+        recipe = Recipe(1, 12345, INGREDIENTS, INSTRUCTIONS, DIETS)
     with pytest.raises(TypeError):
-        recipe = Recipe(1, NAME, "not a list", INGREDIENTS, INSTRUCTIONS)
+        recipe = Recipe(1, NAME, "not a list", INGREDIENTS, INSTRUCTIONS, DIETS)
     with pytest.raises(TypeError):
-        recipe = Recipe(1, NAME, ['not', 1,'list'], INGREDIENTS, INSTRUCTIONS)
+        recipe = Recipe(1, NAME, ['not', 1,'list'], INGREDIENTS, INSTRUCTIONS, DIETS)
     with pytest.raises(TypeError):
-        recipe = Recipe(1, NAME, DIETS, "not a list", INSTRUCTIONS)
+        recipe = Recipe(1, NAME, "not a list", INSTRUCTIONS, DIETS)
     with pytest.raises(TypeError):
-        recipe = Recipe(1, NAME, DIETS, ['not', 1,'list'], INSTRUCTIONS)
+        recipe = Recipe(1, NAME, ['not', 1,'list'], INSTRUCTIONS, DIETS)
     with pytest.raises(TypeError):
-        recipe = Recipe(1, NAME, DIETS, INGREDIENTS, ("not instructions", 1234))
+        recipe = Recipe(1, NAME, INGREDIENTS, ("not instructions", 1234), DIETS)
 
 def test_recipe_methods(rcp):
     """
@@ -74,9 +74,9 @@ def test_recipe_methods(rcp):
     assert rcp.to_dict() == {
         "id": ID,
         "name": NAME,
-        "diets": DIETS,
         "ingredients": INGREDIENTS,
-        "instructions": INSTRUCTIONS
+        "instructions": INSTRUCTIONS,
+        "diets": DIETS
     }
 
     # Tests the ingredients to str method
