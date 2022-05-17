@@ -20,9 +20,9 @@ class Recipe:
             self,
             id: int,
             name: str,
-            diets: list[str],
             ingredients: list[str],
-            instructions: str
+            instructions: str,
+            diets: list[str]
         ):
 
         if type(id) != int:
@@ -33,11 +33,6 @@ class Recipe:
         if type(name) != str:
             raise TypeError(
                 "Recipe name improperly formatted, should be string."
-            )
-
-        if type(diets) != list:
-            raise TypeError(
-                "Recipe diet labels improperly formatted, should be a list."
             )
         
         for label in diets:
@@ -62,11 +57,16 @@ class Recipe:
                 "Recipe instructions improperly formatted, should be string."
             )
 
+        if type(diets) != list:
+            raise TypeError(
+                "Recipe diet labels improperly formatted, should be a list."
+            )
+
         self.id = id
         self.name = name
-        self.diets = diets
         self.ingredients = ingredients
         self.instructions = instructions
+        self.diets = diets
 
     def to_dict(self) -> dict:
         """Returns dictionary of all Recipe attributes."""
