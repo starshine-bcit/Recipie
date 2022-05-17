@@ -32,7 +32,7 @@ jobs:
         python3 -m pip install PyQt6
         python3 -m pip install pyinstaller
     - name: Build package
-      run: pyinstaller recicpie.spec
+      run: pyinstaller recipie.spec
     - name: Publish distribution to Test PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
