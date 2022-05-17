@@ -45,3 +45,8 @@ class RecipeList:
         """Returns a random Recipe from list of Recipes."""
         random_recipe = random.choice(self.recipes)
         return random_recipe
+
+    def save_recipes_to_file(self):
+        """Writes recipes in JSON to a file"""
+        with open("./data/recipe_list.json", "w") as fp:
+            json.dump([rec.to_dict() for rec in self.recipes], fp)
