@@ -2,6 +2,7 @@ import pytest
 from modules.recipe import Recipe
 
 
+ID = "1"
 NAME = "Recipe name"
 INGREDIENTS = ["apple", "orange", "pain"]
 INSTRUCTIONS = "These are cooking instructions"
@@ -15,7 +16,7 @@ def rcp():
     Returns:
         obj: Recipe instance
     """
-    recipe = Recipe(NAME, INGREDIENTS, INSTRUCTIONS)
+    recipe = Recipe(ID, NAME, INGREDIENTS, INSTRUCTIONS)
     return recipe
 
 
@@ -37,11 +38,11 @@ def test_recipe_errors():
     """
 
     with pytest.raises(TypeError):
-        recipe = Recipe(12345, INGREDIENTS, INSTRUCTIONS)
+        recipe = Recipe(ID, 12345, INGREDIENTS, INSTRUCTIONS)
     with pytest.raises(TypeError):
-        recipe = Recipe(NAME, "not a list", INSTRUCTIONS)
+        recipe = Recipe(ID, NAME, "not a list", INSTRUCTIONS)
     with pytest.raises(TypeError):
-        recipe = Recipe(NAME, INGREDIENTS, ("not instructions", 1234))
+        recipe = Recipe(ID, NAME, INGREDIENTS, ("not instructions", 1234))
 
 
 def test_recipe_methods(rcp):
@@ -54,6 +55,7 @@ def test_recipe_methods(rcp):
         rcp (obj): Recipe instance
     """
     assert rcp.to_dict() == {
+        "id": ID,
         "name": NAME,
         "ingredients": INGREDIENTS,
         "instructions": INSTRUCTIONS,
