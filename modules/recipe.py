@@ -8,7 +8,7 @@ class Recipe:
             ID number of recipe when in a list.
         name (str):
             Name of the recipe.
-        diet (list[str]):
+        diets (list[str]):
             Dietary labels/categories of the recipe.
         ingredients (list[str]):
             Ingredients used in the recipe.
