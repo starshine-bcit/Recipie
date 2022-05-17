@@ -2,7 +2,9 @@ import pytest
 from modules.recipe import Recipe
 
 
+ID = 1
 NAME = "Recipe name"
+DIETS = ['vegetarian', 'vegan']
 INGREDIENTS = ["apple", "orange", "pain"]
 INSTRUCTIONS = "These are cooking instructions"
 
@@ -15,34 +17,50 @@ def rcp():
     Returns:
         obj: Recipe instance
     """
-    recipe = Recipe(NAME, INGREDIENTS, INSTRUCTIONS)
+    recipe = Recipe(
+        ID, NAME, DIETS, INGREDIENTS, INSTRUCTIONS
+    )
     return recipe
 
 
 def test_recipe(rcp):
     """
-    Tests the Recipe class and ensures it has 3 attributes: name(str), ingredients(list), instructions(str)
+    Tests the Recipe class and ensures it has 5 attributes:
+        id (int), name(str), diet(list), ingredients(list), instructions(str)
 
     Args:
         rcp (obj): Recipe instance
     """
+    assert rcp.id == 1
     assert rcp.name == "Recipe name"
     assert isinstance(rcp.ingredients, list) == True
+    assert rcp.ingredients == ["apple", "orange", "pain"]
+    assert isinstance(rcp.diets, list) == True
+    assert rcp.diets == ['vegetarian', 'vegan']
     assert rcp.instructions == "These are cooking instructions"
 
 
 def test_recipe_errors():
     """
-    Checks the Recipe class for errors, ensures that name is a string, ingredients is a list, and instructions is a string
+    Checks the Recipe class for errors, ensures that id is an integer,
+    name is a string, diets is a list, ingredients is a list,
+    and instructions is a string.
     """
 
     with pytest.raises(TypeError):
-        recipe = Recipe(12345, INGREDIENTS, INSTRUCTIONS)
+        recipe = Recipe('a', NAME, DIETS, INGREDIENTS, INSTRUCTIONS)
     with pytest.raises(TypeError):
-        recipe = Recipe(NAME, "not a list", INSTRUCTIONS)
+        recipe = Recipe(1, 12345, DIETS, INGREDIENTS, INSTRUCTIONS)
     with pytest.raises(TypeError):
-        recipe = Recipe(NAME, INGREDIENTS, ("not instructions", 1234))
-
+        recipe = Recipe(1, NAME, "not a list", INGREDIENTS, INSTRUCTIONS)
+    with pytest.raises(TypeError):
+        recipe = Recipe(1, NAME, ['not', 1,'list'], INGREDIENTS, INSTRUCTIONS)
+    with pytest.raises(TypeError):
+        recipe = Recipe(1, NAME, DIETS, "not a list", INSTRUCTIONS)
+    with pytest.raises(TypeError):
+        recipe = Recipe(1, NAME, DIETS, ['not', 1,'list'], INSTRUCTIONS)
+    with pytest.raises(TypeError):
+        recipe = Recipe(1, NAME, DIETS, INGREDIENTS, ("not instructions", 1234))
 
 def test_recipe_methods(rcp):
     """
@@ -54,9 +72,11 @@ def test_recipe_methods(rcp):
         rcp (obj): Recipe instance
     """
     assert rcp.to_dict() == {
+        "id": ID,
         "name": NAME,
+        "diets": DIETS,
         "ingredients": INGREDIENTS,
-        "instructions": INSTRUCTIONS,
+        "instructions": INSTRUCTIONS
     }
 
     # Tests the ingredients to str method
