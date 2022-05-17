@@ -29,15 +29,14 @@ class RecipeList:
             with file.open('r', encoding='utf-8') as fp:
                 data = json.load(fp)
 
-            for value in data:
+            for key, value in data.items():
                 try:
                     self.recipes.append(
                         Recipe(
-                            id = count,
-                            name = value["name"],
-                            diets = ['placeholder'],  #FIXME: update after diet labelling
-                            ingredients = value["ingredients"],
-                            instructions = value["instructions"]
+                            id = int(key),
+                            name = value["title"],
+                            ingredients = value["ingreds"],
+                            instructions = value["instruct"]
                         )
                     )
                     count += 1
