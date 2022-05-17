@@ -1,0 +1,5 @@
+include recipie.py
+graft image
+graft data
+prune unit-tests
+prune testing
