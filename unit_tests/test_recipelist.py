@@ -3,9 +3,6 @@ from pathlib import Path
 from modules.recipe import Recipe
 from modules.recipelist import RecipeList
 
-# from ACIT2911.modules.recipe import Recipe            #For local testing
-# from ACIT2911.modules.recipelist import RecipeList    #For local testing
-
 
 INGREDIENTS = ("Apple", "Orange", "flour", "SUGAR", "bUttER")
 
