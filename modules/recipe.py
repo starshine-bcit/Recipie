@@ -12,7 +12,7 @@ class Recipe:
             Instructions for how to make the recipe.
     """
 
-    def __init__(self, name: str, ingredients: list[str], instructions: str):
+    def __init__(self, id: int, name: str, ingredients: list[str], instructions: str):
         if type(name) != str:
             raise TypeError(
                 "Recipe name improperly formatted, should be string."
@@ -28,6 +28,7 @@ class Recipe:
                 "Recipe instructions improperly formatted, should be string."
             )
 
+        self.id = id
         self.name = name
         self.ingredients = ingredients
         self.instructions = instructions
