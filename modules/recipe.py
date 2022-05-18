@@ -76,3 +76,12 @@ class Recipe:
         """Returns ingredients in a list as string."""
         ingredients = '\n'.join(self.ingredients)
         return ingredients
+
+    def add_label(self, label: str):
+        """Appends dietary label to diets attribute.
+
+        Args:
+            label (str):
+                Dietary label to add to the recipe.
+        """
+        self.diets.append(label)
