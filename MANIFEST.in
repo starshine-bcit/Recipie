@@ -1,5 +1,5 @@
 include recipie.py
-graft image
-graft data
+recursive-include data *
+recursive-include image *
 prune unit-tests
 prune testing

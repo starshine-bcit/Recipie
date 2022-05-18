@@ -481,7 +481,7 @@ class MainWindowRecipie(Ui_MainWindow):
     def load_favourites_from_file(self) -> None:
         '''Load saved and favourited recipes from hardcoded csv file'''
 
-        favfilepath = Path('./data/favourites.csv')
+        favfilepath = Path(__file__).parent.parent.joinpath('data/favourites.csv')
         if favfilepath.exists():
             with favfilepath.open('r', encoding='utf-8', newline='') as file:
                 reader = csv.reader(file, delimiter='~', quotechar='`')
@@ -502,7 +502,7 @@ class MainWindowRecipie(Ui_MainWindow):
     def write_favourites_to_file(self) -> None:
         '''Write out a csv file of favourited recipes'''
 
-        favfilepath = Path('./data/favourites.csv')
+        favfilepath = Path(__file__).parent.parent.joinpath('data/favourites.csv')
         if len(self.favlist) > 0:
             with favfilepath.open('w', encoding='utf-8', newline='') as file:
                 writer = csv.writer(file, delimiter='~', quotechar='`')
@@ -575,6 +575,8 @@ class MainWindowRecipie(Ui_MainWindow):
         # Add dialog box to confirm
         self.listWidgetFavouriteRecipes.clear()
         self.favlist.clear()
+        self.pushButtonRemoveAllFavourites.setEnabled(False)
+        self.pushButtonRemoveSelectedFavourites.setEnabled(False)
         if self.verbose:
             print('Removing all favourites')
         self.write_favourites_to_file()
@@ -610,7 +612,7 @@ def load_quotes():
     '''Load quotes from hardcoded json file'''
 
     try:
-        file = Path('./data/quotes/quotes.json')
+        file = Path(__file__).parent.parent.joinpath('data/quotes/quotes.json')
         with file.open('r', encoding='utf-8') as fp:
             data = json.load(fp)
         return data
