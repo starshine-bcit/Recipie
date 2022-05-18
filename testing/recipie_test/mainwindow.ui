@@ -171,7 +171,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="TabSearchInput">
          <attribute name="title">
@@ -324,12 +324,84 @@
          <attribute name="title">
           <string>Filter</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_7">
+         <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,0,1,0">
           <item>
-           <widget class="QCheckBox" name="checkBox">
-            <property name="text">
-             <string>CheckBoxDietary</string>
+           <widget class="QFrame" name="frameDietCheckboxes">
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
             </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_9">
+             <item>
+              <widget class="QLabel" name="LabelFilterDesciption">
+               <property name="text">
+                <string>Select your dietary restrictions:</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBoxVegetarian">
+               <property name="text">
+                <string>Vegetarian</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBoxVegan">
+               <property name="text">
+                <string>Vegan</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBoxNut">
+               <property name="text">
+                <string>Nut Free</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBoxLactose">
+               <property name="text">
+                <string>Lactose Free</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBoxGluten">
+               <property name="text">
+                <string>Gluten Free</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="frameDisclaimer">
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="QLabel" name="labelDisclaimer">
+               <property name="text">
+                <string>DISCLAIMER: We cannot guarantee that displayed recipes are actually safe for your particular diet. Please exercise your best judgement .</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
@@ -346,36 +418,74 @@
            </spacer>
           </item>
           <item>
-           <widget class="QFrame" name="frame">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
-             <item alignment="Qt::AlignHCenter">
-              <widget class="QPushButton" name="pushButtonResetFilters">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="font">
-                <font>
-                 <family>Source Sans Pro</family>
-                 <pointsize>10</pointsize>
-                 <bold>false</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Reset Filters</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayoutFilterButtons" stretch="1,0,1,0,1">
+            <item>
+             <spacer name="horizontalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButtonSendFilterSearch">
+              <property name="text">
+               <string>Search!</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_7">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButtonResetFilters">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>Source Sans Pro</family>
+                <pointsize>10</pointsize>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Reset Filters</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
