@@ -171,7 +171,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="TabSearchInput">
          <attribute name="title">
@@ -182,6 +182,9 @@
            <layout class="QHBoxLayout" name="horizontalLayoutEnterIngredient" stretch="0,0">
             <item>
              <widget class="QLineEdit" name="lineEditIngredientEntry">
+              <property name="toolTip">
+               <string>Enter ingredients you want to search for</string>
+              </property>
               <property name="placeholderText">
                <string>Enter Ingredients Here</string>
               </property>
@@ -210,6 +213,9 @@
               <property name="cursor">
                <cursorShape>PointingHandCursor</cursorShape>
               </property>
+              <property name="toolTip">
+               <string>Add your ingredient to the list below and search</string>
+              </property>
               <property name="text">
                <string/>
               </property>
@@ -219,6 +225,9 @@
           </item>
           <item>
            <widget class="QListWidget" name="listWidgetSearchInput">
+            <property name="toolTip">
+             <string>All the ingredients you've entered so far</string>
+            </property>
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>
             </property>
@@ -235,83 +244,138 @@
             <property name="frameShadow">
              <enum>QFrame::Sunken</enum>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_5" stretch="1,1">
+            <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayoutRadioHolder" stretch="1,1">
+              <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0,1,0,1">
                <item>
-                <widget class="QRadioButton" name="radioButtonInclusive">
-                 <property name="font">
-                  <font>
-                   <family>Source Sans Pro</family>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
+                <spacer name="horizontalSpacer_9">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="text">
-                  <string>Partial</string>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
                  </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
+                </spacer>
                </item>
                <item>
-                <widget class="QRadioButton" name="radioButtonExclusive">
-                 <property name="font">
-                  <font>
-                   <family>Source Sans Pro</family>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Exact</string>
-                 </property>
-                </widget>
+                <layout class="QVBoxLayout" name="verticalLayout_11">
+                 <item>
+                  <widget class="QRadioButton" name="radioButtonInclusive">
+                   <property name="font">
+                    <font>
+                     <family>Source Sans Pro</family>
+                     <pointsize>10</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="toolTip">
+                    <string>Will return all recipes that use ingredients you specified, as well as others</string>
+                   </property>
+                   <property name="text">
+                    <string>Partial</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButtonRemoveSelected">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <family>Source Sans Pro</family>
+                     <pointsize>10</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="toolTip">
+                    <string>Remove selected search terms from above</string>
+                   </property>
+                   <property name="text">
+                    <string>Rem. Selected</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayoutSearchButtonHolder" stretch="1,1">
                <item>
-                <widget class="QPushButton" name="pushButtonResetSearch">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
+                <spacer name="horizontalSpacer_10">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="font">
-                  <font>
-                   <family>Source Sans Pro</family>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
                  </property>
-                 <property name="text">
-                  <string>Reset Search</string>
-                 </property>
-                </widget>
+                </spacer>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButtonRemoveSelected">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
+                <layout class="QVBoxLayout" name="verticalLayout_10">
+                 <item>
+                  <widget class="QRadioButton" name="radioButtonExclusive">
+                   <property name="font">
+                    <font>
+                     <family>Source Sans Pro</family>
+                     <pointsize>10</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="toolTip">
+                    <string>Will return only recipes that match the ingredients you've specified, nothing extra needed!</string>
+                   </property>
+                   <property name="text">
+                    <string>Exact</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButtonResetSearch">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <family>Source Sans Pro</family>
+                     <pointsize>10</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="toolTip">
+                    <string>Clear all search results and terms</string>
+                   </property>
+                   <property name="text">
+                    <string>Reset Search</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_8">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="font">
-                  <font>
-                   <family>Source Sans Pro</family>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
                  </property>
-                 <property name="text">
-                  <string>Remove Selected</string>
-                 </property>
-                </widget>
+                </spacer>
                </item>
               </layout>
              </item>
@@ -327,6 +391,9 @@
          <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,0,1,0">
           <item>
            <widget class="QFrame" name="frameDietCheckboxes">
+            <property name="toolTip">
+             <string>Select which dietary restrictions you have</string>
+            </property>
             <property name="frameShape">
              <enum>QFrame::Box</enum>
             </property>
@@ -393,6 +460,9 @@
             <layout class="QVBoxLayout" name="verticalLayout_2">
              <item>
               <widget class="QLabel" name="labelDisclaimer">
+               <property name="toolTip">
+                <string>Standard disclaimer</string>
+               </property>
                <property name="text">
                 <string>DISCLAIMER: We cannot guarantee that displayed recipes are actually safe for your particular diet. Please exercise your best judgement .</string>
                </property>
@@ -434,6 +504,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButtonSendFilterSearch">
+              <property name="toolTip">
+               <string>Search with these categories and whichever ingredients you entered</string>
+              </property>
               <property name="text">
                <string>Search!</string>
               </property>
@@ -466,6 +539,9 @@
                 <pointsize>10</pointsize>
                 <bold>false</bold>
                </font>
+              </property>
+              <property name="toolTip">
+               <string>Uncheck all filters</string>
               </property>
               <property name="text">
                <string>Reset Filters</string>
@@ -500,7 +576,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="usesScrollButtons">
          <bool>false</bool>
@@ -550,6 +626,9 @@
               <family>Source Serif Pro</family>
               <pointsize>24</pointsize>
              </font>
+            </property>
+            <property name="toolTip">
+             <string>Name of recipe</string>
             </property>
             <property name="frameShadow">
              <enum>QFrame::Sunken</enum>
@@ -611,6 +690,9 @@
               <pointsize>11</pointsize>
              </font>
             </property>
+            <property name="toolTip">
+             <string>Ingredients of recipe</string>
+            </property>
             <property name="autoFormatting">
              <set>QTextEdit::AutoNone</set>
             </property>
@@ -658,6 +740,9 @@
               <pointsize>11</pointsize>
              </font>
             </property>
+            <property name="toolTip">
+             <string>How to make this recipe</string>
+            </property>
            </widget>
           </item>
           <item>
@@ -669,6 +754,9 @@
                 <family>Source Sans Pro</family>
                 <pointsize>10</pointsize>
                </font>
+              </property>
+              <property name="toolTip">
+               <string>Open a nicely formatted version in a new window</string>
               </property>
               <property name="text">
                <string>New Window</string>
@@ -685,6 +773,9 @@
                 <family>Source Sans Pro</family>
                 <pointsize>10</pointsize>
                </font>
+              </property>
+              <property name="toolTip">
+               <string>Add to favourites list</string>
               </property>
               <property name="text">
                <string>Add Favourite</string>
@@ -711,6 +802,9 @@
                 <family>Source Sans Pro</family>
                 <pointsize>10</pointsize>
                </font>
+              </property>
+              <property name="toolTip">
+               <string>Clear currently displayed recipe</string>
               </property>
               <property name="text">
                <string>Clear Display</string>
@@ -764,7 +858,11 @@
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <widget class="QListWidget" name="listWidgetSearchResults"/>
+           <widget class="QListWidget" name="listWidgetSearchResults">
+            <property name="toolTip">
+             <string>All the delicious recipes we found for you</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -803,6 +901,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButtonRemoveAllFavourites">
+              <property name="toolTip">
+               <string>Remove all favourites</string>
+              </property>
               <property name="text">
                <string>Remove All</string>
               </property>
@@ -810,6 +911,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButtonRemoveSelectedFavourites">
+              <property name="toolTip">
+               <string>Remove only selected favourites</string>
+              </property>
               <property name="text">
                <string>Remove Selected</string>
               </property>

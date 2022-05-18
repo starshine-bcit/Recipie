@@ -122,8 +122,10 @@ class MainWindowRecipie(Ui_MainWindow):
         self.srlist = {}
         self.verbose = verbose
         self.currname = ''
+        self.currid = ''
         self.multiwin = {}
         self.favlist = []
+        self.cats = []
 
     def setupUicustom(self):
         '''Setup various elements which have no depends'''
@@ -185,6 +187,13 @@ class MainWindowRecipie(Ui_MainWindow):
         self.listWidgetFavouriteRecipes.itemDoubleClicked.connect(
             self.display_recipe_from_favourites)
         self.timer.timeout.connect(self.timeout_status_bar_display)
+        self.pushButtonResetFilters.clicked.connect(self.clear_cats_list)
+        self.checkBoxGluten.clicked.connect(self.update_cats_list)
+        self.checkBoxLactose.clicked.connect(self.update_cats_list)
+        self.checkBoxNut.clicked.connect(self.update_cats_list)
+        self.checkBoxVegan.clicked.connect(self.update_cats_list)
+        self.checkBoxVegetarian.clicked.connect(self.update_cats_list)
+        self.pushButtonSendFilterSearch.clicked.connect(self.call_search)
 
         self.actionExit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
         self.actionPrint.setShortcut(QtGui.QKeySequence('Ctrl+P'))
@@ -237,6 +246,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonDisplayRecipeNewWindow.setEnabled(True)
         self.pushButtonAddFavourite.setEnabled(True)
         self.currname = rcp.name
+        self.currid = rcp.id
+        self.currrcp = rcp
 
     def exit_recipie(self) -> None:
         '''Exit the entire program'''
@@ -281,17 +292,23 @@ class MainWindowRecipie(Ui_MainWindow):
         '''Sends list of user search terms to logic search functions'''
 
         self.listWidgetSearchResults.clear()
-        search_terms = [self.listWidgetSearchInput.item(
+        if self.listWidgetSearchInput.count() > 0:
+            search_terms = [self.listWidgetSearchInput.item(
             x).text() for x in range(self.listWidgetSearchInput.count())]
+        else:
+            search_terms = []
         if self.verbose:
             print(
                 f'Sending these terms to search:\n{search_terms}'
+                f'Sending these categories to search:\n{self.cats}'
             )
         # Pass the function to execute
-        if len(search_terms) > 0:
+        if len(search_terms) > 0 or len(self.cats) > 0:
             if self.radioButtonExclusive.isChecked():
                 if self.verbose:
                     print('Starting exclusive search...')
+                # self.searchworker = Worker(
+                #     exact_search, search_terms, self.cats, self.rlist)
                 self.searchworker = Worker(
                     exact_search, search_terms, self.rlist)
                 self.lock_ui_elements()
@@ -300,7 +317,8 @@ class MainWindowRecipie(Ui_MainWindow):
             elif self.radioButtonInclusive.isChecked():
                 if self.verbose:
                     print('Starting inclusive search...')
-                self.searchworker = Worker(p_search, search_terms, self.rlist)
+                # self.searchworker = Worker(p_search, search_terms, self.cats, self.rlist)
+                self.searchworker = Worker(p_search, self.cats, self.rlist)
                 self.lock_ui_elements()
                 #search_type = getattr(exact_search, 'partial_search')
 
@@ -315,7 +333,7 @@ class MainWindowRecipie(Ui_MainWindow):
         else:
             self.srlist.clear()
             if self.verbose:
-                print('Search called, but no items to search for')
+                print('Error: Search called, there are no terms or categories')
 
     def thread_complete(self):
         if self.verbose:
@@ -334,6 +352,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonRemoveSelected.setEnabled(False)
         self.actionRemove_Selected.setEnabled(False)
         self.actionReset_Search.setEnabled(False)
+        self.pushButtonSendFilterSearch.setEnabled(False)
         self.status_bar_display('Searching...')
 
     def unlock_ui_elements(self):
@@ -347,6 +366,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonResetSearch.setEnabled(True)
         self.pushButtonRemoveSelected.setEnabled(True)
         self.actionRemove_Selected.setEnabled(True)
+        self.pushButtonSendFilterSearch.setEnabled(True)
         self.actionReset_Search.setEnabled(True)
 
     def reset_search(self) -> None:
@@ -441,6 +461,7 @@ class MainWindowRecipie(Ui_MainWindow):
         srlistlen = len(self.srlist)
 
         for x in range(srlistlen):
+            #newname = self.get_list_recipe_text(self.srlist[x].name, self.srlist[x].id)
             newname = self.srlist[x].name
             newitem = QtWidgets.QListWidgetItem(newname)
             self.listWidgetSearchResults.addItem(newitem)
@@ -526,11 +547,28 @@ class MainWindowRecipie(Ui_MainWindow):
         else:
             if self.verbose:
                 print(f'Added favourite recipe: {self.currname}')
-            self.favlist.append(self.currname)
+            newname = self.get_list_recipe_text(self.currname, self.currid)
+            self.favlist.append(newname)
             self.write_favourites_to_file()
             self.display_favourites_list()
             self.status_bar_display('Added favourite')
             self.timer.start(1500)
+
+    def get_list_recipe_text(self, name: str, id: int) -> str:
+        '''Sets display text for favourites and search results'''
+
+        return name + ' -- ID: ' + str(id)
+
+    def parse_list_recipe_text(self, intext: str) -> int:
+        '''Parses display text for favourites and search results
+        Returns and integer corresponding to recipe id'''
+
+        try:
+            ind = intext.find(' -- ID: ')
+            return int(intext[ind+8::])
+        except (ValueError, IndexError, TypeError) as err:
+            if self.verbose: print('Error:', err)
+            return 0
 
     def display_favourites_list(self) -> None:
         '''Reset then display all favourited recipes'''
@@ -554,9 +592,10 @@ class MainWindowRecipie(Ui_MainWindow):
 
         # also rework this function using recipe id
         rname = self.listWidgetFavouriteRecipes.currentItem().text()
+        clickedid = self.parse_list_recipe_text(rname)
         found = False
         for recipe in self.rlist.recipes:
-            if recipe.name == rname:
+            if recipe.id == clickedid:
                 rmatch = recipe
                 found = True
                 break
@@ -607,6 +646,33 @@ class MainWindowRecipie(Ui_MainWindow):
         self.labelStatusBarFavCount.setText(
             f'Favourites: {len(self.favlist)} ')
 
+    def update_cats_list(self) -> None:
+        '''Updates cats list on checkbox clicks'''
+
+        tcats = []
+        if self.checkBoxGluten.isChecked():
+            tcats.append('glutenfree')
+        if self.checkBoxLactose.isChecked():
+            tcats.append('lactosefree')
+        if self.checkBoxNut.isChecked():
+            tcats.append('nutfree')
+        if self.checkBoxVegan.isChecked():
+            tcats.append('vegan')
+        if self.checkBoxVegetarian.isChecked():
+            tcats.append('vegetarian')
+        self.cats = tcats
+        if self.verbose: print(f'Updated cats list is:\n{self.cats}')
+
+    def clear_cats_list(self) -> None:
+        '''Clears all checkboxes for diets and associated list'''
+
+        self.checkBoxGluten.setChecked(False)
+        self.checkBoxLactose.setChecked(False)
+        self.checkBoxNut.setChecked(False)
+        self.checkBoxVegan.setChecked(False)
+        self.checkBoxVegetarian.setChecked(False)
+        self.cats.clear()
+        if self.verbose: print('Cleared cats list')
 
 def load_quotes():
     '''Load quotes from hardcoded json file'''
