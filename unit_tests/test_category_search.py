@@ -1,5 +1,5 @@
 import pytest
-from modules.catsearch import category_search
+from modules.catsearch import category_search, main_search
 
 
 # simulates the Recipelist.recipes format
@@ -81,7 +81,7 @@ def test_category_search():
     """
     Tests by giving a single category inside a list, should return a list of dictionaries that matches `nutfree`
     """
-    search = category_search(RLIST, ["nutfree"])
+    search = category_search(["nutfree"], RLIST)
     assert isinstance(search, list) == True
     assert len(search) == 5
 
@@ -90,7 +90,35 @@ def test_category_search2():
     """
     tests for multiple categories, should return all recipes that have atleast both these cateories
     """
-    search = category_search(RLIST, ["nutfree", "lactosefree"])    
+    search = category_search(["nutfree", "lactosefree"], RLIST)    
     assert isinstance(search, list) == True
     assert len(search) == 3
     assert isinstance(search[0], dict) == True
+
+
+def test_main_search_using_categories_only():
+    """
+    Tests if main search works as intended using only categories
+    """
+    cat_search = main_search([], ["nutfree", "lactosefree"], RLIST)
+    assert isinstance(cat_search, list) == True
+    assert len(cat_search) == 3
+
+
+def test_main_search_using_exact_search_only():
+    """
+    Tests if main search works as intended using only ingredients
+    """
+    search = main_search(['flour', 'sugar', 'butter', 'apples'], [], RLIST)
+    assert isinstance(search, list) == True
+    assert len(search) == 1
+
+
+def test_main_search_using_both_searches():
+    """
+    Tests main search with both searches to narrow down searching for certain ingredients
+    """
+    search = main_search(['flour', 'sugar', 'butter', 'apples'], ["vegetarian", "nutfree"], RLIST)
+    assert isinstance(search, list) == True
+    assert len(search) == 1
+    assert search[0]['name'] == "Apple Pie"  
