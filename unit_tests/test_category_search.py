@@ -86,11 +86,11 @@ def test_category_search():
     assert len(search) == 5
 
 
-# def test_category_search2():
-#     """
-#     tests for multiple categories, should return all recipes that have atleast both these cateories
-#     """
-#     search = category_search(RLIST, ["nutfree", "lactosefree"])    
-#     assert isinstance(search, list) == True
-#     assert len(search) == 3
-#     assert isinstance(search[0], dict) == True
+def test_category_search2():
+    """
+    tests for multiple categories, should return all recipes that have atleast both these cateories
+    """
+    search = category_search(RLIST, ["nutfree", "lactosefree"])    
+    assert isinstance(search, list) == True
+    assert len(search) == 3
+    assert isinstance(search[0], dict) == True

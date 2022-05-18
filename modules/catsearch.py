@@ -8,10 +8,8 @@ def category_search(rlist: list[dict], cat: list[str]) -> list[dict]:
     """
     matched_recipe = []
     for recipe in rlist: 
-        for item in recipe["diets"]:
-            if item in cat: 
-                matched_recipe.append(recipe)
-    
-    return matched_recipe
+        intersection = set(recipe["diets"]).intersection(set(cat)) 
+        if len(intersection) == len(cat): 
+            matched_recipe.append(recipe)
 
-   
+    return matched_recipe
