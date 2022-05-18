@@ -8,12 +8,12 @@ class Recipe:
             ID number of recipe when in a list.
         name (str):
             Name of the recipe.
-        diets (list[str]):
-            Dietary labels/categories of the recipe.
         ingredients (list[str]):
             Ingredients used in the recipe.
         instructions (str):
             Instructions for how to make the recipe.
+        diets (list[str]):
+            Dietary labels/categories of the recipe.
     """
 
     def __init__(
@@ -61,6 +61,9 @@ class Recipe:
             raise TypeError(
                 "Recipe diet labels improperly formatted, should be a list."
             )
+
+        # Remove empty line ingredients
+        ingredients = [ingred for ingred in ingredients if ingred != "\n"]
 
         self.id = id
         self.name = name
