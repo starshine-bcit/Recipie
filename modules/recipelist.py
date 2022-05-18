@@ -4,6 +4,7 @@ import json
 import random
 from pathlib import Path
 from .recipe import Recipe
+from .constants import GLUTEN_FREE, LACTOSE_FREE, NUT_FREE, VEGAN, VEGGIE
 
 
 class RecipeList:
@@ -46,11 +47,11 @@ class RecipeList:
         
         # FIXME: recipes for different diets
         # self.not_pie = self.get_diet_recipes('not a pie', ['apples', 'blueberries'])
-        # self.vegetarian = self.get_diet_recipes('vegetarian', VEGGIE)
-        # self.vegan = self.get_diet_recipes('vegan', VEGAN)
-        # self.gluten_free = self.get_diet_recipes('glutenfree', GLUTEN)
-        # self.nut_free = self.get_diet_recipes('nutfree', NUT)
-        # self.lactose_free = self.get_diet_recipes('lactosefree', LACTOSE)
+        self.vegetarian = self.get_diet_recipes('vegetarian', VEGGIE)
+        self.vegan = self.get_diet_recipes('vegan', VEGAN)
+        self.gluten_free = self.get_diet_recipes('glutenfree', GLUTEN_FREE)
+        self.nut_free = self.get_diet_recipes('nutfree', NUT_FREE)
+        self.lactose_free = self.get_diet_recipes('lactosefree', LACTOSE_FREE)
 
     def get_random_recipe(self) -> Recipe:
         """Returns a random Recipe from list of Recipes."""
