@@ -12,7 +12,18 @@ def main_search(ingredients_list: list[str], categories: list[str], rlist: list[
 
     When we're done, this function should be transferrable between both esearch and psearch
     """
-    pass
+
+    if len(ingredients_list) == 0 and len(categories) != 0: 
+        matched_recipes = category_search(categories, rlist)
+    
+    elif len(ingredients_list) != 0 and len(categories) == 0:
+        matched_recipes = e_search(ingredients_list, rlist)
+    
+    elif len(ingredients_list)!= 0 and len(categories) != 0:
+        diet_recipes = category_search(categories, rlist)
+        matched_recipes = e_search(ingredients_list, diet_recipes)
+    
+    return matched_recipes 
 
 
 ############## You shouldn't need to touch anything after this line in the first iteration ################
