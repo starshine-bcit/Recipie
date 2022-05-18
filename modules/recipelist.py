@@ -1,6 +1,5 @@
 """Module of a class of a list of food recipes."""
 
-from dis import Instruction
 import json
 import random
 from pathlib import Path
@@ -35,7 +34,8 @@ class RecipeList:
                             name = value["title"],
                             ingredients = value["ingreds"],
                             instructions = value["instruct"],
-                            diets = ['placeholder']
+                            # diets = ["cat"], #  for when json has diets
+                            diets = []  # placeholder
                         )
                     )
                 except:
@@ -43,54 +43,75 @@ class RecipeList:
                     # print(self.recipes[-1].name)
                     # Skip over non-recipes in JSON
                     continue
+        
+        # FIXME: recipes for different diets
+        # self.not_pie = self.get_diet_recipes('not a pie', ['apples', 'blueberries'])
+        # self.vegetarian = self.get_diet_recipes('vegetarian', VEGGIE)
+        # self.vegan = self.get_diet_recipes('vegan', VEGAN)
+        # self.gluten_free = self.get_diet_recipes('glutenfree', GLUTEN)
+        # self.nut_free = self.get_diet_recipes('nutfree', NUT)
+        # self.lactose_free = self.get_diet_recipes('lactosefree', LACTOSE)
 
     def get_random_recipe(self) -> Recipe:
         """Returns a random Recipe from list of Recipes."""
         random_recipe = random.choice(self.recipes)
         return random_recipe
 
-    # Method used when cleaning up multiple recipe data files.
+    # Method used when cleaning up recipe data files.
     def save_recipes_to_file(self):
         """Writes recipes to JSON file"""
         recipes_json = {}
         count = 0
-        with open("./data/recipe_list_test_test.json", "w") as fp:
+        # FIXME: update file to write to
+        with open("./data/recipe_list_test.json", "w") as fp:
             for recipe in self.recipes:
                 recipes_json.update(
                     {count: {
                         "title": recipe.name,
                         "ingreds": recipe.ingredients,
                         "instruct": recipe.instructions,
-                        "cat": []
+                        "cat": recipe.diets
                     }}
                 )
                 count +=1
             json.dump(recipes_json, fp, indent = 4)
 
+    # Adds dietary label to recipe and returns list of recipes
+    def get_diet_recipes(
+        self,
+        label: str,
+        exclude_ingreds: list[str]
+    ) -> list[Recipe]:
+        """Adds dietary label to appropriate recipes, returns recipes.
 
-    # WORK IN PROGRESS
-    # Get list of recipes that belong to diet
-    # def add_diet_recipes(
-    #         self,
-    #         label: str,
-    #         exclude_ingreds: list[str]
-    # ) -> list[Recipe]:
+        Args:
+            label (str):
+                Dietary label to add to the recipe.
+            exclude_ingreds (list[str]):
+                Ingredients that are not part of the diet.
 
-    #     results_list = []
-    #     for recipe in self.recipes:
-    #         rec_ingreds = recipe.ingredients_as_str()
-    #         matches = 0
-    #         for ingred in exclude_ingreds:
-    #             if ingred in rec_ingreds:
-    #                 break
-    #             if ingred == exclude_ingreds[-1]:
-    #                 recipe.diets.append(f'{label}')
-    #                 results_list.append(recipe)
-    #     return results_list
+        Returns:
+            list[Recipe]:
+                Recipes that fit the dietary label.
+        """
 
-    # # Pass above return into below fnx
+        results_list = []
+        for recipe in self.recipes:
 
-    # # Add label to diet recipes
-    # def add_diet_label(self, label, diet_recipes: list[Recipe]):
-    #     for d_rec in diet_recipes:
-    #         pass
+            # Combine all ingredients into one string.
+            rec_ingreds = recipe.ingredients_as_str()
+
+            for ingred in exclude_ingreds:
+                
+                # Skip to next recipe if an exlusion ingredient 
+                #  is in the recipe ingredients.
+                if ingred in rec_ingreds:
+                    break
+                
+                # If last exclude ingredient is reached without
+                #  breaking loop, recipe is labeled and appended.
+                if ingred == exclude_ingreds[-1]:
+                    recipe.add_label(label)
+                    results_list.append(recipe)
+
+        return results_list
