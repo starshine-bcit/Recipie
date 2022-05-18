@@ -66,7 +66,7 @@ class RecipeList:
 
     # Method used when cleaning up recipe data files.
     # Can be deleted when recipes are clean.
-    def save_recipes_to_file(self, count, filepath: str):
+    def save_recipes_to_file(self, count, filepath: str) -> int:
         """Writes recipes to JSON file
 
         Args:
