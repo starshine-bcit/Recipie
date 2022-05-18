@@ -336,6 +336,8 @@ class MainWindowRecipie(Ui_MainWindow):
                 print('Error: Search called, there are no terms or categories')
 
     def thread_complete(self):
+        '''To be triggered when search worker finishes, unlocks ui elements'''
+
         if self.verbose:
             print('Search thread completed')
         self.unlock_ui_elements()
@@ -640,6 +642,8 @@ class MainWindowRecipie(Ui_MainWindow):
                 print('No selected favourites to remove')
 
     def timeout_status_bar_display(self) -> None:
+        '''Function to trigger Ready display when timer runs out'''
+
         self.status_bar_display('Ready')
 
     def update_favcount_status_bar(self) -> None:
