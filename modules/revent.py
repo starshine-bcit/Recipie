@@ -294,7 +294,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.listWidgetSearchResults.clear()
         if self.listWidgetSearchInput.count() > 0:
             search_terms = [self.listWidgetSearchInput.item(
-            x).text() for x in range(self.listWidgetSearchInput.count())]
+                x).text() for x in range(self.listWidgetSearchInput.count())]
         else:
             search_terms = []
         if self.verbose:
@@ -504,7 +504,8 @@ class MainWindowRecipie(Ui_MainWindow):
     def load_favourites_from_file(self) -> None:
         '''Load saved and favourited recipes from hardcoded csv file'''
 
-        favfilepath = Path(__file__).parent.parent.joinpath('data/favourites.csv')
+        favfilepath = Path(__file__).parent.parent.joinpath(
+            'data/favourites.csv')
         if favfilepath.exists():
             with favfilepath.open('r', encoding='utf-8', newline='') as file:
                 reader = csv.reader(file, delimiter='~', quotechar='`')
@@ -525,7 +526,8 @@ class MainWindowRecipie(Ui_MainWindow):
     def write_favourites_to_file(self) -> None:
         '''Write out a csv file of favourited recipes'''
 
-        favfilepath = Path(__file__).parent.parent.joinpath('data/favourites.csv')
+        favfilepath = Path(__file__).parent.parent.joinpath(
+            'data/favourites.csv')
         if len(self.favlist) > 0:
             with favfilepath.open('w', encoding='utf-8', newline='') as file:
                 writer = csv.writer(file, delimiter='~', quotechar='`')
@@ -569,7 +571,8 @@ class MainWindowRecipie(Ui_MainWindow):
             ind = intext.find(' -- ID: ')
             return int(intext[ind+8::])
         except (ValueError, IndexError, TypeError) as err:
-            if self.verbose: print('Error:', err)
+            if self.verbose:
+                print('Error:', err)
             return 0
 
     def display_favourites_list(self) -> None:
@@ -665,7 +668,8 @@ class MainWindowRecipie(Ui_MainWindow):
         if self.checkBoxVegetarian.isChecked():
             tcats.append('vegetarian')
         self.cats = tcats
-        if self.verbose: print(f'Updated cats list is:\n{self.cats}')
+        if self.verbose:
+            print(f'Updated cats list is:\n{self.cats}')
 
     def clear_cats_list(self) -> None:
         '''Clears all checkboxes for diets and associated list'''
@@ -676,7 +680,9 @@ class MainWindowRecipie(Ui_MainWindow):
         self.checkBoxVegan.setChecked(False)
         self.checkBoxVegetarian.setChecked(False)
         self.cats.clear()
-        if self.verbose: print('Cleared cats list')
+        if self.verbose:
+            print('Cleared cats list')
+
 
 def load_quotes():
     '''Load quotes from hardcoded json file'''
