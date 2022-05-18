@@ -1,11 +1,9 @@
 '''Recipie Main Module'''
+import sys
 from pathlib import Path
 import argparse
 
-#from PyQt6 import QtCore, QtGui, QtWidgets
-
 import modules.revent
-#import modules.qtui
 import modules.recipelist
 
 
@@ -49,6 +47,7 @@ def main():
     if verbose:
         print(f'Total recipes indexed: {len(mainrlist.recipes)}')
     modules.revent.initmainwindow(verbose, mainrlist)
+
 
 
 if __name__ == '__main__':
