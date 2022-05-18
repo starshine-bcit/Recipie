@@ -46,7 +46,6 @@ def test_recipe_errors():
     name is a string, diets is a list, ingredients is a list,
     and instructions is a string.
     """
-
     with pytest.raises(TypeError):
         recipe = Recipe('a', NAME, INGREDIENTS, INSTRUCTIONS, DIETS)
     with pytest.raises(TypeError):
@@ -61,6 +60,7 @@ def test_recipe_errors():
         recipe = Recipe(1, NAME, ['not', 1,'list'], INSTRUCTIONS, DIETS)
     with pytest.raises(TypeError):
         recipe = Recipe(1, NAME, INGREDIENTS, ("not instructions", 1234), DIETS)
+
 
 def test_recipe_methods(rcp):
     """
