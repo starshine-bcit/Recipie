@@ -15,7 +15,7 @@ from .recipelist import RecipeList
 from .recipe import Recipe
 from .recipewindow import Ui_Dialog
 from .esearch import exact_search
-from .psearch import p_search
+from .psearch import partial_search
 
 #####################################################
 # Credits to https://www.pythonguis.com for this code
@@ -307,18 +307,15 @@ class MainWindowRecipie(Ui_MainWindow):
             if self.radioButtonExclusive.isChecked():
                 if self.verbose:
                     print('Starting exclusive search...')
-                # self.searchworker = Worker(
-                #     exact_search, search_terms, self.cats, self.rlist)
                 self.searchworker = Worker(
-                    exact_search, search_terms, self.rlist)
+                    exact_search, search_terms, self.cats, self.rlist)
                 self.lock_ui_elements()
                 # progress_callback.emit(n*100/4)
                 #search_type = getattr(esearch, 'exact_search')
             elif self.radioButtonInclusive.isChecked():
                 if self.verbose:
                     print('Starting inclusive search...')
-                # self.searchworker = Worker(p_search, search_terms, self.cats, self.rlist)
-                self.searchworker = Worker(p_search, self.cats, self.rlist)
+                self.searchworker = Worker(partial_search, search_terms, self.cats, self.rlist)
                 self.lock_ui_elements()
                 #search_type = getattr(exact_search, 'partial_search')
 
@@ -578,7 +575,6 @@ class MainWindowRecipie(Ui_MainWindow):
     def display_favourites_list(self) -> None:
         '''Reset then display all favourited recipes'''
 
-        # rework this function using recipe id
         if len(self.favlist) > 0:
             self.listWidgetFavouriteRecipes.clear()
             for x in self.favlist:
@@ -595,7 +591,6 @@ class MainWindowRecipie(Ui_MainWindow):
     def display_recipe_from_favourites(self) -> None:
         '''Find favourited recipe and display it as normal'''
 
-        # also rework this function using recipe id
         rname = self.listWidgetFavouriteRecipes.currentItem().text()
         clickedid = self.parse_list_recipe_text(rname)
         found = False
