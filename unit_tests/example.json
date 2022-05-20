@@ -23,7 +23,8 @@
         "title": "Death",
         "ingreds": [
             "3 cups of coca cola",
-            "2 sticks of mentos"
+            "2 sticks of mentos",
+            "2 walnuts"
         ],
         "instruct": "drink the cola then down the mentos"
     },

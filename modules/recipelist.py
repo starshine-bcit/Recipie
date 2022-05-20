@@ -36,10 +36,10 @@ class RecipeList:
                             id = count,
                             # id = int(key),
                             name = value["title"],
-                            # ingredients = value["ingreds"],
-                            ingredients = value["ingredients"],
-                            # instructions = value["instruct"],
-                            instructions = value["instructions"],
+                            ingredients = value["ingreds"],
+                            # ingredients = value["ingredients"],
+                            instructions = value["instruct"],
+                            # instructions = value["instructions"],
                             # diets = ["cat"], #  for when json has diets
                             diets = []  #  placeholder
                         )

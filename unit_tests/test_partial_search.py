@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 from modules.recipe import Recipe
 from modules.recipelist import RecipeList
-from modules.psearch import p_search
+from modules.psearch import p_search, partial_search
 
 
 INGREDIENTS_LOWER = ["flour", "sugar", "butter"]
@@ -61,3 +61,33 @@ def test_p_search_singular(recipelist):
     """
     result = p_search(['apple'], recipelist)
     assert result[0].name == 'Apple Pie'
+
+
+def test_main_search_using_categories_only(recipelist):
+    """
+    Tests if main search works as intended using only categories
+    """
+    cat_search = partial_search([], ["nutfree", "lactosefree"], recipelist)
+    assert isinstance(cat_search, list) == True
+    assert len(cat_search) == 2
+    assert cat_search[1].name == "Sweet Death"
+
+
+
+def test_main_search_using_partial_search_only(recipelist):
+    """
+    Tests if main search works as intended using only ingredients
+    """
+    search = partial_search(['flour', 'sugar', 'butter', 'apples'], [], recipelist)
+    assert isinstance(search, list) == True
+    assert len(search) == 1
+
+
+def test_main_search_using_both_searches(recipelist):
+    """
+    Tests main search with both searches to narrow down searching for certain ingredients
+    """
+    search = partial_search(['flour', 'sugar', 'butter', 'apples'], ["vegetarian", "nutfree"], recipelist)
+    assert isinstance(search, list) == True
+    assert len(search) == 1
+    assert search[0].name == "Apple Pie"  
