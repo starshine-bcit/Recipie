@@ -1,57 +1,58 @@
 {
-    "asdfoisdnfoisdf": {
+    "1": {
         "title": "Apple Pie",
-        "ingredients": [
+        "ingreds": [
             "5 cups of flour",
             "2 cups of sugar",
             "10 sticks of butter",
             "3 apples"
         ],
-        "instructions": "this is a recipe for apple pies"
+        "instruct": "this is a recipe for apple pies"
+
     },
-    "asdojsdnsdf": {
+    "2": {
         "title": "Blueberry Pie",
-        "ingredients": [
+        "ingreds": [
             "5 cups of flour",
             "2 cups of sugar",
             "10 sticks of butter",
             "2 cups of blueberries"
         ],
-        "instructions": "this is a recipe for blueberry pies"
+        "instruct": "this is a recipe for blueberry pies"
     },
-    "asodfndsofnsdf": {
+    "3": {
         "title": "Death",
-        "ingredients": [
+        "ingreds": [
             "3 cups of coca cola",
             "2 sticks of mentos"
         ],
-        "instructions": "drink the cola then down the mentos"
+        "instruct": "drink the cola then down the mentos"
     },
-    "alskdjglkasjdk": {
+    "4": {
         "title": "Sweet Death",
-        "ingredients": [
+        "ingreds": [
             "3 cups of coca cola",
             "2 sticks of mento",
             "1 cup of sugar"
         ],
-        "instructions": "drink the cola then down the mentos"
+        "instruct": "drink the cola then down the mentos"
     },
-    "asfjsdnfsdojfnsdf": {},
-    "alksjfkladsjf": {
+    "5": {},
+    "6": {
         "title": "Fake Shortbread",
-        "ingredients": [
+        "ingreds": [
             "2 cups butter",
             "1 cup packed salt",
             "4 1/2 cups all-purpose flour",
             "some mentos for fun"
         ],
-        "instructions": "death by minty salt"
+        "instruct": "death by minty salt"
     },
-    "alsksjfkladsjf": {
+    "7": {
         "title": "Chocolate",
-        "ingredients": [
+        "ingreds": [
             "milk chocolate"
         ],
-        "instructions": "choco choco choco"
+        "instruct": "choco choco choco"
     }
 }

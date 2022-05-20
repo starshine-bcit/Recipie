@@ -26,19 +26,25 @@ class RecipeList:
         for file in files:
             with file.open('r', encoding='utf-8') as fp:
                 data = json.load(fp)
+                count = 0
 
             for key, value in data.items():
                 try:
                     self.recipes.append(
+                        # FIXME: change un/commented code when done with data
                         Recipe(
-                            id = int(key),
+                            id = count,
+                            # id = int(key),
                             name = value["title"],
                             ingredients = value["ingreds"],
+                            # ingredients = value["ingredients"],
                             instructions = value["instruct"],
+                            # instructions = value["instructions"],
                             # diets = ["cat"], #  for when json has diets
-                            diets = []  # placeholder
+                            diets = []  #  placeholder
                         )
                     )
+                    count += 1
                 except:
                     # Quick check of where it is breaking
                     # print(self.recipes[-1].name)
@@ -59,12 +65,24 @@ class RecipeList:
         return random_recipe
 
     # Method used when cleaning up recipe data files.
-    def save_recipes_to_file(self):
-        """Writes recipes to JSON file"""
+    # Can be deleted when recipes are clean.
+    def save_recipes_to_file(self, count, filepath: str) -> int:
+        """Writes recipes to JSON file
+
+        Args:
+            count (int):
+                Number for continuous numbering of all recipes.
+            filepath (str):
+                Relative path to new file to write into.
+        """
+
         recipes_json = {}
-        count = 0
-        # FIXME: update file to write to
-        with open("./data/recipe_list_test.json", "w") as fp:
+        # ar, epi, fn
+        # count = 0
+        # count = 39522
+        # count = 64845
+        # count = 124473
+        with open(filepath, "w") as fp:
             for recipe in self.recipes:
                 recipes_json.update(
                     {count: {
@@ -76,6 +94,8 @@ class RecipeList:
                 )
                 count +=1
             json.dump(recipes_json, fp, indent = 4)
+            print(count)
+        return count
 
     # Adds dietary label to recipe and returns list of recipes
     def get_diet_recipes(
@@ -112,7 +132,7 @@ class RecipeList:
                 # If last exclude ingredient is reached without
                 #  breaking loop, recipe is labeled and appended.
                 if ingred == exclude_ingreds[-1]:
-                    recipe.add_label(label)
+                    recipe.add_label(label)  #FIXME: remove labelling later
                     results_list.append(recipe)
 
         return results_list
