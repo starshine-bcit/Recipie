@@ -23,3 +23,13 @@ htmlcov/
 
 # Qt Debug
 build-*-Debug
+
+# PyInstaller
+build
+dist
+
+# User Data
+data/favourites.csv
+
+# setuptools
+recipie.egg-info
