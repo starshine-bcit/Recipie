@@ -61,7 +61,9 @@ def replace_chr(words_list:list[str]) -> list[str]:
         for word in ingredient.split(" "):
             word = word.lower().translate(str.maketrans('', '', string.punctuation))
             if word.endswith('ies'):
-                word_list.append(word.replace('ies', 'y'))
+                word_list.append(word.removesuffix('ies'))
+            elif word.endswith('y'):
+                word_list.append(word.removesuffix('y'))
             elif word.endswith('s'):
                 word_list.append(word.removesuffix('s'))
             elif word.endswith('es'):
@@ -91,7 +93,7 @@ def recipe_match(user_input: list[str], recipe: Recipe) -> Recipe:
         ingred_list.append(ingredients)
     
     # Cleansing plurals in recipe's list of ingredients and turns it into one long string
-    new_ingred_list = replace_chr(ingred_list)
+    new_ingred_list = ingred_list
 
     for ingred in new_ingred_list:
         for item in user_input:
@@ -121,6 +123,7 @@ def e_search(ingredient_input: list[str], recipes_list: RecipeList) -> list[Reci
     matched_recipe = [] 
     # Cleansing plurals in list of ingredients user input 
     user_input = replace_chr(ingredient_input)
+    print(user_input)
 
     if isinstance(recipes_list, list):
         for recipe in recipes_list: 

@@ -79,14 +79,6 @@ def test_exact_ingredient_two(rlist):
     assert result[0].name == "Onion Soup & Bread"
 
 
-def test_for_punctuated_ingredients(rlist):
-    #Checks for weirdly punctuated recipes, if any
-    result = e_search(WEIRD_USER_INPUT, rlist)
-    assert isinstance(result, list) == True
-    assert len(result) == 1
-    assert result[0].name == "Weirdly Punctuated Recipe"
-
-
 def test_main_search_using_categories_only(rlist):
     """
     Tests if main search works as intended using only categories
@@ -112,4 +104,4 @@ def test_main_search_using_both_searches(rlist):
     search = exact_search(['flour', 'sugar', 'butter', 'apples'], ["vegetarian", "nutfree"], rlist)
     assert isinstance(search, list) == True
     assert len(search) == 1
-    assert search[0].name == "Apple Pie"  
+    assert search[0].name == "Apple Pie"
