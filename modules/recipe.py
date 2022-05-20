@@ -62,6 +62,9 @@ class Recipe:
                 "Recipe diet labels improperly formatted, should be a list."
             )
 
+        # Remove empty line ingredients
+        ingredients = [ingred for ingred in ingredients if ingred != "\n"]
+
         self.id = id
         self.name = name
         self.ingredients = ingredients

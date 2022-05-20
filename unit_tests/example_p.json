@@ -1,3 +1,58 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:dad3e159ab313fdf68cc453e3e6d73d0b787eaf98b580498425c45198ef688c6
-size 1456
+{
+    "1": {
+        "title": "Apple Pie",
+        "ingreds": [
+            "5 cups of flour",
+            "2 cups of sugar",
+            "10 sticks of butter",
+            "3 apples"
+        ],
+        "instruct": "this is a recipe for apple pies"
+
+    },
+    "2": {
+        "title": "Blueberry Pie",
+        "ingreds": [
+            "5 cups of flour",
+            "2 cups of sugar",
+            "10 sticks of butter",
+            "2 cups of blueberries"
+        ],
+        "instruct": "this is a recipe for blueberry pies"
+    },
+    "3": {
+        "title": "Death",
+        "ingreds": [
+            "3 cups of coca cola",
+            "2 sticks of mentos"
+        ],
+        "instruct": "drink the cola then down the mentos"
+    },
+    "4": {
+        "title": "Sweet Death",
+        "ingreds": [
+            "3 cups of coca cola",
+            "2 sticks of mento",
+            "1 cup of sugar"
+        ],
+        "instruct": "drink the cola then down the mentos"
+    },
+    "5": {},
+    "6": {
+        "title": "Fake Shortbread",
+        "ingreds": [
+            "2 cups butter",
+            "1 cup packed salt",
+            "4 1/2 cups all-purpose flour",
+            "some mentos for fun"
+        ],
+        "instruct": "death by minty salt"
+    },
+    "7": {
+        "title": "Chocolate",
+        "ingreds": [
+            "milk chocolate"
+        ],
+        "instruct": "choco choco choco"
+    }
+}
