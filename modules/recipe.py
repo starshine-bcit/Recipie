@@ -8,20 +8,12 @@ class Recipe:
             ID number of recipe when in a list.
         name (str):
             Name of the recipe.
-<<<<<<< HEAD
-=======
         diets (list[str]):
             Dietary labels/categories of the recipe.
->>>>>>> star/dev
         ingredients (list[str]):
             Ingredients used in the recipe.
         instructions (str):
             Instructions for how to make the recipe.
-<<<<<<< HEAD
-        diets (list[str]):
-            Dietary labels/categories of the recipe.
-=======
->>>>>>> star/dev
     """
 
     def __init__(

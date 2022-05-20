@@ -33,7 +33,7 @@ class RecipeList:
                     self.recipes.append(
                         # FIXME: change un/commented code when done with data
                         Recipe(
-                            id = count,
+                            id = int(key),
                             # id = int(key),
                             name = value["title"],
                             ingredients = value["ingreds"],

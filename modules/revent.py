@@ -1,4 +1,5 @@
 '''Recipie module for subclassing and event handling'''
+from functools import singledispatch
 import sys
 import traceback
 import re
@@ -553,7 +554,7 @@ class MainWindowRecipie(Ui_MainWindow):
             self.write_favourites_to_file()
             self.display_favourites_list()
             self.status_bar_display('Added favourite')
-            self.timer.start(1500)
+            self.timer.singleShot(1500, self.timeout_status_bar_display)
 
     def get_list_recipe_text(self, name: str, id: int) -> str:
         '''Sets display text for favourites and search results'''
