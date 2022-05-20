@@ -1,3 +1,60 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:00ffc0b892adae4e30efbb53b20630d3f38d0a9085dc2e84bc2c1126ed2c5652
-size 1694
+{
+    "1": {
+        "title": "Apple Pie",
+        "ingredients": [
+            "3 apples",
+            "5 cups of flour",
+            "2 cups of sugar",
+            "10 sticks of butter"
+        ],
+        "instructions": "this is a recipe for apple pies"
+    },
+    "2": {
+        "title": "Blueberry Pie",
+        "ingredients": [
+            "2 cups of blueberries",
+            "5 cups of flour",
+            "2 cups of sugar",
+            "10 sticks of butter"
+        ],
+        "instructions": "this is a recipe for blueberry pies"
+    },
+    "3": {
+        "title": "Death",
+        "ingredients": [
+            "3 cups of coca cola",
+            "2 sticks of mentos"
+        ],
+        "instructions": "drink the cola then down the mentos"
+    },
+    "4": {
+        "title": "Sandwich with Onions",
+        "ingredients": [
+            "2 slices of bread",
+            "1 whole onion",
+            "2 slices of ham",
+            "1 lettuce leaf"
+        ],
+        "instructions": "Assemble this very sad sandwich that is meant to test the onion thingo"
+    },    
+    "5": {
+        "title": "Onion Soup & Bread",
+        "ingredients": [
+            "1 can of onion soup",
+            "3 slices of bread",
+            "1 leg of ham",
+            "1 whole head of lettuce"
+        ],
+        "instructions": "Toast the bread and drink the soup, eat like a barbarian."
+    },
+    "6": {
+        "title": "Weirdly Punctuated Recipe",
+        "ingredients": [
+            "2 grams of strawberries?",
+            "1 spoonful of chicken!!!",
+            "5 pounds of broccoli."
+        ],
+        "instructions": "Haha you thought this was a real recipe?!"
+    },
+    "7": {}
+}

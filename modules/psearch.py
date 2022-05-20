@@ -2,8 +2,8 @@
 and returns matching recipes (that use all ingredients) as a list"""
 
 import re
-from modules.recipe import Recipe
-from modules.recipelist import RecipeList
+from .recipe import Recipe
+from .recipelist import RecipeList
 
 # When testing, comment out above import blocks & uncomment below imports
 # from ACIT2911.modules.recipe import Recipe

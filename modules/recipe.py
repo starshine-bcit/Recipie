@@ -63,7 +63,7 @@ class Recipe:
             )
 
         self.id = id
-        self.name = name
+        self.name = name.strip()
         self.ingredients = ingredients
         self.instructions = instructions
         self.diets = diets
