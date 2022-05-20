@@ -3,8 +3,8 @@ import sys
 from pathlib import Path
 import argparse
 
-import modules.revent
-import modules.recipelist
+from modules.revent import initmainwindow
+from modules.recipelist import RecipeList
 
 
 def createdslist(args):
@@ -30,7 +30,7 @@ def main():
         '-ds',
         '--datastore',
         type=Path,
-        default=Path('./data'),
+        default=Path(__file__).parent.joinpath('data'),
         help='json file to load, hopefully with recipies'
     )
 
@@ -43,10 +43,11 @@ def main():
 
     verbose = True if args.verbose else False
     datafilelist = createdslist(args)
-    mainrlist = modules.recipelist.RecipeList(datafilelist)
+    mainrlist = RecipeList(datafilelist)
     if verbose:
         print(f'Total recipes indexed: {len(mainrlist.recipes)}')
-    modules.revent.initmainwindow(verbose, mainrlist)
+    initmainwindow(verbose, mainrlist)
+
 
 
 if __name__ == '__main__':

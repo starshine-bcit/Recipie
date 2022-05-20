@@ -1,0 +1,2 @@
+Write-Host 'Attempting to build recipie...'
+& pyinstaller --add-data="data;data" --add-data="image;image" --add-data="README.md;." --add-data="LICENSE;." --add-data="modules;modules" --add-data="recipie.py;." --icon="image\PieLogo256.ico" -w recipie.py .\modules\revent.py .\modules\esearch.py .\modules\qtui.py .\modules\recipe.py .\modules\recipelist.py .\modules\recipewindow.py

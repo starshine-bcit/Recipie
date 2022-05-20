@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 from modules.recipe import Recipe
 from modules.recipelist import RecipeList
-from modules.esearch import exact_search
+from modules.esearch import exact_search, e_search
 
 
 USER_INPUT = ['flour', 'sugar', 'butter', 'apples']
@@ -22,7 +22,7 @@ def rlist():
 
 @pytest.fixture
 def search(rlist):
-    result = exact_search(USER_INPUT, rlist)
+    result = e_search(USER_INPUT, rlist)
     return result 
 
 
@@ -51,21 +51,21 @@ def test_exact_search_working(search):
 
 def test_irregular_input(rlist):
     #Checks if the exact match function works even if the user doesn't know how to turn off their caps or stop holding shift
-    result = exact_search(ANNOYING_USER_INPUT, rlist)
+    result = e_search(ANNOYING_USER_INPUT, rlist)
     assert isinstance(result, list) == True
     assert result[0].name == "Blueberry Pie"
 
 
 def test_plural_input(rlist):
     #Checks if the exact_search function works even if the user forgets to make the word plural
-    result = exact_search(SINGULAR_USER_INPUT, rlist)
+    result = e_search(SINGULAR_USER_INPUT, rlist)
     assert isinstance(result, list) == True
     assert result[0].name == "Apple Pie"
 
 
 def test_exact_ingredient(rlist):
     #Checks if it only matches with the ingredient and not ingredients with that share the same ingredient, eg. onions and onion soup
-    result = exact_search(ONION_ENJOYER_INPUT, rlist)
+    result = e_search(ONION_ENJOYER_INPUT, rlist)
     assert isinstance(result, list) == True
     assert len(result) == 1
     assert result[0].name == "Sandwich with Onions"
@@ -73,15 +73,35 @@ def test_exact_ingredient(rlist):
 
 def test_exact_ingredient_two(rlist):
     #Checks if it only matches with the ingredient and not ingredients with that share the same ingredient, eg. onions and onion soup
-    result = exact_search(ONION_SOUP_ENJOYER_INPUT, rlist)
+    result = e_search(ONION_SOUP_ENJOYER_INPUT, rlist)
     assert isinstance(result, list) == True
     assert len(result) == 1
     assert result[0].name == "Onion Soup & Bread"
 
 
-def test_for_punctuated_ingredients(rlist):
-    #Checks for weirdly punctuated recipes, if any
-    result = exact_search(WEIRD_USER_INPUT, rlist)
-    assert isinstance(result, list) == True
-    assert len(result) == 1
-    assert result[0].name == "Weirdly Punctuated Recipe"
+def test_main_search_using_categories_only(rlist):
+    """
+    Tests if main search works as intended using only categories
+    """
+    cat_search = exact_search([], ["nutfree", "lactosefree"], rlist)
+    assert isinstance(cat_search, list) == True
+    assert len(cat_search) == 3
+
+
+def test_main_search_using_exact_search_only(rlist):
+    """
+    Tests if main search works as intended using only ingredients
+    """
+    search = exact_search(['flour', 'sugar', 'butter', 'apples'], [], rlist)
+    assert isinstance(search, list) == True
+    assert len(search) == 1
+
+
+def test_main_search_using_both_searches(rlist):
+    """
+    Tests main search with both searches to narrow down searching for certain ingredients
+    """
+    search = exact_search(['flour', 'sugar', 'butter', 'apples'], ["vegetarian", "nutfree"], rlist)
+    assert isinstance(search, list) == True
+    assert len(search) == 1
+    assert search[0].name == "Apple Pie"
