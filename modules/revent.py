@@ -5,6 +5,8 @@ import re
 import json
 from pathlib import Path
 from random import choice
+import operator
+import csv
 
 from PyQt6 import QtCore, QtGui, QtWidgets, QtPrintSupport
 
@@ -13,10 +15,12 @@ from .recipelist import RecipeList
 from .recipe import Recipe
 from .recipewindow import Ui_Dialog
 from .esearch import exact_search
-from .psearch import p_search
+from .psearch import partial_search
 
-
+#####################################################
 # Credits to https://www.pythonguis.com for this code
+
+
 class WorkerSignals(QtCore.QObject):
     '''
     Defines the signals available from a running worker thread.
@@ -84,11 +88,12 @@ class Worker(QtCore.QRunnable):
             print((exctype, value, traceback.format_exc()))
             # self.signals.error.emit((exctype, value, traceback.format_exc()))
         else:
-            self.signals.result.emit(result)  # Return the result of the processing
+            # Return the result of the processing
+            self.signals.result.emit(result)
         finally:
             self.signals.finished.emit()  # Done
-#End credited code here
-
+# End credited code here
+#####################################################
 
 
 class MainWindowRecipie(Ui_MainWindow):
@@ -117,11 +122,10 @@ class MainWindowRecipie(Ui_MainWindow):
         self.srlist = {}
         self.verbose = verbose
         self.currname = ''
-        self.multiwin = {} 
-        #self.timer = QtCore.QTimer()
-        #self.timer.setInterval(1000)
-        #self.timer.timeout.connect(self.recurring_timer)
-        #self.timer.start()
+        self.currid = ''
+        self.multiwin = {}
+        self.favlist = []
+        self.cats = []
 
     def setupUicustom(self):
         '''Setup various elements which have no depends'''
@@ -131,12 +135,25 @@ class MainWindowRecipie(Ui_MainWindow):
         self.labelStatusBarRecipeCount = QtWidgets.QLabel(
             f'Indexing {len(self.rlist.recipes)} recipes ')
         self.statusbar.addPermanentWidget(self.labelStatusBarRecipeCount)
+        self.labelStatusBarFavCount = QtWidgets.QLabel()
+        self.update_favcount_status_bar()
+        self.statusbar.addPermanentWidget(self.labelStatusBarFavCount)
         self.statusbar.showMessage('Ready')
         self.tabWidgetRecipe.setCurrentIndex(0)
         self.tabWidgetSearch.setCurrentIndex(0)
         self.pushButtonDisplayRecipeNewWindow.setEnabled(False)
+        self.pushButtonAddFavourite.setEnabled(False)
         self.quotes = load_quotes()
         self.threadpool = QtCore.QThreadPool().globalInstance()
+        self.pushButtonRemoveAllFavourites.setEnabled(False)
+        self.pushButtonRemoveSelectedFavourites.setEnabled(False)
+        self.load_favourites_from_file()
+        self.listWidgetFavouriteRecipes.setSortingEnabled(True)
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(1000)
+
+        # self.listWidgetSearchResults.setSortingEnabled(True)
+        # Enable this once we have id on recipes?
 
     def createevents(self) -> None:
         '''Connect triggered events with functions'''
@@ -158,8 +175,25 @@ class MainWindowRecipie(Ui_MainWindow):
             self.click_search_result)
         self.pushButtonDisplayRecipeNewWindow.clicked.connect(
             self.display_recipe_window)
-        self.radioButtonExclusive.clicked.connect(self.exclusive_search_clicked)
-        self.radioButtonInclusive.clicked.connect(self.inclusive_search_clicked)
+        self.radioButtonExclusive.clicked.connect(
+            self.call_search)
+        self.radioButtonInclusive.clicked.connect(
+            self.call_search)
+        self.pushButtonAddFavourite.clicked.connect(self.add_favourite)
+        self.pushButtonRemoveAllFavourites.clicked.connect(
+            self.remove_all_favourites)
+        self.pushButtonRemoveSelectedFavourites.clicked.connect(
+            self.remove_selected_favourites)
+        self.listWidgetFavouriteRecipes.itemDoubleClicked.connect(
+            self.display_recipe_from_favourites)
+        self.timer.timeout.connect(self.timeout_status_bar_display)
+        self.pushButtonResetFilters.clicked.connect(self.clear_cats_list)
+        self.checkBoxGluten.clicked.connect(self.update_cats_list)
+        self.checkBoxLactose.clicked.connect(self.update_cats_list)
+        self.checkBoxNut.clicked.connect(self.update_cats_list)
+        self.checkBoxVegan.clicked.connect(self.update_cats_list)
+        self.checkBoxVegetarian.clicked.connect(self.update_cats_list)
+        self.pushButtonSendFilterSearch.clicked.connect(self.call_search)
 
         self.actionExit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
         self.actionPrint.setShortcut(QtGui.QKeySequence('Ctrl+P'))
@@ -210,7 +244,10 @@ class MainWindowRecipie(Ui_MainWindow):
         self.textBrowserRecipeDirections.setText(rcp.instructions)
         self.set_md_recipe(rcp.name, ingreds, rcp.instructions)
         self.pushButtonDisplayRecipeNewWindow.setEnabled(True)
+        self.pushButtonAddFavourite.setEnabled(True)
         self.currname = rcp.name
+        self.currid = rcp.id
+        self.currrcp = rcp
 
     def exit_recipie(self) -> None:
         '''Exit the entire program'''
@@ -233,7 +270,7 @@ class MainWindowRecipie(Ui_MainWindow):
 
     def enter_search_term(self) -> None:
         '''Captures text from user entry and inputs to search list'''
-        
+
         stext = self.lineEditIngredientEntry.text()
         search_terms = [self.listWidgetSearchInput.item(
             x).text() for x in range(self.listWidgetSearchInput.count())]
@@ -243,40 +280,48 @@ class MainWindowRecipie(Ui_MainWindow):
             self.call_search()
         elif stext in search_terms:
             self.lineEditIngredientEntry.setText('')
-            if self.verbose: print('Error, search term already exists')
+            if self.verbose:
+                print('Error, search term already exists')
         else:
             self.lineEditIngredientEntry.setText('')
             newitem = QtWidgets.QListWidgetItem(stext)
             self.listWidgetSearchInput.addItem(newitem)
             self.call_search()
-        
 
     def call_search(self) -> None:
         '''Sends list of user search terms to logic search functions'''
 
         self.listWidgetSearchResults.clear()
-        search_terms = [self.listWidgetSearchInput.item(
-            x).text() for x in range(self.listWidgetSearchInput.count())]
+        if self.listWidgetSearchInput.count() > 0:
+            search_terms = [self.listWidgetSearchInput.item(
+                x).text() for x in range(self.listWidgetSearchInput.count())]
+        else:
+            search_terms = []
         if self.verbose:
             print(
                 f'Sending these terms to search:\n{search_terms}'
+                f'Sending these categories to search:\n{self.cats}'
             )
         # Pass the function to execute
-        if len(search_terms) > 0:
+        if len(search_terms) > 0 or len(self.cats) > 0:
             if self.radioButtonExclusive.isChecked():
-                if self.verbose: print('Starting exclusive search...')
-                self.searchworker = Worker(exact_search, search_terms, self.rlist)
+                if self.verbose:
+                    print('Starting exclusive search...')
+                self.searchworker = Worker(
+                    exact_search, search_terms, self.cats, self.rlist)
                 self.lock_ui_elements()
                 # progress_callback.emit(n*100/4)
                 #search_type = getattr(esearch, 'exact_search')
             elif self.radioButtonInclusive.isChecked():
-                if self.verbose: print('Starting inclusive search...')
-                self.searchworker = Worker(p_search, search_terms, self.rlist)
+                if self.verbose:
+                    print('Starting inclusive search...')
+                self.searchworker = Worker(partial_search, search_terms, self.cats, self.rlist)
                 self.lock_ui_elements()
                 #search_type = getattr(exact_search, 'partial_search')
 
              # Setup our signals
-            self.searchworker.signals.result.connect(self.display_search_result_list)
+            self.searchworker.signals.result.connect(
+                self.display_search_result_list)
             self.searchworker.signals.finished.connect(self.thread_complete)
             # searchworker.signals.progress.connect(self.progress_fn)
 
@@ -285,10 +330,13 @@ class MainWindowRecipie(Ui_MainWindow):
         else:
             self.srlist.clear()
             if self.verbose:
-                print('Search called, but no items to search for')
- 
+                print('Error: Search called, there are no terms or categories')
+
     def thread_complete(self):
-        if self.verbose: print('Search thread completed')
+        '''To be triggered when search worker finishes, unlocks ui elements'''
+
+        if self.verbose:
+            print('Search thread completed')
         self.unlock_ui_elements()
 
     def lock_ui_elements(self):
@@ -303,6 +351,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonRemoveSelected.setEnabled(False)
         self.actionRemove_Selected.setEnabled(False)
         self.actionReset_Search.setEnabled(False)
+        self.pushButtonSendFilterSearch.setEnabled(False)
         self.status_bar_display('Searching...')
 
     def unlock_ui_elements(self):
@@ -316,6 +365,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonResetSearch.setEnabled(True)
         self.pushButtonRemoveSelected.setEnabled(True)
         self.actionRemove_Selected.setEnabled(True)
+        self.pushButtonSendFilterSearch.setEnabled(True)
         self.actionReset_Search.setEnabled(True)
 
     def reset_search(self) -> None:
@@ -349,7 +399,9 @@ class MainWindowRecipie(Ui_MainWindow):
         self.textBrowserRecipeDirections.setText('')
         self.curr_recipe_md.setMarkdown('')
         self.pushButtonDisplayRecipeNewWindow.setEnabled(False)
-        self.labelTopBarText.setText('Welcome to Recipie Beta, please hit \'Random Recipe to try it out!')
+        self.pushButtonAddFavourite.setEnabled(False)
+        self.labelTopBarText.setText(
+            'Welcome to Recipie Beta, please hit \'Random Recipe to try it out!')
         if self.verbose:
             print('Clearing displayed recipe...')
 
@@ -366,6 +418,7 @@ class MainWindowRecipie(Ui_MainWindow):
 
     def set_md_recipe(self, title: str, ingred: str, instruct: str) -> None:
         '''Format and store markdown based on string version of recipe
+        This code could use a refactor
 
         Args:
             title (str): title of recipe
@@ -400,11 +453,14 @@ class MainWindowRecipie(Ui_MainWindow):
 
         self.srlist.clear()
 
+        unlist.sort(key=operator.attrgetter('name'))
+
         for x in range(len(unlist)):
             self.srlist.update({x: unlist[x]})
         srlistlen = len(self.srlist)
 
         for x in range(srlistlen):
+            #newname = self.get_list_recipe_text(self.srlist[x].name, self.srlist[x].id)
             newname = self.srlist[x].name
             newitem = QtWidgets.QListWidgetItem(newname)
             self.listWidgetSearchResults.addItem(newitem)
@@ -439,32 +495,202 @@ class MainWindowRecipie(Ui_MainWindow):
         '''Display quotes from self.quotes'''
 
         rquote = choice(self.quotes['quotes'])
-        qstring = rquote['quote'] + '\n- ' + rquote['author']
+        qstring = rquote['quote'] + ' -- ' + rquote['author']
         self.labelTopBarText.setText(qstring)
 
-    def exclusive_search_clicked(self) -> None:
-        self.radioButtonExclusive.setChecked(True)
-        self.radioButtonInclusive.setChecked(False)
-        self.call_search()
+    def load_favourites_from_file(self) -> None:
+        '''Load saved and favourited recipes from hardcoded csv file'''
 
-    def inclusive_search_clicked(self) -> None:
-        self.radioButtonExclusive.setChecked(False)
-        self.radioButtonInclusive.setChecked(True)
-        self.call_search()
+        favfilepath = Path(__file__).parent.parent.joinpath(
+            'data/favourites.csv')
+        if favfilepath.exists():
+            with favfilepath.open('r', encoding='utf-8', newline='') as file:
+                reader = csv.reader(file, delimiter='~', quotechar='`')
+                tlist = list(reader)
+                self.favlist = tlist[0]
+                if len(self.favlist) > 0:
+                    self.pushButtonRemoveAllFavourites.setEnabled(True)
+                    self.pushButtonRemoveAllFavourites.setEnabled(True)
+                self.display_favourites_list()
+                if self.verbose:
+                    print(f'Loaded {len(self.favlist)} favourites from file')
+        else:
+            if self.verbose:
+                print(f'No favourites file to load :\'(')
+            self.favlist = []
+        self.update_favcount_status_bar()
+
+    def write_favourites_to_file(self) -> None:
+        '''Write out a csv file of favourited recipes'''
+
+        favfilepath = Path(__file__).parent.parent.joinpath(
+            'data/favourites.csv')
+        if len(self.favlist) > 0:
+            with favfilepath.open('w', encoding='utf-8', newline='') as file:
+                writer = csv.writer(file, delimiter='~', quotechar='`')
+                writer.writerow(self.favlist)
+            if self.verbose:
+                print(
+                    f'Successfully wrote favourites file with {len(self.favlist)} items')
+        else:
+            if favfilepath.is_file:
+                if self.verbose:
+                    print('Deleting favourites file')
+                favfilepath.unlink()
+        self.update_favcount_status_bar()
+
+    def add_favourite(self) -> None:
+        '''Add selected recipe from search to favourites'''
+
+        if self.currname in self.favlist:
+            if self.verbose:
+                print('Error: Recipe is already in favourites')
+        else:
+            if self.verbose:
+                print(f'Added favourite recipe: {self.currname}')
+            newname = self.get_list_recipe_text(self.currname, self.currid)
+            self.favlist.append(newname)
+            self.write_favourites_to_file()
+            self.display_favourites_list()
+            self.status_bar_display('Added favourite')
+            self.timer.start(1500)
+
+    def get_list_recipe_text(self, name: str, id: int) -> str:
+        '''Sets display text for favourites and search results'''
+
+        return name + ' -- ID: ' + str(id)
+
+    def parse_list_recipe_text(self, intext: str) -> int:
+        '''Parses display text for favourites and search results
+        Returns and integer corresponding to recipe id'''
+
+        try:
+            ind = intext.find(' -- ID: ')
+            return int(intext[ind+8::])
+        except (ValueError, IndexError, TypeError) as err:
+            if self.verbose:
+                print('Error:', err)
+            return 0
+
+    def display_favourites_list(self) -> None:
+        '''Reset then display all favourited recipes'''
+
+        if len(self.favlist) > 0:
+            self.listWidgetFavouriteRecipes.clear()
+            for x in self.favlist:
+                newitem = QtWidgets.QListWidgetItem(x)
+                self.listWidgetFavouriteRecipes.addItem(newitem)
+            self.pushButtonRemoveAllFavourites.setEnabled(True)
+            self.pushButtonRemoveSelectedFavourites.setEnabled(True)
+            if self.verbose:
+                print(f'Displaying {len(self.favlist)} favourites')
+        else:
+            self.pushButtonRemoveAllFavourites.setEnabled(False)
+            self.pushButtonRemoveSelectedFavourites.setEnabled(False)
+
+    def display_recipe_from_favourites(self) -> None:
+        '''Find favourited recipe and display it as normal'''
+
+        rname = self.listWidgetFavouriteRecipes.currentItem().text()
+        clickedid = self.parse_list_recipe_text(rname)
+        found = False
+        for recipe in self.rlist.recipes:
+            if recipe.id == clickedid:
+                rmatch = recipe
+                found = True
+                break
+        if found:
+            if self.verbose:
+                print('Found favourite recipe to display')
+            self.display_recipe(rmatch)
+            self.tabWidgetRecipe.setCurrentIndex(0)
+        else:
+            if self.verbose:
+                print('Error: Can\'t find favourite recipe to display')
+
+    def remove_all_favourites(self) -> None:
+        '''Remove all favourites and clear file'''
+
+        # Add dialog box to confirm
+        self.listWidgetFavouriteRecipes.clear()
+        self.favlist.clear()
+        self.pushButtonRemoveAllFavourites.setEnabled(False)
+        self.pushButtonRemoveSelectedFavourites.setEnabled(False)
+        if self.verbose:
+            print('Removing all favourites')
+        self.write_favourites_to_file()
+
+    def remove_selected_favourites(self) -> None:
+        '''Remove favourites as selected on list widget'''
+
+        count = len(self.listWidgetFavouriteRecipes.selectedItems())
+        if count > 0:
+            for listitem in self.listWidgetFavouriteRecipes.selectedItems():
+                self.favlist.remove(listitem.text())
+                self.listWidgetFavouriteRecipes.takeItem(
+                    self.listWidgetFavouriteRecipes.row(listitem))
+                self.write_favourites_to_file()
+                if self.verbose:
+                    print(f'Removed {count} items from favourites')
+            if self.listWidgetFavouriteRecipes.count() == 0:
+                self.pushButtonRemoveAllFavourites.setEnabled(False)
+                self.pushButtonRemoveSelectedFavourites.setEnabled(False)
+        else:
+            if self.verbose:
+                print('No selected favourites to remove')
+
+    def timeout_status_bar_display(self) -> None:
+        '''Function to trigger Ready display when timer runs out'''
+
+        self.status_bar_display('Ready')
+
+    def update_favcount_status_bar(self) -> None:
+        self.labelStatusBarFavCount.setText(
+            f'Favourites: {len(self.favlist)} ')
+
+    def update_cats_list(self) -> None:
+        '''Updates cats list on checkbox clicks'''
+
+        tcats = []
+        if self.checkBoxGluten.isChecked():
+            tcats.append('glutenfree')
+        if self.checkBoxLactose.isChecked():
+            tcats.append('lactosefree')
+        if self.checkBoxNut.isChecked():
+            tcats.append('nutfree')
+        if self.checkBoxVegan.isChecked():
+            tcats.append('vegan')
+        if self.checkBoxVegetarian.isChecked():
+            tcats.append('vegetarian')
+        self.cats = tcats
+        if self.verbose:
+            print(f'Updated cats list is:\n{self.cats}')
+
+    def clear_cats_list(self) -> None:
+        '''Clears all checkboxes for diets and associated list'''
+
+        self.checkBoxGluten.setChecked(False)
+        self.checkBoxLactose.setChecked(False)
+        self.checkBoxNut.setChecked(False)
+        self.checkBoxVegan.setChecked(False)
+        self.checkBoxVegetarian.setChecked(False)
+        self.cats.clear()
+        if self.verbose:
+            print('Cleared cats list')
+
 
 def load_quotes():
-    """Load quotes from hardcoded json file
+    '''Load quotes from hardcoded json file'''
 
-    Returns:
-        dict: dictionary of quotes
-    """    
     try:
-        file = Path('./data/quotes/quotes.json')
+        file = Path(__file__).parent.parent.joinpath('data/quotes/quotes.json')
         with file.open('r', encoding='utf-8') as fp:
             data = json.load(fp)
         return data
-    except FileNotFoundError as err: print(err)
-    except TypeError as err: print(err)
+    except FileNotFoundError as err:
+        print(err)
+    except TypeError as err:
+        print(err)
 
 
 def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
