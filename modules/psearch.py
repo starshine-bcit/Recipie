@@ -1,13 +1,10 @@
 """A function that takes in a list of ingredients and a list of recipes
 and returns matching recipes (that use all ingredients) as a list"""
 
-# import re
+
 from modules.recipe import Recipe
 from modules.recipelist import RecipeList
-
-# When testing, comment out above import blocks & uncomment below imports
-# from ACIT2911.modules.recipe import Recipe
-# from ACIT2911.modules.recipelist import RecipeList
+from modules.catsearch import category_search
 
 
 def partial_search(ingredients_list: list[str], categories: list[str], rlist: RecipeList) -> list[Recipe]:
@@ -38,19 +35,6 @@ def partial_search(ingredients_list: list[str], categories: list[str], rlist: Re
     return matched_recipes
 
 
-def category_search(cat: list[str], rlist: RecipeList) -> list[Recipe]:
-    """
-    Searches through the recipe list(rlist) and returns recipes(dict) that match the category(s)(cat)
-    """
-    matched_recipe = []
-    for recipe in rlist.recipes: 
-        intersection = set(recipe.diets).intersection(set(cat)) 
-        if len(intersection) == len(cat): 
-            matched_recipe.append(recipe)
-
-    return matched_recipe
-
-
 def recipe_match(ingredients_list: list[str], recipe: Recipe) -> Recipe:
     """
     Is given a list of ingredients and single Recipe, returns the recipe if it matches the ingredients or none if it does not match
@@ -78,21 +62,6 @@ def recipe_match(ingredients_list: list[str], recipe: Recipe) -> Recipe:
             if ingredient in rec_ingredient:
                 matches += 1
                 break   
-
-            ### Regex to be explored another time.
-            # # Set up regex to look for possibly plural ingredient
-            # #  and commas and spaces to single out ingredient
-            # to_match = f'^{ingredient}[ies]*[,\\s]+|'\
-            #         f'[,\\s]+{ingredient}[ies]*$|'\
-            #         f'[,\\s]+{ingredient}[ies]*[,\\s]+|'\
-            #         f'^{ingredient}$'
-            # match = re.search(to_match, rec_ingredient)
-            # # Stop looping if input ingredient is in current
-            # #  recipe ingredient, increment if ingredients match
-            # if match:
-            #     matches += 1
-            #     break
-            ###
 
         # Stop looping and add recipe to list to be returned
         #  if number of matches is met, return recipe
