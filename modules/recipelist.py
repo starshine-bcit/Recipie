@@ -4,7 +4,7 @@ import json
 import random
 from pathlib import Path
 from .recipe import Recipe
-from .constants import GLUTEN_FREE, LACTOSE_FREE, NUT_FREE, VEGAN, VEGGIE
+# from .constants import GLUTEN_FREE, LACTOSE_FREE, NUT_FREE, VEGAN, VEGGIE
 
 
 class RecipeList:
@@ -40,8 +40,8 @@ class RecipeList:
                             # ingredients = value["ingredients"],
                             instructions = value["instruct"],
                             # instructions = value["instructions"],
-                            # diets = ["cat"], #  for when json has diets
-                            diets = []  #  placeholder
+                            diets = value["cat"], #  for when json has diets
+                            # diets = []  #  placeholder
                         )
                     )
                     count += 1
@@ -53,11 +53,11 @@ class RecipeList:
         
         # FIXME: recipes for different diets
         # self.not_pie = self.get_diet_recipes('not a pie', ['apples', 'blueberries'])
-        self.vegetarian = self.get_diet_recipes('vegetarian', VEGGIE)
-        self.vegan = self.get_diet_recipes('vegan', VEGAN)
-        self.gluten_free = self.get_diet_recipes('glutenfree', GLUTEN_FREE)
-        self.nut_free = self.get_diet_recipes('nutfree', NUT_FREE)
-        self.lactose_free = self.get_diet_recipes('lactosefree', LACTOSE_FREE)
+        # self.vegetarian = self.get_diet_recipes('vegetarian', VEGGIE)
+        # self.vegan = self.get_diet_recipes('vegan', VEGAN)
+        # self.gluten_free = self.get_diet_recipes('glutenfree', GLUTEN_FREE)
+        # self.nut_free = self.get_diet_recipes('nutfree', NUT_FREE)
+        # self.lactose_free = self.get_diet_recipes('lactosefree', LACTOSE_FREE)
 
     def get_random_recipe(self) -> Recipe:
         """Returns a random Recipe from list of Recipes."""
@@ -77,15 +77,11 @@ class RecipeList:
         """
 
         recipes_json = {}
-        # ar, epi, fn
-        # count = 0
-        # count = 39522
-        # count = 64845
-        # count = 124473
+
         with open(filepath, "w") as fp:
             for recipe in self.recipes:
                 recipes_json.update(
-                    {count: {
+                    {recipe.id: {
                         "title": recipe.name,
                         "ingreds": recipe.ingredients,
                         "instruct": recipe.instructions,
@@ -119,8 +115,8 @@ class RecipeList:
         results_list = []
         for recipe in self.recipes:
 
-            # Combine all ingredients into one string.
-            rec_ingreds = recipe.ingredients_as_str()
+            # Combine all ingredients into one lowercase string.
+            rec_ingreds = recipe.ingredients_as_str().lower()
 
             for ingred in exclude_ingreds:
                 
@@ -132,7 +128,7 @@ class RecipeList:
                 # If last exclude ingredient is reached without
                 #  breaking loop, recipe is labeled and appended.
                 if ingred == exclude_ingreds[-1]:
-                    recipe.add_label(label)  #FIXME: remove labelling later
+                    # recipe.add_label(label)  #FIXME: remove labelling later
                     results_list.append(recipe)
 
         return results_list
