@@ -22,10 +22,12 @@ class RecipeList:
 
     def __init__(self, files: list[Path]):
         self.recipes = []
+        tlen = 0
 
         for file in files:
             with file.open('r', encoding='utf-8') as fp:
                 data = json.load(fp)
+                tlen += len(data)
                 count = 0
 
             for key, value in data.items():

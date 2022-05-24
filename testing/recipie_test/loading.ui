@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DialogLoading</class>
+ <widget class="QDialog" name="DialogLoading">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>125</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::NoContextMenu</enum>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="labelLoadingWelcome">
+       <property name="font">
+        <font>
+         <family>Source Sans Pro</family>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Recipie is loading, thanks for your patience...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QProgressBar" name="progressBar">
+     <property name="value">
+      <number>24</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="labelLoadingMessage">
+       <property name="font">
+        <font>
+         <family>Source Sans Pro</family>
+        </font>
+       </property>
+       <property name="text">
+        <string>Beggining to Load</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
