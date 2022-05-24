@@ -106,7 +106,7 @@ def e_search(ingredient_input: list[str], recipes_list: RecipeList) -> list[Reci
 
     Args:
         ingredient_input (list[str]): The list of ingredients the user has given
-        recipes_list (list[dict]): the list of recipes the search function will look through
+        recipes_list (list[dict]): the list of recipes or a RecipeList instance that holds the recipes the search function will look through
 
     Returns:
         list[dict]: A list of recipes that matches what the user was looking for

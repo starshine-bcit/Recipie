@@ -78,7 +78,7 @@ def p_search(ingredients_list: list[str],
         ingredients_list (list[str]):
             List of string of ingredients that recipe should contain.
         recipes_list (list[Recipe]):
-            List of Recipe instances.
+            List of Recipe instances or a RecipeList instance that holds the Recipe instances.
 
     Returns:
         list[Recipe]:
