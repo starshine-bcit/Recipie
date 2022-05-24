@@ -1,6 +1,10 @@
+"""A function that takes a list of ingredients and a list of recipes and returns matching recipes in a list
+that have the same ingredients (if the recipe has ingredients that the user did not give, excludes them from the list)"""
+
 import string
 from .recipe import Recipe
 from .recipelist import RecipeList
+from .catsearch import category_search
 
 
 def exact_search(ingredients_list: list[str], categories: list[str], rlist: RecipeList) -> list[Recipe]:
@@ -29,19 +33,6 @@ def exact_search(ingredients_list: list[str], categories: list[str], rlist: Reci
         matched_recipes = e_search(ingredients_list, diet_recipes)
     
     return matched_recipes
-
-
-def category_search(cat: list[str], rlist: RecipeList) -> list[Recipe]:
-    """
-    Searches through the recipe list(rlist) and returns recipes(dict) that match the category(s)(cat)
-    """
-    matched_recipe = []
-    for recipe in rlist.recipes: 
-        intersection = set(recipe.diets).intersection(set(cat))
-        if len(intersection) == len(cat): 
-            matched_recipe.append(recipe)
-
-    return matched_recipe
 
 
 def replace_chr(words_list:list[str]) -> list[str]:
@@ -115,7 +106,7 @@ def e_search(ingredient_input: list[str], recipes_list: RecipeList) -> list[Reci
 
     Args:
         ingredient_input (list[str]): The list of ingredients the user has given
-        recipes_list (list[dict]): the list of recipes the search function will look through
+        recipes_list (list[dict]): the list of recipes or a RecipeList instance that holds the recipes the search function will look through
 
     Returns:
         list[dict]: A list of recipes that matches what the user was looking for

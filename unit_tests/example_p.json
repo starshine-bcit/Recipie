@@ -7,8 +7,8 @@
             "10 sticks of butter",
             "3 apples"
         ],
-        "instruct": "this is a recipe for apple pies"
-
+        "instruct": "this is a recipe for apple pies",
+        "cat": ["vegetarian", "nutfree"]
     },
     "2": {
         "title": "Blueberry Pie",
@@ -18,7 +18,8 @@
             "10 sticks of butter",
             "2 cups of blueberries"
         ],
-        "instruct": "this is a recipe for blueberry pies"
+        "instruct": "this is a recipe for blueberry pies",
+        "cat": ["vegetarian", "nutfree"]
     },
     "3": {
         "title": "Death",
@@ -26,7 +27,8 @@
             "3 cups of coca cola",
             "2 sticks of mentos"
         ],
-        "instruct": "drink the cola then down the mentos"
+        "instruct": "drink the cola then down the mentos",
+        "cat": ["vegetarian", "vegan", "lactosefree", "glutenfree", "nutfree"]
     },
     "4": {
         "title": "Sweet Death",
@@ -35,7 +37,8 @@
             "2 sticks of mento",
             "1 cup of sugar"
         ],
-        "instruct": "drink the cola then down the mentos"
+        "instruct": "drink the cola then down the mentos",
+        "cat": ["vegetarian", "vegan", "lactosefree", "glutenfree", "nutfree"]
     },
     "5": {},
     "6": {
@@ -46,13 +49,15 @@
             "4 1/2 cups all-purpose flour",
             "some mentos for fun"
         ],
-        "instruct": "death by minty salt"
+        "instruct": "death by minty salt",
+        "cat": ["vegetarian", "nutfree"]
     },
     "7": {
         "title": "Chocolate",
         "ingreds": [
             "milk chocolate"
         ],
-        "instruct": "choco choco choco"
+        "instruct": "choco choco choco",
+        "cat": ["glutenfree", "nutfree", "vegetarian"]
     }
 }
