@@ -180,6 +180,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.dspath = dspath
         self.app = app
         self.setupUi(self.mw)
+        self.mw.setWindowTitle('Recipie')
         self.load_widget = QtWidgets.QDialog()
         self.load_display = LoadingWindow()
         self.threadpool = QtCore.QThreadPool().globalInstance()
