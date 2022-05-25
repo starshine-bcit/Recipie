@@ -1,23 +1,25 @@
 # ACIT2911 Project - Recipie
 
-Git repository for group 19's ACIT2911 project, Recipie
+A project created for ACIT-2911 by team Voracious Hippos.
 
 ## Recipie Details
 
-A Python based application that users can look up cooking recipes for.
+Recipie is a Python based application that users can look up cooking recipes for.
 Features include:
 - A button that randomly generates a recipe
 - An input field for ingredients that the user has, returns a list of recipes that include only those ingredients or less
 - A category list for users with dietary restrictions, filters out recipes that do not meet the category
-
+- A favourites function
+- Runs completely offline
+- The ability to add additional recipes via json data-stores
 
 ## Members
 
-Amanda
-Eva
-Raqin
-Sasha
-Sean
+- Amanda
+- Eva
+- Raqin
+- Sasha
+- Sean
 
 
 ## Usage 
@@ -52,7 +54,7 @@ Steps to run Recipie Application:
 ## Adding New Recipes 
 
 User can choose to add a new recipe to the last existing JSON or create a new JSON.\
-All recipes are inserted using JSON format, and each recipe as a value is assigned a numerical key.\
+All recipes are inserted using JSON format, and each recipe as a value is assigned a numerical key. Each key value must be unique.\
 The recipe "value" is another dictionary with the following keys: 
 
 1. title            
@@ -68,7 +70,7 @@ The recipe "value" is another dictionary with the following keys:
 
 ## Acknowledgements
 
-This project uses open source tools and libraries from the Qt project to generate a GUI, in accordance with the GPLv3 License.
+This project uses open source tools and libraries from the Qt project to generate a GUI, in accordance with the GPLv3 License. This project is also licensed GPLv3, which can be viewed in the LICENSE file.
 
 * [Qt.io](https://www.qt.io/product/features?hsLang=en#js-6-4)
 * [Recipe Json](https://eightportions.com/datasets/Recipes/)
