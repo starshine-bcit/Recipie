@@ -32,7 +32,7 @@ Recipie desktop application
 Options: 
 -h, --help                              show this help message and exit 
 -v, --verbose                           verbosely output to console 
--ds DATASTORE, --datastore DATASTORE    json file with recipes load 
+-ds DATASTORE, --datastore DATASTORE    folder with json recipes to load (default: ./data)
 ```
 
 Steps to run Recipie Application: 
