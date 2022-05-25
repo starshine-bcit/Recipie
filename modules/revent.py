@@ -1,5 +1,5 @@
 '''Recipie module for subclassing and event handling'''
-from functools import singledispatch
+
 import sys
 import traceback
 import re
@@ -19,9 +19,9 @@ from .loadingbar import Ui_DialogLoading
 from .esearch import exact_search
 from .psearch import partial_search
 
+
 #####################################################
 # Credits to https://www.pythonguis.com for this code
-
 
 class WorkerSignals(QtCore.QObject):
     '''
@@ -95,9 +95,9 @@ class Worker(QtCore.QRunnable):
         finally:
             self.signals.finished.emit()  # Done
 
-
 # End credited code here
 #####################################################
+
 
 class LoadWorkerSignals(QtCore.QObject):
     finished = QtCore.pyqtSignal()
@@ -191,8 +191,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.timer = QtCore.QTimer()
         self.timer.setInterval(1000)
         self.linkimages(self.app)
-        self.run_loading_window() # Init and display loading window
-        sys.exit(self.app.exec()) # Start the main event loop
+        self.run_loading_window()  # Init and display loading window
+        sys.exit(self.app.exec())  # Start the main event loop
 
     def run_loading_window(self) -> None:
         '''Display our loading window and calls worker to parse json recipes'''
@@ -223,7 +223,7 @@ class MainWindowRecipie(Ui_MainWindow):
 
     def assign_rcp_list(self, rlist: RecipeList):
         '''Assign our recipe list in this class based on worker return
-        
+
             Args:
                 rlist (RecipeList): Instance of rlist for the ui to pass around
         '''
@@ -262,11 +262,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.load_favourites_from_file()
         self.listWidgetFavouriteRecipes.setSortingEnabled(True)
 
-        # self.listWidgetSearchResults.setSortingEnabled(True)
-        # Enable this once we have id on recipes?
-
     def createevents(self) -> None:
-        '''Connect triggered events with functions'''
+        '''Connect triggered events with functions, AKA signals/slots'''
 
         self.pushButtonRandom.clicked.connect(self.random_button_click)
         self.actionRandom.triggered.connect(self.random_button_click)
@@ -447,11 +444,7 @@ class MainWindowRecipie(Ui_MainWindow):
         else:
             self.srlist.clear()
             if self.verbose:
-                print('Error: Search called, there are no terms or categories')
-
-    def load_progress_callback(self) -> None:
-        '''Updates UI progress bar as program loads'''
-        pass
+                print('Error: Search called, but there are no terms or categories')
 
     def thread_complete(self):
         '''To be triggered when search worker finishes, unlocks ui elements'''
@@ -802,7 +795,7 @@ class MainWindowRecipie(Ui_MainWindow):
 
 def load_quotes():
     '''Load quotes from hardcoded json file
-    
+
         Returns:
             data (dict): Dictionary of quotes to display as needed
     '''
