@@ -132,9 +132,24 @@ class LoadWorker(QtCore.QRunnable):
 class LoadingWindow(Ui_DialogLoading):
     def __init__(self) -> None:
         super().__init__()
+        self.loading_messages = [
+            'Beginning to start the process',
+            'Initializing quantum indeterminate matrices',
+            'Starting git-lfs',
+            'Predicting likelihood of dupes',
+            'Fighting with pytest',
+            'Taking a break on the 7th day',
+            'Determining underlying vertice logic',
+            'Satisfying instructor requirements',
+            'Instantiating Skynet'
+        ]
 
     def update_progress_bar(self, pct: int) -> None:
         self.progressBar.setValue(pct)
+        if pct == 100:
+            pass
+        else:
+            self.update_loading_message(self.loading_messages[pct//10])
 
     def update_loading_message(self, msg: str) -> None:
         self.labelLoadingMessage.setText(msg)
