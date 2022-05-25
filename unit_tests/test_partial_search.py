@@ -3,15 +3,24 @@ from pathlib import Path
 from modules.recipe import Recipe
 from modules.recipelist import RecipeList
 from modules.psearch import p_search, partial_search
+from modules.revent import ProgressCallback
 
 
 INGREDIENTS_LOWER = ["flour", "sugar", "butter"]
 INGREDIENTS_UPPER = ["flOUr", "suGar", "buttER"]
 
+
 @pytest.fixture
-def recipelist():
+def callback():
+    cb = ProgressCallback()
+
+    return cb
+
+
+@pytest.fixture
+def recipelist(callback):
     path = Path("./unit_tests/example_p.json")
-    recipelist = RecipeList([path])
+    recipelist = RecipeList([path], callback)
     return recipelist
 
 # This searches for recipes that have flour, sugar, and butter as ingredients
