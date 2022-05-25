@@ -141,15 +141,13 @@ class LoadingWindow(Ui_DialogLoading):
             'Taking a break on the 7th day',
             'Determining underlying vertice logic',
             'Satisfying instructor requirements',
-            'Instantiating Skynet'
+            'Instantiating Skynet',
+            'Taking a break on the final day'
         ]
 
     def update_progress_bar(self, pct: int) -> None:
         self.progressBar.setValue(pct)
-        if pct == 100:
-            pass
-        else:
-            self.update_loading_message(self.loading_messages[pct//10])
+        self.update_loading_message(self.loading_messages[pct//10])
 
     def update_loading_message(self, msg: str) -> None:
         self.labelLoadingMessage.setText(msg)
