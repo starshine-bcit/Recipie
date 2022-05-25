@@ -2,20 +2,29 @@ import pytest
 from pathlib import Path
 from modules.recipe import Recipe
 from modules.recipelist import RecipeList
+from modules.revent import ProgressCallback
+import modules.constants
 
 
 INGREDIENTS = ("Apple", "Orange", "flour", "SUGAR", "bUttER")
 
 
 @pytest.fixture
-def rlist():
+def callback():
+    cb = ProgressCallback()
+
+    return cb
+
+
+@pytest.fixture
+def rlist(callback):
     """Creates a RecipeList instance, uses the example.json located in the same folder
 
     Returns:
         recipelist (RecipeList): a RecipeList instance, uses RECIPE_JSON as its datastore
     """
     path = Path("./unit_tests/example.json")
-    recipelist = RecipeList([path])
+    recipelist = RecipeList([path], callback)
     return recipelist
 
 
@@ -30,12 +39,12 @@ def test_recipe_list(rlist):
     assert isinstance(rlist.recipes[0], Recipe) == True
 
 
-def test_not_recipe_list():
+def test_not_recipe_list(callback):
     """
     Checks for errors if no datastore is given
     """
     with pytest.raises(FileNotFoundError):
-        not_rlist = RecipeList([Path("./unit_tests/not_example.json")])
+        not_rlist = RecipeList([Path("./unit_tests/not_example.json")], callback)
 
 
 def test_recipe_list_methods(rlist):
@@ -51,3 +60,14 @@ def test_recipe_list_methods(rlist):
     random_recipe = rlist.get_random_recipe()
     assert len([random_recipe]) == 1
     assert isinstance(random_recipe, Recipe) == True
+
+
+def test_add_diet_labels(rlist):
+    """
+    Tests adding dietary labels
+
+    Args:
+        rlist (RecipeList): RecipeList instance
+    """
+    labelled_recipes = rlist.add_diet_labels("glutenfree", modules.constants.GLUTEN_FREE)
+    assert len(labelled_recipes) == 2

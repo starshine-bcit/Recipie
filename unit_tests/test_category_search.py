@@ -3,12 +3,20 @@ from pathlib import Path
 from modules.catsearch import category_search
 from modules.recipelist import RecipeList
 from modules.recipe import Recipe
+from modules.revent import ProgressCallback
 
 
 @pytest.fixture
-def rlist():
+def callback():
+    cb = ProgressCallback()
+
+    return cb
+
+
+@pytest.fixture
+def rlist(callback):
     path = Path("./unit_tests/example.json")
-    recipelist = RecipeList([path])
+    recipelist = RecipeList([path], callback)
     return recipelist
 
 
