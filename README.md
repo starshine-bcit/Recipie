@@ -13,7 +13,7 @@ Features include:
 - Runs completely offline
 - The ability to add additional recipes via json data-stores
 
-## Members
+## Voracious Hippos
 
 - Amanda
 - Eva
