@@ -142,7 +142,7 @@ class LoadingWindow(Ui_DialogLoading):
             'Determining underlying vertice logic',
             'Satisfying instructor requirements',
             'Instantiating Skynet',
-            'Taking a break on the final day'
+            'Parsing friendship butterflies'
         ]
 
     def update_progress_bar(self, pct: int) -> None:

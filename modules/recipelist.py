@@ -18,6 +18,8 @@ class RecipeList:
     Args:
         files (list[Path]):
             List of Path instances of all recipe JSON files.
+        callback (ProgressCallback):
+            Instance of a ProgressCallback Qobject from revent to emit signals.
 
     Attributes:
         recipes (list[Recipe]):
@@ -31,10 +33,9 @@ class RecipeList:
         for file in files:
             with file.open('r', encoding='utf-8') as fp:
                 data.update(json.load(fp))
-                # count = 0 #  Use when json does not have id
 
-        count = 0
-        tlen = len(data)
+        count = 0 # Init counter for signals to 0
+        tlen = len(data) # Set total length to calc % done
         for key, value in data.items():
             try:
                 self.recipes.append(
@@ -48,9 +49,9 @@ class RecipeList:
                         # diets=[]  # Use when json does not have dietary labels
                     )
                 )
-                if count % 100 == 0:
-                    callback(int(count/tlen*100))
-                count += 1
+                if count % 100 == 0: # So we don't send signals every nanosecond
+                    callback(int(count/tlen*100)) # Send signal in % done
+                count += 1 # increment count on each iter
             except:
                 # Catches any errors from Recipe instantiation and
                 #  skips over non-recipes in JSON.
