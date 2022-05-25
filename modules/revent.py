@@ -181,6 +181,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.app = app
         self.setupUi(self.mw)
         self.mw.setWindowTitle('Recipie')
+        self.labelTopBarText.setText(
+            'Welcome to Recipie 1.0\nMade by chefs, for everyone!')
         self.load_widget = QtWidgets.QDialog()
         self.load_display = LoadingWindow()
         self.threadpool = QtCore.QThreadPool().globalInstance()
@@ -205,13 +207,30 @@ class MainWindowRecipie(Ui_MainWindow):
         self.threadpool.start(self.loadworker)
 
     def create_recipe_list(self, callback) -> None:
+        '''Instantiate RecipeList method with callback for loading bar
+
+            Args:
+                callback (ProgressCallback): Simple Qt object to emit signals
+
+            Returns:
+                rlist (RecipeList): An instance of RecipeList containing everything
+        '''
+
         rlist = RecipeList(self.dspath, callback)
         return rlist
 
     def assign_rcp_list(self, rlist: RecipeList):
+        '''Assign our recipe list in this class based on worker return
+        
+            Args:
+                rlist (RecipeList): Instance of rlist for the ui to pass around
+        '''
+
         self.rlist = rlist
 
     def run_loading_finished(self) -> None:
+        '''Setup and display rest of main UI once loading worker is done'''
+
         self.load_widget.hide()
         self.setupUicustom()
         self.createevents()
@@ -283,6 +302,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.checkBoxVegan.clicked.connect(self.update_cats_list)
         self.checkBoxVegetarian.clicked.connect(self.update_cats_list)
         self.pushButtonSendFilterSearch.clicked.connect(self.call_search)
+        self.actionShow_Help.triggered.connect(self.spawn_help)
 
         self.actionExit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
         self.actionPrint.setShortcut(QtGui.QKeySequence('Ctrl+P'))
@@ -312,6 +332,15 @@ class MainWindowRecipie(Ui_MainWindow):
 
         # Finally, set app icon to the QIcon instance
         app.setWindowIcon(app_icon)
+
+    def spawn_help(self) -> None:
+        self.helpwin = QtWidgets.QDialog()
+        self.helpdisplay = Ui_Dialog()
+        self.helpdisplay.setupUi(self.helpwin)
+        self.helpwin.setWindowTitle('Readme')
+        help_loc = Path(__file__).parent.parent.joinpath('README.md')
+        self.helpdisplay.textBrowserDisplay.setMarkdown(help_loc.read_text())
+        self.helpwin.show()
 
     def random_button_click(self) -> None:
         '''Call get_random_recipe, display it with display_recipe'''
@@ -493,7 +522,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonDisplayRecipeNewWindow.setEnabled(False)
         self.pushButtonAddFavourite.setEnabled(False)
         self.labelTopBarText.setText(
-            'Welcome to Recipie Beta, please hit \'Random Recipe to try it out!')
+            'Welcome to Recipie 1.0, Made by chefs, for everyone!')
         if self.verbose:
             print('Clearing displayed recipe...')
 
