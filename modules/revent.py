@@ -165,7 +165,9 @@ class MainWindowRecipie(Ui_MainWindow):
 
         Args:
             verbose (bool): True enables logging to console
-            rlist (RecipeList): Instance of RecipeList with all recipes
+            dspath (list[Path]): list of recipe json files to load
+            mw (QtWidgets.QMainWindow): recipie mainwindow instance
+            app (QtWidgets.QApplication): recipie main app instance
         """
 
         super().__init__()
@@ -189,8 +191,8 @@ class MainWindowRecipie(Ui_MainWindow):
         self.timer = QtCore.QTimer()
         self.timer.setInterval(1000)
         self.linkimages(self.app)
-        self.run_loading_window()
-        sys.exit(self.app.exec())
+        self.run_loading_window() # Init and display loading window
+        sys.exit(self.app.exec()) # Start the main event loop
 
     def run_loading_window(self) -> None:
         '''Display our loading window and calls worker to parse json recipes'''
@@ -420,7 +422,7 @@ class MainWindowRecipie(Ui_MainWindow):
                 f'Sending these terms to search:\n{search_terms}'
                 f'Sending these categories to search:\n{self.cats}'
             )
-        # Pass the function to execute
+        # Pass the function to execute and lock UI elements
         if len(search_terms) > 0 or len(self.cats) > 0:
             if self.radioButtonExclusive.isChecked():
                 if self.verbose:
@@ -428,7 +430,6 @@ class MainWindowRecipie(Ui_MainWindow):
                 self.searchworker = Worker(
                     exact_search, search_terms, self.cats, self.rlist)
                 self.lock_ui_elements()
-                # progress_callback.emit(n*100/4)
             elif self.radioButtonInclusive.isChecked():
                 if self.verbose:
                     print('Starting inclusive search...')
@@ -440,7 +441,6 @@ class MainWindowRecipie(Ui_MainWindow):
             self.searchworker.signals.result.connect(
                 self.display_search_result_list)
             self.searchworker.signals.finished.connect(self.thread_complete)
-            # searchworker.signals.progress.connect(self.progress_fn)
 
             # Execute our search
             self.threadpool.start(self.searchworker)
@@ -801,7 +801,11 @@ class MainWindowRecipie(Ui_MainWindow):
 
 
 def load_quotes():
-    '''Load quotes from hardcoded json file'''
+    '''Load quotes from hardcoded json file
+    
+        Returns:
+            data (dict): Dictionary of quotes to display as needed
+    '''
 
     try:
         file = Path(__file__).parent.parent.joinpath('data/quotes/quotes.json')
@@ -819,7 +823,7 @@ def initmainwindow(verbose: bool, dspath: list[Path]) -> None:
 
         Args:
             verbose (bool): Specify verbose setting for program
-            rlist (RecipeList): Main instance of RecipeList
+            dspath (list[Path]): list of recipe json files to load
     '''
 
     if verbose:
