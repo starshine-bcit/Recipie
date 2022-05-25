@@ -51,8 +51,8 @@ Steps to run Recipie Application:
 
 ## Adding New Recipes 
 
-User can choose to add a new recipe to the last existing JSON or create a new JSON. 
-All recipes are inserted using JSON format, and each recipe as a value is assigned a numerical key.
+User can choose to add a new recipe to the last existing JSON or create a new JSON.\
+All recipes are inserted using JSON format, and each recipe as a value is assigned a numerical key.\
 The recipe "value" is another dictionary with the following keys: 
 
 1. title            
