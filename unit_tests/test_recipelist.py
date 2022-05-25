@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 from modules.recipe import Recipe
 from modules.recipelist import RecipeList
-from modules.revent import ProgressCallback
+# from modules.revent import ProgressCallback
 import modules.constants
 
 
@@ -11,9 +11,8 @@ INGREDIENTS = ("Apple", "Orange", "flour", "SUGAR", "bUttER")
 
 @pytest.fixture
 def callback():
-    cb = ProgressCallback()
 
-    return cb
+    return 50
 
 
 @pytest.fixture
