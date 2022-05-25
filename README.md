@@ -1,19 +1,22 @@
 # ACIT2911 Project - Recipie
 
-A project created for ACIT-2911 by team Voracious Hippos.
+A project created for ACIT 2911 (Winter Term 2022) by team Voracious Hippos.
+
 
 ## Recipie Details
 
-Recipie is a Python based application that users can look up cooking recipes for.
+Recipie is a Python-based application for users to look up cooking recipes.
 Features include:
-- A button that randomly generates a recipe
-- An input field for ingredients that the user has, returns a list of recipes that include only those ingredients or less
-- A category list for users with dietary restrictions, filters out recipes that do not meet the category
-- A favourites function
-- Runs completely offline
-- The ability to add additional recipes via json data-stores
+- Displaying a random recipe
+- Searching for recipes by desired ingredients
+- Filtering recipes based on dietary restrictions
+- Saving recipes as favourites
+- Printing recipes
+- Application runs completely offline
+- Ability to add additional recipes via json data-stores
 
-## Voracious Hippos
+
+## Voracious Hippos Team Members
 
 - Amanda
 - Eva
@@ -36,8 +39,8 @@ Options:
 ```
 
 Steps to run Recipie Application: 
-1. Open the git console, `mkdir [FOLDER_NAME]` to create a folder and `cd [FOLDER_NAME]` change to the directory. 
-2. `git clone https://github.com/SeanXYTan/ACIT2911.git` to copy Recipie repository into your local directory. 
+1. Open the git console, `mkdir [FOLDER_NAME]` to create a folder, and `cd [FOLDER_NAME]` change to the directory. 
+2. `git clone https://github.com/SeanXYTan/ACIT2911.git` to copy the Recipie repository into your local directory. 
 3. `cd ACIT2911` to change directory to ACIT2911. 
 4. To run Recipie from source, you need to install `PyQt6` PyPi Package by typing `pip install pyqt6` in the console. 
 5. To open the Recipie program, `py .\recipie.py` for Windows and `python3 ./recipie.py` for Linux.
@@ -45,16 +48,17 @@ Steps to run Recipie Application:
 
 ## Standalone Installation 
 
-1. Locate "Release" and click "tags"
+1. On GitHub, locate "Releases", and click "tags" 
 2. Select the latest version of release 
-3. Download the Windows installer by selecting the asset ending in .exe
-4. From "Download," click "open file" to complete the installation 
+3. Download the Windows installer by selecting the asset ending in .exe 
+4. From "Downloads", click "open file" to complete the installation 
 
 
 ## Adding New Recipes 
 
 User can choose to add a new recipe to the last existing JSON or create a new JSON.\
-All recipes are inserted using JSON format, and each recipe as a value is assigned a numerical key. Each key value must be unique.\
+All recipes are inserted using JSON format.\
+Each recipe is a value that is assigned to a numerical key. Each key must be unique.\
 The recipe "value" is another dictionary with the following keys: 
 
 1. title            
