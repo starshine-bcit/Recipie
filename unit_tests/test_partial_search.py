@@ -3,7 +3,7 @@ from pathlib import Path
 from modules.recipe import Recipe
 from modules.recipelist import RecipeList
 from modules.psearch import p_search, partial_search
-from modules.revent import ProgressCallback
+# from modules.revent import ProgressCallback
 
 
 INGREDIENTS_LOWER = ["flour", "sugar", "butter"]
@@ -12,9 +12,8 @@ INGREDIENTS_UPPER = ["flOUr", "suGar", "buttER"]
 
 @pytest.fixture
 def callback():
-    cb = ProgressCallback()
 
-    return cb
+    return 50
 
 
 @pytest.fixture

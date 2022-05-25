@@ -3,14 +3,13 @@ from pathlib import Path
 from modules.catsearch import category_search
 from modules.recipelist import RecipeList
 from modules.recipe import Recipe
-from modules.revent import ProgressCallback
+# from modules.revent import ProgressCallback
 
 
 @pytest.fixture
 def callback():
-    cb = ProgressCallback()
 
-    return cb
+    return 50
 
 
 @pytest.fixture
