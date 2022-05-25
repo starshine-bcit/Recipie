@@ -55,10 +55,14 @@ User can choose to add a new recipe to the last existing JSON or create a new JS
 All recipes are inserted using JSON format, and each recipe as a value is assigned a numerical key.
 The recipe "value" is another dictionary with the following keys: 
 
-1. title            value: string
-2. ingreds          value: list of string(s) items
-3. instruct         value: string
-4. cat              value: list of string(s) items 
+1. title            
+    * value: string
+2. ingreds          
+    * value: list of string(s) items
+3. instruct         
+    * value: string
+4. cat              
+    * value: list of string(s) items 
     * category must be 'glutenfree', 'lactosefree', 'nutfree', 'vegetarian', 'vegan' 
 
 
