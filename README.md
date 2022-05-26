@@ -90,6 +90,8 @@ The recipe "value" is another dictionary with the following keys:
     * value: list of string(s) items 
     * category must be 'glutenfree', 'lactosefree', 'nutfree', 'vegetarian', 'vegan' 
 
+Once you're done with the JSON file, you can move the JSON into the ./data folder, located inside the repo you cloned. (e.g. `ACIT2911/data/your file here`)
+Alternatively, you can use the `-ds` option when initializing the app to designate where your recipe json is located.
 
 ## Acknowledgements
 
