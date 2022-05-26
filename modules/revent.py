@@ -494,6 +494,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.actionRemove_Selected.setEnabled(True)
         self.pushButtonSendFilterSearch.setEnabled(True)
         self.actionReset_Search.setEnabled(True)
+        self.lineEditIngredientEntry.setFocus()
 
     def reset_search(self) -> None:
         '''Clear Search inputs and results'''
