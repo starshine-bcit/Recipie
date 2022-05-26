@@ -28,7 +28,7 @@ Features include:
 
 ### Software
 * python >= 3.9
-* PyQt6 >= 6.30
+* PyQt6 >= 6.30\
 Binary Windows releases can be run without these
 
 ### Operating System
