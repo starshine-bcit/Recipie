@@ -24,6 +24,25 @@ Features include:
 - Sasha
 - Sean
 
+## Requirements
+
+### Software
+* python >= 3.9
+* PyQt6 >= 6.30
+Binary Windows releases can be run without these
+
+### Operating System
+* Windows NT based system
+   * Tested on Win 10/11
+* GNU/Linux with X11 and a modern DE
+   * Tested on Debian 11 with XFCE
+* MacOS
+   * Not tested, but should work
+
+### Hardware
+* 1024x768+ display
+* 500 MB of available memory
+* 64-bit processor
 
 ## Usage 
 
