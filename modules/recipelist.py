@@ -34,8 +34,8 @@ class RecipeList:
             with file.open('r', encoding='utf-8') as fp:
                 data.update(json.load(fp))
 
-        count = 0 # Init counter for signals to 0
-        tlen = len(data) # Set total length to calc % done
+        count = 0  # Init counter for signals to 0
+        tlen = len(data)  # Set total length to calc % done
         for key, value in data.items():
             try:
                 self.recipes.append(
@@ -50,7 +50,7 @@ class RecipeList:
                     )
                 )
                 if count % 100 == 0: # So we don't send signals every nanosecond
-                    callback(int(count/tlen*100)) # Send signal in % done
+                    callback(int(count/tlen*100))  # Send signal in % done
                 count += 1 # increment count on each iter
             except:
                 # Catches any errors from Recipe instantiation and
@@ -58,11 +58,11 @@ class RecipeList:
                 continue
 
         # Run below if recipes need dietary labels.
-        # self.vegetarian = self.get_diet_recipes('vegetarian', VEGGIE)
-        # self.vegan = self.get_diet_recipes('vegan', VEGAN)
-        # self.gluten_free = self.get_diet_recipes('glutenfree', GLUTEN_FREE)
-        # self.nut_free = self.get_diet_recipes('nutfree', NUT_FREE)
-        # self.lactose_free = self.get_diet_recipes('lactosefree', LACTOSE_FREE)
+        # self.vegetarian = self.add_diet_labels('vegetarian', VEGGIE)
+        # self.vegan = self.add_diet_labels('vegan', VEGAN)
+        # self.gluten_free = self.add_diet_labels('glutenfree', GLUTEN_FREE)
+        # self.nut_free = self.add_diet_labels('nutfree', NUT_FREE)
+        # self.lactose_free = self.add_diet_labels('lactosefree', LACTOSE_FREE)
 
     def get_random_recipe(self) -> Recipe:
         """Returns a random Recipe from list of Recipes."""
