@@ -11,6 +11,8 @@ QtApplication {
 
     files: [
         "helpwindow.ui",
+        "loading.ui",
+        "loadingbar.ui",
         "main.cpp",
         "mainwindow.cpp",
         "mainwindow.h",

@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['recipie.py', 'modules\\revent.py', 'modules\\esearch.py', 'modules\\qtui.py', 'modules\\recipe.py', 'modules\\recipelist.py', 'modules\\recipewindow.py'],
+    ['recipie.py', 'modules\\revent.py', 'modules\\esearch.py', 'modules\\qtui.py', 'modules\\recipe.py', 'modules\\recipelist.py', 'modules\\recipewindow.py', 'modules\\catsearch.py', 'modules\\constants.py', 'modules\\psearch.py', 'modules\\loadingbar.py'],
     pathex=[],
     binaries=[],
     datas=[('data', 'data'), ('image', 'image'), ('README.md', '.'), ('LICENSE', '.'), ('modules', 'modules'), ('recipie.py', '.')],

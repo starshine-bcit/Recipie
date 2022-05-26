@@ -3,6 +3,7 @@
 import json
 import random
 from pathlib import Path
+
 from .recipe import Recipe
 
 
@@ -17,38 +18,44 @@ class RecipeList:
     Args:
         files (list[Path]):
             List of Path instances of all recipe JSON files.
+        callback (ProgressCallback):
+            Instance of a ProgressCallback Qobject from revent to emit signals.
 
     Attributes:
         recipes (list[Recipe]):
             List of recipes as Recipe instances.
     """
 
-    def __init__(self, files: list[Path]):
+    def __init__(self, files: list[Path], callback):
         self.recipes = []
+        data = {}
 
         for file in files:
             with file.open('r', encoding='utf-8') as fp:
-                data = json.load(fp)
-                # count = 0 #  Use when json does not have id
+                data.update(json.load(fp))
 
-            for key, value in data.items():
-                try:
-                    self.recipes.append(
-                        Recipe(
-                            id=int(key),
-                            # id=int(key),  # Use when json does not have id
-                            name=value["title"],
-                            ingredients=value["ingreds"],
-                            instructions=value["instruct"],
-                            diets=value["cat"],  # Use when json has dietary labels
-                            # diets=[]  # Use when json does not have dietary labels
-                        )
+        count = 0 # Init counter for signals to 0
+        tlen = len(data) # Set total length to calc % done
+        for key, value in data.items():
+            try:
+                self.recipes.append(
+                    Recipe(
+                        id=int(key),
+                        # id=int(key),  # Use when json does not have id
+                        name=value["title"],
+                        ingredients=value["ingreds"],
+                        instructions=value["instruct"],
+                        diets=value["cat"],  # Use when json has dietary labels
+                        # diets=[]  # Use when json does not have dietary labels
                     )
-                    # count += 1  # Use when json does not have id
-                except:
-                    # Catches any errors from Recipe instantiation and
-                    #  skips over non-recipes in JSON.
-                    continue
+                )
+                if count % 100 == 0: # So we don't send signals every nanosecond
+                    callback(int(count/tlen*100)) # Send signal in % done
+                count += 1 # increment count on each iter
+            except:
+                # Catches any errors from Recipe instantiation and
+                #  skips over non-recipes in JSON.
+                continue
 
         # Run below if recipes need dietary labels.
         # self.vegetarian = self.get_diet_recipes('vegetarian', VEGGIE)
