@@ -3,6 +3,7 @@ from pathlib import Path
 from modules.recipe import Recipe
 from modules.recipelist import RecipeList
 from modules.esearch import exact_search, e_search
+# from modules.revent import ProgressCallback
 
 
 USER_INPUT = ['flour', 'sugar', 'butter', 'apples']
@@ -14,9 +15,15 @@ WEIRD_USER_INPUT = ['strawberry', 'chicken', 'broccoli']
 
 
 @pytest.fixture
-def rlist():
+def callback():
+
+    return 50
+
+
+@pytest.fixture
+def rlist(callback):
     path = Path("./unit_tests/example.json")
-    recipelist = RecipeList([path])
+    recipelist = RecipeList([path], callback)
     return recipelist
 
 

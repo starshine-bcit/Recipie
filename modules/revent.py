@@ -1,5 +1,5 @@
 '''Recipie module for subclassing and event handling'''
-from functools import singledispatch
+
 import sys
 import traceback
 import re
@@ -15,12 +15,13 @@ from .qtui import Ui_MainWindow
 from .recipelist import RecipeList
 from .recipe import Recipe
 from .recipewindow import Ui_Dialog
+from .loadingbar import Ui_DialogLoading
 from .esearch import exact_search
 from .psearch import partial_search
 
+
 #####################################################
 # Credits to https://www.pythonguis.com for this code
-
 
 class WorkerSignals(QtCore.QObject):
     '''
@@ -93,8 +94,70 @@ class Worker(QtCore.QRunnable):
             self.signals.result.emit(result)
         finally:
             self.signals.finished.emit()  # Done
+
 # End credited code here
 #####################################################
+
+
+class LoadWorkerSignals(QtCore.QObject):
+    finished = QtCore.pyqtSignal()
+    result = QtCore.pyqtSignal(RecipeList)
+    progress = QtCore.pyqtSignal(int)
+
+
+class LoadWorker(QtCore.QRunnable):
+    def __init__(self, fn, *args, **kwargs):
+        super(LoadWorker, self).__init__()
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+        self.signals = LoadWorkerSignals()
+        self.setAutoDelete(True)
+
+    @QtCore.pyqtSlot()
+    def run(self):
+        try:
+            result = self.fn(*self.args, **self.kwargs)
+        except:
+            traceback.print_exc()
+            exctype, value = sys.exc_info()[:2]
+            print((exctype, value, traceback.format_exc()))
+            # self.signals.error.emit((exctype, value, traceback.format_exc()))
+        else:
+            self.signals.result.emit(result)
+        finally:
+            self.signals.finished.emit()
+
+
+class LoadingWindow(Ui_DialogLoading):
+    def __init__(self) -> None:
+        super().__init__()
+        self.loading_messages = [
+            'Beginning to start the process',
+            'Initializing quantum indeterminate matrices',
+            'Starting git-lfs',
+            'Predicting likelihood of dupes',
+            'Fighting with pytest',
+            'Taking a break on the 7th day',
+            'Determining underlying vertice logic',
+            'Satisfying instructor requirements',
+            'Instantiating Skynet',
+            'Parsing friendship butterflies'
+        ]
+
+    def update_progress_bar(self, pct: int) -> None:
+        self.progressBar.setValue(pct)
+        self.update_loading_message(self.loading_messages[pct//10])
+
+    def update_loading_message(self, msg: str) -> None:
+        self.labelLoadingMessage.setText(msg)
+
+
+class ProgressCallback(QtCore.QObject):
+    progressChanged = QtCore.pyqtSignal(int)
+
+    def __call__(self, value):
+        self.progressChanged.emit(value)
 
 
 class MainWindowRecipie(Ui_MainWindow):
@@ -109,17 +172,18 @@ class MainWindowRecipie(Ui_MainWindow):
         verbose (bool): Enables logging useful messages to console
     """
 
-    def __init__(self, verbose: bool, rlist: RecipeList) -> None:
+    def __init__(self, verbose: bool, dspath: list[Path], mw: QtWidgets.QMainWindow, app: QtWidgets.QApplication) -> None:
         """Initialize this instance with provided args
         Use super().__init__() just in case
 
         Args:
             verbose (bool): True enables logging to console
-            rlist (RecipeList): Instance of RecipeList with all recipes
+            dspath (list[Path]): list of recipe json files to load
+            mw (QtWidgets.QMainWindow): recipie mainwindow instance
+            app (QtWidgets.QApplication): recipie main app instance
         """
 
         super().__init__()
-        self.rlist = rlist
         self.srlist = {}
         self.verbose = verbose
         self.currname = ''
@@ -127,12 +191,73 @@ class MainWindowRecipie(Ui_MainWindow):
         self.multiwin = {}
         self.favlist = []
         self.cats = []
+        self.mw = mw
+        self.dspath = dspath
+        self.app = app
+        self.setupUi(self.mw)
+        self.mw.setWindowTitle('Recipie')
+        self.labelTopBarText.setText(
+            'Welcome to Recipie 1.0\nMade by chefs, for everyone!')
+        self.load_widget = QtWidgets.QDialog()
+        self.load_display = LoadingWindow()
+        self.threadpool = QtCore.QThreadPool().globalInstance()
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(1000)
+        self.linkimages(self.app)
+        self.run_loading_window()  # Init and display loading window
+        sys.exit(self.app.exec())  # Start the main event loop
+
+    def run_loading_window(self) -> None:
+        '''Display our loading window and calls worker to parse json recipes'''
+
+        callback = ProgressCallback()
+        self.load_display.setupUi(self.load_widget)
+        self.load_display.update_progress_bar(0)
+        self.load_widget.setWindowTitle('Loading recipie...')
+        self.load_widget.show()
+        self.loadworker = LoadWorker(self.create_recipe_list, callback)
+        self.loadworker.signals.result.connect(self.assign_rcp_list)
+        self.loadworker.signals.finished.connect(self.run_loading_finished)
+        callback.progressChanged.connect(self.load_display.update_progress_bar)
+        self.threadpool.start(self.loadworker)
+
+    def create_recipe_list(self, callback) -> None:
+        '''Instantiate RecipeList method with callback for loading bar
+
+            Args:
+                callback (ProgressCallback): Simple Qt object to emit signals
+
+            Returns:
+                rlist (RecipeList): An instance of RecipeList containing everything
+        '''
+
+        rlist = RecipeList(self.dspath, callback)
+        return rlist
+
+    def assign_rcp_list(self, rlist: RecipeList):
+        '''Assign our recipe list in this class based on worker return
+
+            Args:
+                rlist (RecipeList): Instance of rlist for the ui to pass around
+        '''
+
+        self.rlist = rlist
+
+    def run_loading_finished(self) -> None:
+        '''Setup and display rest of main UI once loading worker is done'''
+
+        self.load_widget.hide()
+        self.setupUicustom()
+        self.createevents()
+        self.mw.show()
 
     def setupUicustom(self):
         '''Setup various elements which have no depends'''
 
         self.printer = QtPrintSupport.QPrinter()
         self.curr_recipe_md = QtGui.QTextDocument()
+        if self.verbose:
+            print(f'Total recipes indexed: {len(self.rlist.recipes)}')
         self.labelStatusBarRecipeCount = QtWidgets.QLabel(
             f'Indexing {len(self.rlist.recipes)} recipes ')
         self.statusbar.addPermanentWidget(self.labelStatusBarRecipeCount)
@@ -145,19 +270,13 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonDisplayRecipeNewWindow.setEnabled(False)
         self.pushButtonAddFavourite.setEnabled(False)
         self.quotes = load_quotes()
-        self.threadpool = QtCore.QThreadPool().globalInstance()
         self.pushButtonRemoveAllFavourites.setEnabled(False)
         self.pushButtonRemoveSelectedFavourites.setEnabled(False)
         self.load_favourites_from_file()
         self.listWidgetFavouriteRecipes.setSortingEnabled(True)
-        self.timer = QtCore.QTimer()
-        self.timer.setInterval(1000)
-
-        # self.listWidgetSearchResults.setSortingEnabled(True)
-        # Enable this once we have id on recipes?
 
     def createevents(self) -> None:
-        '''Connect triggered events with functions'''
+        '''Connect triggered events with functions, AKA signals/slots'''
 
         self.pushButtonRandom.clicked.connect(self.random_button_click)
         self.actionRandom.triggered.connect(self.random_button_click)
@@ -195,6 +314,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.checkBoxVegan.clicked.connect(self.update_cats_list)
         self.checkBoxVegetarian.clicked.connect(self.update_cats_list)
         self.pushButtonSendFilterSearch.clicked.connect(self.call_search)
+        self.actionShow_Help.triggered.connect(self.spawn_help)
 
         self.actionExit.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
         self.actionPrint.setShortcut(QtGui.QKeySequence('Ctrl+P'))
@@ -224,6 +344,15 @@ class MainWindowRecipie(Ui_MainWindow):
 
         # Finally, set app icon to the QIcon instance
         app.setWindowIcon(app_icon)
+
+    def spawn_help(self) -> None:
+        self.helpwin = QtWidgets.QDialog()
+        self.helpdisplay = Ui_Dialog()
+        self.helpdisplay.setupUi(self.helpwin)
+        self.helpwin.setWindowTitle('Readme')
+        help_loc = Path(__file__).parent.parent.joinpath('README.md')
+        self.helpdisplay.textBrowserDisplay.setMarkdown(help_loc.read_text())
+        self.helpwin.show()
 
     def random_button_click(self) -> None:
         '''Call get_random_recipe, display it with display_recipe'''
@@ -303,7 +432,7 @@ class MainWindowRecipie(Ui_MainWindow):
                 f'Sending these terms to search:\n{search_terms}'
                 f'Sending these categories to search:\n{self.cats}'
             )
-        # Pass the function to execute
+        # Pass the function to execute and lock UI elements
         if len(search_terms) > 0 or len(self.cats) > 0:
             if self.radioButtonExclusive.isChecked():
                 if self.verbose:
@@ -311,27 +440,24 @@ class MainWindowRecipie(Ui_MainWindow):
                 self.searchworker = Worker(
                     exact_search, search_terms, self.cats, self.rlist)
                 self.lock_ui_elements()
-                # progress_callback.emit(n*100/4)
-                #search_type = getattr(esearch, 'exact_search')
             elif self.radioButtonInclusive.isChecked():
                 if self.verbose:
                     print('Starting inclusive search...')
-                self.searchworker = Worker(partial_search, search_terms, self.cats, self.rlist)
+                self.searchworker = Worker(
+                    partial_search, search_terms, self.cats, self.rlist)
                 self.lock_ui_elements()
-                #search_type = getattr(exact_search, 'partial_search')
 
              # Setup our signals
             self.searchworker.signals.result.connect(
                 self.display_search_result_list)
             self.searchworker.signals.finished.connect(self.thread_complete)
-            # searchworker.signals.progress.connect(self.progress_fn)
 
             # Execute our search
             self.threadpool.start(self.searchworker)
         else:
             self.srlist.clear()
             if self.verbose:
-                print('Error: Search called, there are no terms or categories')
+                print('Error: Search called, but there are no terms or categories')
 
     def thread_complete(self):
         '''To be triggered when search worker finishes, unlocks ui elements'''
@@ -368,6 +494,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.actionRemove_Selected.setEnabled(True)
         self.pushButtonSendFilterSearch.setEnabled(True)
         self.actionReset_Search.setEnabled(True)
+        self.lineEditIngredientEntry.setFocus()
 
     def reset_search(self) -> None:
         '''Clear Search inputs and results'''
@@ -402,7 +529,7 @@ class MainWindowRecipie(Ui_MainWindow):
         self.pushButtonDisplayRecipeNewWindow.setEnabled(False)
         self.pushButtonAddFavourite.setEnabled(False)
         self.labelTopBarText.setText(
-            'Welcome to Recipie Beta, please hit \'Random Recipe to try it out!')
+            'Welcome to Recipie 1.0, Made by chefs, for everyone!')
         if self.verbose:
             print('Clearing displayed recipe...')
 
@@ -681,7 +808,11 @@ class MainWindowRecipie(Ui_MainWindow):
 
 
 def load_quotes():
-    '''Load quotes from hardcoded json file'''
+    '''Load quotes from hardcoded json file
+
+        Returns:
+            data (dict): Dictionary of quotes to display as needed
+    '''
 
     try:
         file = Path(__file__).parent.parent.joinpath('data/quotes/quotes.json')
@@ -694,28 +825,19 @@ def load_quotes():
         print(err)
 
 
-def initmainwindow(verbose: bool, rlist: RecipeList) -> None:
+def initmainwindow(verbose: bool, dspath: list[Path]) -> None:
     '''Initialize and display main recipie window
 
         Args:
             verbose (bool): Specify verbose setting for program
-            rlist (RecipeList): Main instance of RecipeList
+            dspath (list[Path]): list of recipe json files to load
     '''
 
     if verbose:
         print('Starting to initialize ui...')
     app = QtWidgets.QApplication([])
     MainWindow = QtWidgets.QMainWindow()
-    ui = MainWindowRecipie(verbose, rlist)  # Instance of UI_MainWindow
-    ui.setupUi(MainWindow)  # Basic initialization
-    ui.setupUicustom()  # Our secondary initialization
-    ui.createevents()  # Add event listeners and shortcuts
-    ui.linkimages(app)  # Link images to window
-    ui.status_bar_display('Ready')
-    MainWindow.show()  # Finally, show the window
-    if verbose:
-        print('Initialized successfully and visible')
-    sys.exit(app.exec())
+    ui = MainWindowRecipie(verbose, dspath, MainWindow, app)
 
 
 if __name__ == '__main__':

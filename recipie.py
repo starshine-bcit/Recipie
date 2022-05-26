@@ -1,10 +1,8 @@
 '''Recipie Main Module'''
-import sys
 from pathlib import Path
 import argparse
 
 from modules.revent import initmainwindow
-from modules.recipelist import RecipeList
 
 
 def createdslist(args):
@@ -31,7 +29,7 @@ def main():
         '--datastore',
         type=Path,
         default=Path(__file__).parent.joinpath('data'),
-        help='json file to load, hopefully with recipies'
+        help='json files to load, hopefully with recipies'
     )
 
     args = parser.parse_args()
@@ -43,12 +41,9 @@ def main():
 
     verbose = True if args.verbose else False
     datafilelist = createdslist(args)
-    mainrlist = RecipeList(datafilelist)
-    if verbose:
-        print(f'Total recipes indexed: {len(mainrlist.recipes)}')
-    initmainwindow(verbose, mainrlist)
-
+    initmainwindow(verbose, datafilelist)
 
 
 if __name__ == '__main__':
     main()
+    
