@@ -58,9 +58,8 @@ Options:
 ```
 
 Steps to run Recipie Application: 
-1. Open the git console, `mkdir [FOLDER_NAME]` to create a folder, and `cd [FOLDER_NAME]` change to the directory. 
-2. `git clone https://github.com/SeanXYTan/ACIT2911.git` to copy the Recipie repository into your local directory. 
-3. `cd ACIT2911` to change directory to ACIT2911. 
+2. `git clone https://github.com/starshine-bcit/Recipie.git` to copy the Recipie repository into a local directory. 
+3. `cd Recipie` to change directory to Recipie. 
 4. To run Recipie from source, you need to install `PyQt6` PyPi Package by typing `pip install pyqt6` in the console. 
 5. To open the Recipie program, `py .\recipie.py` for Windows and `python3 ./recipie.py` for Linux.
 
